@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="description" content="Reproducible saturation based peak calling" />
+  <meta name="keywords" content="ChIP-Seq, peak calling, software, bioinformatics, computational biology, genetics, epigenetics" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <title>
+
+	  Installation
+
+	</title>
+	<script type="text/javascript">
+	function xch(chrcode) {
+	  return String.fromCharCode(chrcode);
+	  }
+	</script>
+
+
+  <link rel="shortcut icon" href="img/Q-logo.png" />
+  <link rel="stylesheet" href="stylesheets/layout_q.css" type="text/css" />
+  <style type="text/css" media="screen">
+	 .pageStyle #mainContent {
+	    background: none;
+	    background-color:transparent;
+			position: relative;
+			z-index:1;
+	   }
+		 .pageStyle #mainContent h3 {
+			 padding-top:2px;
+			 margin-top:4px;
+		 }
+		.pageStyle #mainContent h2 {
+			 padding-top:2px;
+			 margin-top:4px;
+		 }
+
+	</style>
+	  <!--[if lt IE 7]>
+     <style type="text/css" media="screen">
+	   .pageStyle #mainContent {
+	     /* border-top: 1px solid #FFF; 
+	     background: none;
+	     background-color:#FFFFFF; */	 
+	     float:left;
+	     clear:both;
+	    }
+	 	 .pageStyle hr {
+	     position:absolute;
+       border-top:2px solid #9AF;
+	     margin:2px 0;
+	     }
+     </style>
+	<![endif]-->
+	<!--[if lte IE 7]>
+     <style type="text/css" media="screen">
+		   .pageStyle {
+	       margin-top: expression(( 720 - this.height ) / 2); 
+	       }
+     </style>
+	<![endif]-->
+
+
+	
+</head>
+
+
+<body class="pageStyle">
+
+
+
+<!-- the mainContent div should follow here -->
+
+
+<div id="mainContent">
+  <!-- disabled.#include virtual="topbar.inc.shtml"-->
+<div class="round-button">
+    <a href="index.html">
+        <img src="img/Home_Icon.svg" alt="Home" />
+    </a>
+</div>
+  <div id="main">
+	<br>
+	<h1>Installation for Linux</h1>
+	<h3>Precompiled executable</h3>
+	<p>
+	We provide a precompiled executable for
+	<a href="downloads/executables/Linux x86_64 binary/Q">Linux x86_64 binary</a>,
+	which does not require any runtime libraries. 
+	If you just want to use Q, you do not have to install from source. Try the following command (which will display
+	help messages) to test the file.
+	<div class="codebox">
+	<code>   
+			$./Q --help
+	</code>
+	</div>
+	<p>Alternatively, place Q in your PATH.
+	<br>	
+	</p>
+	
+	<br>
+		<h3>Installation from source</h3>
+		<h4>Preliminaries</h4>
+			<p>Q is written in C++ and makes use of several external libraries. Q uses 
+			<a href="http://www.seqan.de/">SeqAn</a> for BAM file I/O, and the SeqAn library is provided together
+			with the Q source code and does not need to be installed separated. The zlib, bz2, and gomp libraries
+			are needed for operating with the (compressed) BAM files and for multiprocessor support. Here, the
+			dev versions of the libraries should be installed (which are guaranteed to have the header files needed
+			for compilation). In addition, the boost library is used by Q for certain statistical calculations.
+			</p>
+			<p>On debian systems, these libraries can be installed with the following command:</p>
+			<div class="codebox">
+				<code>   
+					apt-get install g++ zlib1g-dev libbz2-dev libboost-dev libgomp1
+				</code>
+			</div>
+			<p>On other linux distrubtions, install the libraries using the command appropriate to your system.</p>
+			
+			<p>We have tested Q using the following compiler and library versions.
+			<ul>
+			<li>g++: 4:4.7.2-1</li>
+			<li>libboost-dev: 1.49.0.1</li>
+			<li>zlib1g-dev: 1:1.2.7.dfsg-13</li>
+			<li>libbz2-dev: 1.0.6-4</li>
+			<li>libgomp1: 4.7.2-5</li>
+			</ul>
+			</p>
+			<h4>Installation</h4>
+			Clone the source code from the github repository:
+			  <p class="view"><a href="https://github.com/charite/Q">View the Project on GitHub <small>charite/Q</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/charite/Q/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/charite/Q/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/charite/Q">View On <strong>GitHub</strong></a></li>
+        </ul>
+        
+			<p>Use the following command to check if your system has the required libraries and to create a Makefile:    
+			<div class="codebox">
+				<code>   
+					./configure
+				</code>
+			</div>  
+			Assuming no error messages are produce, Q can now be compiled. There are two ways of doing so.  
+			You can  install the executable in a system wide directory (if you have write permissions, e.g., because you are root):
+			<div class="codebox">
+				<code>   
+					make; make install
+				</code>
+			</div>   
+			Alternatively, to install Q in another directory, use the following to create the Makefile:
+			<div class="codebox">
+				<code>   
+					./configure --prefix=/path/to/my-directory
+				</code>
+			</div>   
+			Entering "make;make install" will now install Q into "/path/to/my-directory/bin/Q".
+			</p>
+			<p>The above will compile a version of Q will all of the library code included as well as debugging symbols. To create
+			a smaller executable, you can use the following command:</p>
+			<div class="codebox">
+				<code>   
+					make install-strip
+				</code>
+			</div>   
+			
+        
+	<!--<h1>Installation for Mac</h1>
+	<p>		
+	<b>TBA</b>
+	</p>-->
+	<br></br>
+	<h3>Visualizing Q Analysis Results on the UCSC Genome Browser</h3>
+	<p>	
+	Q generates BedGraph files for the fragment coverage profiles on the fly. This section describes the installation of
+	several UCSC executables that will be needed (See the tutorial for details).
+	Sometimes the BigWig format is more suitable and we will implement the generation of BigWig files in near future.
+	By then two tools from the UCSC command line utilities are needed for the conversion from BedGraph to BigWig format.
+	For downloading change to the bin directory within your home directory and enter the following command lines.
+	<div class="codebox">
+	<code>
+		wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/fetchChromSizes
+	</code>
+	</div>
+	<br>
+	<div class="codebox">
+	<code>
+		wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/bedGraphToBigWig
+	</code>
+	</div>
+	</p>
+	<p>
+		Now you have to make the utilities executable using the following command.
+	<div class="codebox">
+	<code>
+		chmod u+x fetchChromSizes bedGraphToBigWig
+	</code>
+	</div>
+	</p>
+	<p>		
+	If you have added <em>/home/bin</em> to your $PATH variable as described above,
+	the utilities should now be available.
+	</p>
+	<br>	
+</div>
+</body>
+</html>
+
+
