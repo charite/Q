@@ -1,0 +1,10 @@
+K 10
+svn:ignore
+V 63
+.svnignore
+*_generated_forwards.h
+._*
+svn-commit.tmp
+*DS_Store
+
+END

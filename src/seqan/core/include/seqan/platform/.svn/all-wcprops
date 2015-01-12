@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform
+END
+platform_windows.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform/platform_windows.h
+END
+windows_stdint.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform/windows_stdint.h
+END
+platform_gcc.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform/platform_gcc.h
+END
+platform_solaris.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform/platform_solaris.h
+END
+platform_icc.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform/platform_icc.h
+END
+platform_pgi.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform/platform_pgi.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform/INFO
+END
+platform_mingw.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform/platform_mingw.h
+END

@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream
+END
+record_reader_double.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/record_reader_double.h
+END
+record_reader_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13930/trunk/core/include/seqan/stream/record_reader_base.h
+END
+stream_gz_file.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/stream_gz_file.h
+END
+write.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/seqan/!svn/ver/13855/trunk/core/include/seqan/stream/write.h
+END
+lexical_cast.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13855/trunk/core/include/seqan/stream/lexical_cast.h
+END
+adapt_iostream.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/adapt_iostream.h
+END
+adapt_cstdio.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/adapt_cstdio.h
+END
+record_reader_single.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13921/trunk/core/include/seqan/stream/record_reader_single.h
+END
+adapt_mmap.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/adapt_mmap.h
+END
+stream_bgzf.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/stream_bgzf.h
+END
+record_reader_double_mmap.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/record_reader_double_mmap.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13933/trunk/core/include/seqan/stream/INFO
+END
+concept_stream.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/stream/concept_stream.h
+END
+stream_bz2_file.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/stream_bz2_file.h
+END
+adapt_fstream.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/adapt_fstream.h
+END
+read_sam.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13938/trunk/core/include/seqan/stream/read_sam.h
+END
+read_auto_format.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/stream/read_auto_format.h
+END
+read.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13855/trunk/core/include/seqan/stream/read.h
+END
+is.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13855/trunk/core/include/seqan/stream/is.h
+END
+record_reader_single_mmap.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/record_reader_single_mmap.h
+END
+stream_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/stream/stream_base.h
+END
+stream_char_array.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/stream_char_array.h
+END
+adapt_sstream.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/adapt_sstream.h
+END
+tokenize.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream/tokenize.h
+END

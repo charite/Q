@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/seqan/!svn/ver/13982/trunk/core/include/seqan/misc/cmdparser
+END
+cmdparser_parse.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/seqan/!svn/ver/13855/trunk/core/include/seqan/misc/cmdparser/cmdparser_parse.h
+END
+cmdoption.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13855/trunk/core/include/seqan/misc/cmdparser/cmdoption.h
+END
+cmdparser_type_support.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/seqan/!svn/ver/13855/trunk/core/include/seqan/misc/cmdparser/cmdparser_type_support.h
+END
+cmdparser.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13855/trunk/core/include/seqan/misc/cmdparser/cmdparser.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/misc/cmdparser/INFO
+END
+cmdparser_ctd_support.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/seqan/!svn/ver/13982/trunk/core/include/seqan/misc/cmdparser/cmdparser_ctd_support.h
+END

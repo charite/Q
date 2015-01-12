@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13982/trunk/core/include/seqan/sequence_journaled
+END
+journal_entry.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/seqan/!svn/ver/13855/trunk/core/include/seqan/sequence_journaled/journal_entry.h
+END
+sequence_journaled.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/seqan/!svn/ver/13953/trunk/core/include/seqan/sequence_journaled/sequence_journaled.h
+END
+journal_entries_unbalanced_tree.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/seqan/!svn/ver/13855/trunk/core/include/seqan/sequence_journaled/journal_entries_unbalanced_tree.h
+END
+journal_entries_sorted_array.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/seqan/!svn/ver/13982/trunk/core/include/seqan/sequence_journaled/journal_entries_sorted_array.h
+END
+journal_entries_unbalanced_tree_node.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/seqan/!svn/ver/13855/trunk/core/include/seqan/sequence_journaled/journal_entries_unbalanced_tree_node.h
+END
+sequence_journaled_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/seqan/!svn/ver/13855/trunk/core/include/seqan/sequence_journaled/sequence_journaled_iterator.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13933/trunk/core/include/seqan/sequence_journaled/INFO
+END
+journal_entries_unbalanced_tree_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/seqan/!svn/ver/13855/trunk/core/include/seqan/sequence_journaled/journal_entries_unbalanced_tree_iterator.h
+END

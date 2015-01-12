@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/seqan/!svn/ver/14069/trunk/core/include/seqan/arg_parse
+END
+arg_parse_ctd_support.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/seqan/!svn/ver/14069/trunk/core/include/seqan/arg_parse/arg_parse_ctd_support.h
+END
+arg_parse_option.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13955/trunk/core/include/seqan/arg_parse/arg_parse_option.h
+END
+xml_support.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/arg_parse/xml_support.h
+END
+arg_parse_parse.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13930/trunk/core/include/seqan/arg_parse/arg_parse_parse.h
+END
+argument_parser.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13930/trunk/core/include/seqan/arg_parse/argument_parser.h
+END
+arg_parse_type_support.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/seqan/!svn/ver/13912/trunk/core/include/seqan/arg_parse/arg_parse_type_support.h
+END
+tool_doc.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13930/trunk/core/include/seqan/arg_parse/tool_doc.h
+END
+arg_parse_exceptions.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/seqan/!svn/ver/13855/trunk/core/include/seqan/arg_parse/arg_parse_exceptions.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/seqan/!svn/ver/13855/trunk/core/include/seqan/arg_parse/INFO
+END
+arg_parse_argument.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13930/trunk/core/include/seqan/arg_parse/arg_parse_argument.h
+END
+arg_parse_doc.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13930/trunk/core/include/seqan/arg_parse/arg_parse_doc.h
+END

@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/13982/trunk/core/include/seqan/modifier
+END
+modifier_reverse.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13791/trunk/core/include/seqan/modifier/modifier_reverse.h
+END
+modifier_shortcuts.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13791/trunk/core/include/seqan/modifier/modifier_shortcuts.h
+END
+modifier_alphabet.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13855/trunk/core/include/seqan/modifier/modifier_alphabet.h
+END
+modifier_functors.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13791/trunk/core/include/seqan/modifier/modifier_functors.h
+END
+modifier_alphabet_expansion.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/seqan/!svn/ver/13855/trunk/core/include/seqan/modifier/modifier_alphabet_expansion.h
+END
+modifier_string.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13982/trunk/core/include/seqan/modifier/modifier_string.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13855/trunk/core/include/seqan/modifier/INFO
+END
+modifier_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13791/trunk/core/include/seqan/modifier/modifier_iterator.h
+END
+modifier_view.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13982/trunk/core/include/seqan/modifier/modifier_view.h
+END

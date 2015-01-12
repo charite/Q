@@ -1,0 +1,317 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/seqan/!svn/ver/14082/trunk/core/include/seqan/align
+END
+local_alignment_enumeration_banded.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/local_alignment_enumeration_banded.h
+END
+align_iterator_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/align_iterator_base.h
+END
+gaps_iterator_anchor.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13941/trunk/core/include/seqan/align/gaps_iterator_anchor.h
+END
+global_alignment_myers_hirschberg_impl.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/global_alignment_myers_hirschberg_impl.h
+END
+local_alignment_enumeration.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/seqan/!svn/ver/14076/trunk/core/include/seqan/align/local_alignment_enumeration.h
+END
+local_alignment_enumeration_unbanded.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/local_alignment_enumeration_unbanded.h
+END
+gaps_iterator_array.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/gaps_iterator_array.h
+END
+local_alignment_banded_waterman_eggert_impl.h
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/seqan/!svn/ver/14082/trunk/core/include/seqan/align/local_alignment_banded_waterman_eggert_impl.h
+END
+dp_cell.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/seqan/!svn/ver/13904/trunk/core/include/seqan/align/dp_cell.h
+END
+dp_trace_segment.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/dp_trace_segment.h
+END
+dp_matrix_navigator_trace_matrix.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_matrix_navigator_trace_matrix.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13933/trunk/core/include/seqan/align/INFO
+END
+align_cols.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/align_cols.h
+END
+dp_cell_affine.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_cell_affine.h
+END
+dp_traceback_adaptor.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_traceback_adaptor.h
+END
+dp_scout.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_scout.h
+END
+alignment_operations.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/alignment_operations.h
+END
+dp_traceback_impl.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/14072/trunk/core/include/seqan/align/dp_traceback_impl.h
+END
+dp_setup.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/13909/trunk/core/include/seqan/align/dp_setup.h
+END
+dp_profile.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/dp_profile.h
+END
+gaps_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/14075/trunk/core/include/seqan/align/gaps_base.h
+END
+local_alignment_banded.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/local_alignment_banded.h
+END
+dp_matrix.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/dp_matrix.h
+END
+dp_band.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/dp_band.h
+END
+dp_formula.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/dp_formula.h
+END
+gaps_array.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14075/trunk/core/include/seqan/align/gaps_array.h
+END
+local_alignment_unbanded.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/seqan/!svn/ver/14075/trunk/core/include/seqan/align/local_alignment_unbanded.h
+END
+align_metafunctions.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/align_metafunctions.h
+END
+align_traceback.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/align_traceback.h
+END
+dp_algorithm_impl.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_algorithm_impl.h
+END
+global_alignment_banded.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/global_alignment_banded.h
+END
+dp_cell_linear.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_cell_linear.h
+END
+gapped_value_type.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/gapped_value_type.h
+END
+dp_matrix_navigator_score_matrix_sparse.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_matrix_navigator_score_matrix_sparse.h
+END
+gaps_iterator_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/gaps_iterator_base.h
+END
+global_alignment_myers_impl.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/global_alignment_myers_impl.h
+END
+global_alignment_unbanded.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/seqan/!svn/ver/14075/trunk/core/include/seqan/align/global_alignment_unbanded.h
+END
+matrix_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14076/trunk/core/include/seqan/align/matrix_base.h
+END
+dp_formula_affine.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/14072/trunk/core/include/seqan/align/dp_formula_affine.h
+END
+gap_anchor.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/gap_anchor.h
+END
+dp_matrix_navigator.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/dp_matrix_navigator.h
+END
+alignment_algorithm_tags.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/alignment_algorithm_tags.h
+END
+dp_matrix_sparse.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_matrix_sparse.h
+END
+local_alignment_waterman_eggert_impl.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/seqan/!svn/ver/14082/trunk/core/include/seqan/align/local_alignment_waterman_eggert_impl.h
+END
+global_alignment_specialized.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/global_alignment_specialized.h
+END
+align_config.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/align_config.h
+END
+global_alignment_hirschberg_impl.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/seqan/!svn/ver/13982/trunk/core/include/seqan/align/global_alignment_hirschberg_impl.h
+END
+dp_matrix_navigator_score_matrix.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_matrix_navigator_score_matrix.h
+END
+dp_formula_linear.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/align/dp_formula_linear.h
+END
+dp_meta_info.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/dp_meta_info.h
+END
+align_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14073/trunk/core/include/seqan/align/align_base.h
+END
+gaps_anchor.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14075/trunk/core/include/seqan/align/gaps_anchor.h
+END

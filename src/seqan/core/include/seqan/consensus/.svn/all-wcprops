@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/seqan/!svn/ver/13982/trunk/core/include/seqan/consensus
+END
+consensus_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13982/trunk/core/include/seqan/consensus/consensus_base.h
+END
+consensus_score.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13982/trunk/core/include/seqan/consensus/consensus_score.h
+END
+consensus_realign.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13982/trunk/core/include/seqan/consensus/consensus_realign.h
+END
+consensus_library.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13982/trunk/core/include/seqan/consensus/consensus_library.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/seqan/!svn/ver/13855/trunk/core/include/seqan/consensus/INFO
+END

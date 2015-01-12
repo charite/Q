@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/seqan/!svn/ver/13982/trunk/core/include/seqan/graph_msa
+END
+graph_align_tcoffee_library.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/seqan/!svn/ver/13982/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_library.h
+END
+graph_align_tcoffee_io.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/seqan/!svn/ver/13855/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_io.h
+END
+graph_align_tcoffee_progressive.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/seqan/!svn/ver/13855/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_progressive.h
+END
+graph_align_tcoffee_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/seqan/!svn/ver/13982/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_base.h
+END
+graph_align_tcoffee_distance.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/seqan/!svn/ver/13855/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_distance.h
+END
+graph_align_tcoffee_refinement.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/seqan/!svn/ver/13855/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_refinement.h
+END
+graph_align_tcoffee_guidetree.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/seqan/!svn/ver/13855/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_guidetree.h
+END
+graph_align_tcoffee_kmer.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/seqan/!svn/ver/13855/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_kmer.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/seqan/!svn/ver/13933/trunk/core/include/seqan/graph_msa/INFO
+END
+graph_align_tcoffee_msa.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/seqan/!svn/ver/13982/trunk/core/include/seqan/graph_msa/graph_align_tcoffee_msa.h
+END

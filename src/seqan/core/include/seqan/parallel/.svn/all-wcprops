@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/14058/trunk/core/include/seqan/parallel
+END
+parallel_splitting.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13855/trunk/core/include/seqan/parallel/parallel_splitting.h
+END
+parallel_macros.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/14058/trunk/core/include/seqan/parallel/parallel_macros.h
+END
+parallel_atomic_misc.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/seqan/!svn/ver/13855/trunk/core/include/seqan/parallel/parallel_atomic_misc.h
+END
+parallel_atomic_primitives.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/seqan/!svn/ver/13855/trunk/core/include/seqan/parallel/parallel_atomic_primitives.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13855/trunk/core/include/seqan/parallel/INFO
+END

@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/seqan/!svn/ver/13982/trunk/core/include/seqan/seq_io
+END
+guess_stream_format.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13920/trunk/core/include/seqan/seq_io/guess_stream_format.h
+END
+read_embl.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/seq_io/read_embl.h
+END
+read_genbank.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13855/trunk/core/include/seqan/seq_io/read_genbank.h
+END
+simple_read_fasta.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13947/trunk/core/include/seqan/seq_io/simple_read_fasta.h
+END
+sequence_stream.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13958/trunk/core/include/seqan/seq_io/sequence_stream.h
+END
+genomic_region.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13947/trunk/core/include/seqan/seq_io/genomic_region.h
+END
+sequence_stream_impl.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13920/trunk/core/include/seqan/seq_io/sequence_stream_impl.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13855/trunk/core/include/seqan/seq_io/INFO
+END
+fai_index.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13982/trunk/core/include/seqan/seq_io/fai_index.h
+END
+write_fasta_fastq.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13947/trunk/core/include/seqan/seq_io/write_fasta_fastq.h
+END
+read_fasta_fastq.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/seq_io/read_fasta_fastq.h
+END

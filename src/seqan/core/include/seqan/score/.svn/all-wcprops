@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/seqan/!svn/ver/13930/trunk/core/include/seqan/score
+END
+score_matrix.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/score/score_matrix.h
+END
+score_edit.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/score/score_edit.h
+END
+score_simple.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/score/score_simple.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13855/trunk/core/include/seqan/score/INFO
+END
+score_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13930/trunk/core/include/seqan/score/score_base.h
+END
+score_matrix_io.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13930/trunk/core/include/seqan/score/score_matrix_io.h
+END
+score_matrix_data.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/score/score_matrix_data.h
+END

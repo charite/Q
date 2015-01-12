@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe
+END
+pipe_counter.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_counter.h
+END
+pipe_caster.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_caster.h
+END
+pipe_filter.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_filter.h
+END
+pool_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pool_base.h
+END
+pipe_joiner.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_joiner.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/INFO
+END
+pipe_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_iterator.h
+END
+pool_sorter.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pool_sorter.h
+END
+pool_mapper.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pool_mapper.h
+END
+pipe_source.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_source.h
+END
+pipe_namer.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_namer.h
+END
+pipe_sampler.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_sampler.h
+END
+pipe_shifter.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_shifter.h
+END
+pipe_echoer.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_echoer.h
+END
+pipe_edit_environment.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_edit_environment.h
+END
+pipe_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_base.h
+END
+pipe_tupler.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe/pipe_tupler.h
+END

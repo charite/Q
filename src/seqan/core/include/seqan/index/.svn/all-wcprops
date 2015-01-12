@@ -1,0 +1,395 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/seqan/!svn/ver/14083/trunk/core/include/seqan/index
+END
+index_esa_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_esa_base.h
+END
+index_fm.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/14018/trunk/core/include/seqan/index/index_fm.h
+END
+index_shawarma.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_shawarma.h
+END
+index_fm_stree.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13955/trunk/core/include/seqan/index/index_fm_stree.h
+END
+index_fm_rank_support_bit_string_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_fm_rank_support_bit_string_iterator.h
+END
+find_index_qgram.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13914/trunk/core/include/seqan/index/find_index_qgram.h
+END
+find_index_esa.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13992/trunk/core/include/seqan/index/find_index_esa.h
+END
+index_skew7_multi.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_skew7_multi.h
+END
+index_fm_prefix_sum_table.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/seqan/!svn/ver/14008/trunk/core/include/seqan/index/index_fm_prefix_sum_table.h
+END
+index_wotd.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_wotd.h
+END
+shape_threshold.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/shape_threshold.h
+END
+index_fm_right_array_binary_tree_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/seqan/!svn/ver/13988/trunk/core/include/seqan/index/index_fm_right_array_binary_tree_iterator.h
+END
+index_fm_lf_table.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13979/trunk/core/include/seqan/index/index_fm_lf_table.h
+END
+shape_onegapped.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/shape_onegapped.h
+END
+index_qgram_openaddressing.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_qgram_openaddressing.h
+END
+index_lcp_tree.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_lcp_tree.h
+END
+index_fm_rank_support_bit_string.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/seqan/!svn/ver/13979/trunk/core/include/seqan/index/index_fm_rank_support_bit_string.h
+END
+index_fm_sentinel_rank_dictionary.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/seqan/!svn/ver/13989/trunk/core/include/seqan/index/index_fm_sentinel_rank_dictionary.h
+END
+index_qgram.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_qgram.h
+END
+pizzachili_api.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/pizzachili_api.h
+END
+find_index_approx.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/find_index_approx.h
+END
+index_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_base.h
+END
+index_esa_stree.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_esa_stree.h
+END
+pump_extender3.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/pump_extender3.h
+END
+index_fm_dox.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/14083/trunk/core/include/seqan/index/index_fm_dox.h
+END
+pump_extender7.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/pump_extender7.h
+END
+find_index.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13964/trunk/core/include/seqan/index/find_index.h
+END
+repeat_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/repeat_base.h
+END
+index_esa_drawing.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_esa_drawing.h
+END
+index_esa_algs_multi.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_esa_algs_multi.h
+END
+index_sa_qsort.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_sa_qsort.h
+END
+index_skew3.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_skew3.h
+END
+shape_predefined.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/shape_predefined.h
+END
+pump_lcp_core.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/pump_lcp_core.h
+END
+index_skew7.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_skew7.h
+END
+index_dfi.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_dfi.h
+END
+find_swift.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13988/trunk/core/include/seqan/index/find_swift.h
+END
+index_fm_sparse_string.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13979/trunk/core/include/seqan/index/index_fm_sparse_string.h
+END
+index_pizzachili_find.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_pizzachili_find.h
+END
+index_pizzachili.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_pizzachili.h
+END
+index_childtab.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_childtab.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/INFO
+END
+index_fm_right_array_binary_tree.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/seqan/!svn/ver/13988/trunk/core/include/seqan/index/index_fm_right_array_binary_tree.h
+END
+index_fm_compressed_sa_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/seqan/!svn/ver/13955/trunk/core/include/seqan/index/index_fm_compressed_sa_iterator.h
+END
+index_shims.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_shims.h
+END
+index_sa_lss.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_sa_lss.h
+END
+index_sa_btree.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_sa_btree.h
+END
+shape_gapped.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/shape_gapped.h
+END
+index_sa_mm.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_sa_mm.h
+END
+index_pizzachili_string.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_pizzachili_string.h
+END
+index_sa_bwtwalk.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_sa_bwtwalk.h
+END
+find_pigeonhole.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13993/trunk/core/include/seqan/index/find_pigeonhole.h
+END
+shape_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/shape_base.h
+END
+index_fm_rank_dictionary_bms.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/seqan/!svn/ver/14002/trunk/core/include/seqan/index/index_fm_rank_dictionary_bms.h
+END
+find_quasar.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/find_quasar.h
+END
+index_fm_compressed_sa.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13979/trunk/core/include/seqan/index/index_fm_compressed_sa.h
+END
+index_fm_rank_dictionary_wt.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/seqan/!svn/ver/13979/trunk/core/include/seqan/index/index_fm_rank_dictionary_wt.h
+END
+index_lcp.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_lcp.h
+END
+index_esa_algs.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/14081/trunk/core/include/seqan/index/index_esa_algs.h
+END
+radix.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13988/trunk/core/include/seqan/index/radix.h
+END
+index_forwards.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_forwards.h
+END
+pipe_merger3.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/pipe_merger3.h
+END
+index_bwt.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/index_bwt.h
+END
+pipe_merger7.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/pipe_merger7.h
+END
+pump_separator7.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/index/pump_separator7.h
+END

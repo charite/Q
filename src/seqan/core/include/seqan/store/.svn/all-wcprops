@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/seqan/!svn/ver/14017/trunk/core/include/seqan/store
+END
+store_align_intervals.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13983/trunk/core/include/seqan/store/store_align_intervals.h
+END
+store_contig.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/store_contig.h
+END
+store_io_ucsc.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/store_io_ucsc.h
+END
+store_io_gff.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/14017/trunk/core/include/seqan/store/store_io_gff.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/INFO
+END
+store_align.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13982/trunk/core/include/seqan/store/store_align.h
+END
+store_matepair.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/store_matepair.h
+END
+store_library.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/store_library.h
+END
+store_intervaltree.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13919/trunk/core/include/seqan/store/store_intervaltree.h
+END
+store_io_sam.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13976/trunk/core/include/seqan/store/store_io_sam.h
+END
+store_io.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/13976/trunk/core/include/seqan/store/store_io.h
+END
+store_all.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/store_all.h
+END
+store_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/store_base.h
+END
+store_annotation.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/store_annotation.h
+END
+store_read.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store/store_read.h
+END

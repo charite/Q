@@ -1,0 +1,467 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/seqan/!svn/ver/14068/trunk/core/include/seqan/basic
+END
+allocator_simple.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13930/trunk/core/include/seqan/basic/allocator_simple.h
+END
+basic_fundamental.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_fundamental.h
+END
+alphabet_qualities.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/alphabet_qualities.h
+END
+iterator_adapt_pointer.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/iterator_adapt_pointer.h
+END
+iterator_adaptor.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13982/trunk/core/include/seqan/basic/iterator_adaptor.h
+END
+volatile_ptr.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/volatile_ptr.h
+END
+basic_parallelism.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_parallelism.h
+END
+triple_packed.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/14061/trunk/core/include/seqan/basic/triple_packed.h
+END
+hosted_type_interface.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/hosted_type_interface.h
+END
+holder_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/holder_base.h
+END
+tuple_bit_compressed.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/tuple_bit_compressed.h
+END
+fundamental_tags.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/fundamental_tags.h
+END
+metaprogramming_enable_if.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/seqan/!svn/ver/14061/trunk/core/include/seqan/basic/metaprogramming_enable_if.h
+END
+iterator_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/14046/trunk/core/include/seqan/basic/iterator_base.h
+END
+test_system.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/test_system.h
+END
+basic_smart_pointer.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_smart_pointer.h
+END
+debug_test_system.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13988/trunk/core/include/seqan/basic/debug_test_system.h
+END
+triple_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14062/trunk/core/include/seqan/basic/triple_base.h
+END
+alphabet_simple_type.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13930/trunk/core/include/seqan/basic/alphabet_simple_type.h
+END
+basic_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_iterator.h
+END
+metaprogramming_type.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13982/trunk/core/include/seqan/basic/metaprogramming_type.h
+END
+proxy_iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/proxy_iterator.h
+END
+holder_tristate.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/holder_tristate.h
+END
+fundamental_concepts.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/14046/trunk/core/include/seqan/basic/fundamental_concepts.h
+END
+container_concept.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/14046/trunk/core/include/seqan/basic/container_concept.h
+END
+alphabet_adapt_builtins.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/alphabet_adapt_builtins.h
+END
+pair_packed.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/pair_packed.h
+END
+iterator_concept.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/14046/trunk/core/include/seqan/basic/iterator_concept.h
+END
+iterator_interface.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/14046/trunk/core/include/seqan/basic/iterator_interface.h
+END
+alphabet_residue_tabs.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/alphabet_residue_tabs.h
+END
+fundamental_transport.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/fundamental_transport.h
+END
+proxy_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/proxy_base.h
+END
+basic_allocator.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_allocator.h
+END
+basic_container.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_container.h
+END
+debug_helper.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/debug_helper.h
+END
+pair_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/14068/trunk/core/include/seqan/basic/pair_base.h
+END
+metaprogramming_control.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/seqan/!svn/ver/14061/trunk/core/include/seqan/basic/metaprogramming_control.h
+END
+alphabet_math.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/alphabet_math.h
+END
+basic_math.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_math.h
+END
+basic_metaprogramming.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_metaprogramming.h
+END
+basic_concept.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_concept.h
+END
+builtin_functions.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13930/trunk/core/include/seqan/basic/builtin_functions.h
+END
+array_construct_destruct.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/array_construct_destruct.h
+END
+alphabet_residue.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/alphabet_residue.h
+END
+math_log_space_value.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/math_log_space_value.h
+END
+fundamental_conversion.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/fundamental_conversion.h
+END
+alphabet_storage.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/alphabet_storage.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/INFO
+END
+metaprogramming_logic.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/14061/trunk/core/include/seqan/basic/metaprogramming_logic.h
+END
+alphabet_bio.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/alphabet_bio.h
+END
+iterator_adapt_std.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/iterator_adapt_std.h
+END
+iterator_position.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/iterator_position.h
+END
+pair_bit_compressed.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/pair_bit_compressed.h
+END
+math_functions.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/math_functions.h
+END
+macro_deprecated.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/macro_deprecated.h
+END
+basic_alphabet.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_alphabet.h
+END
+basic_proxy.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_proxy.h
+END
+allocator_multipool.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/allocator_multipool.h
+END
+holder_simple.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/holder_simple.h
+END
+basic_debug.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_debug.h
+END
+fundamental_comparison.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/fundamental_comparison.h
+END
+profiling.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13917/trunk/core/include/seqan/basic/profiling.h
+END
+alphabet_concept.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13930/trunk/core/include/seqan/basic/alphabet_concept.h
+END
+allocator_to_std.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/allocator_to_std.h
+END
+fundamental_metafunctions.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/seqan/!svn/ver/13930/trunk/core/include/seqan/basic/fundamental_metafunctions.h
+END
+alphabet_profile.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13930/trunk/core/include/seqan/basic/alphabet_profile.h
+END
+allocator_interface.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13930/trunk/core/include/seqan/basic/allocator_interface.h
+END
+aggregate_concept.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/aggregate_concept.h
+END
+metaprogramming_math.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/14061/trunk/core/include/seqan/basic/metaprogramming_math.h
+END
+allocator_chunkpool.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/allocator_chunkpool.h
+END
+basic_tangle.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13976/trunk/core/include/seqan/basic/basic_tangle.h
+END
+allocator_singlepool.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/allocator_singlepool.h
+END
+boost_preprocessor_subset.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/boost_preprocessor_subset.h
+END
+basic_type.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_type.h
+END
+tuple_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/tuple_base.h
+END
+concept_checking.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/14046/trunk/core/include/seqan/basic/concept_checking.h
+END
+basic_aggregate.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic/basic_aggregate.h
+END

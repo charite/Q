@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/seqan/!svn/ver/13947/trunk/core/include/seqan/gff_io
+END
+gff_io_context.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13930/trunk/core/include/seqan/gff_io/gff_io_context.h
+END
+gff_io_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13947/trunk/core/include/seqan/gff_io/gff_io_base.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13933/trunk/core/include/seqan/gff_io/INFO
+END

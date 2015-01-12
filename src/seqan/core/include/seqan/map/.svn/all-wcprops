@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/seqan/!svn/ver/13933/trunk/core/include/seqan/map
+END
+sumlist_mini.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/map/sumlist_mini.h
+END
+map_adapter_stl.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13922/trunk/core/include/seqan/map/map_adapter_stl.h
+END
+map_chooser.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13855/trunk/core/include/seqan/map/map_chooser.h
+END
+map_skiplist.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13919/trunk/core/include/seqan/map/map_skiplist.h
+END
+map_vector.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/13855/trunk/core/include/seqan/map/map_vector.h
+END
+sumlist.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13855/trunk/core/include/seqan/map/sumlist.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/13933/trunk/core/include/seqan/map/INFO
+END
+sumlist_skip.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/map/sumlist_skip.h
+END
+map_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/seqan/!svn/ver/13858/trunk/core/include/seqan/map/map_base.h
+END

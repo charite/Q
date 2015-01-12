@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13982/trunk/core/include/seqan/graph_align
+END
+graph_algorithm_refine_align.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_algorithm_refine_align.h
+END
+graph_algorithm_refine_annotation.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_algorithm_refine_annotation.h
+END
+graph_algorithm_refine_inexact.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_algorithm_refine_inexact.h
+END
+graph_algorithm_refine_aligngraph.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_algorithm_refine_aligngraph.h
+END
+graph_impl_align.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_impl_align.h
+END
+graph_algorithm_refine_exact_iterative.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/seqan/!svn/ver/13982/trunk/core/include/seqan/graph_align/graph_algorithm_refine_exact_iterative.h
+END
+graph_algorithm_refine_fragment.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_algorithm_refine_fragment.h
+END
+graph_algorithm_refine_exact.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_algorithm_refine_exact.h
+END
+graph_algorithm_refine_scoring.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_algorithm_refine_scoring.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/13933/trunk/core/include/seqan/graph_align/INFO
+END
+graph_impl_align_adapt.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align/graph_impl_align_adapt.h
+END

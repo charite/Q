@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/seqan/!svn/ver/14065/trunk/core/include/seqan/bam_io
+END
+read_bam.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/13938/trunk/core/include/seqan/bam_io/read_bam.h
+END
+bam_io_context.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/14057/trunk/core/include/seqan/bam_io/bam_io_context.h
+END
+write_sam.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13938/trunk/core/include/seqan/bam_io/write_sam.h
+END
+bam_writer.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14065/trunk/core/include/seqan/bam_io/bam_writer.h
+END
+bam_alignment_record.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/seqan/!svn/ver/14011/trunk/core/include/seqan/bam_io/bam_alignment_record.h
+END
+bam_index_bai.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13938/trunk/core/include/seqan/bam_io/bam_index_bai.h
+END
+sam_reader.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/bam_io/sam_reader.h
+END
+bam_sam_conversion.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/seqan/!svn/ver/13855/trunk/core/include/seqan/bam_io/bam_sam_conversion.h
+END
+bam_header_record.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13923/trunk/core/include/seqan/bam_io/bam_header_record.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13855/trunk/core/include/seqan/bam_io/INFO
+END
+xam_reader.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/bam_io/xam_reader.h
+END
+write_bam.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/14065/trunk/core/include/seqan/bam_io/write_bam.h
+END
+bam_stream.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14064/trunk/core/include/seqan/bam_io/bam_stream.h
+END
+read_sam.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/seqan/!svn/ver/14057/trunk/core/include/seqan/bam_io/read_sam.h
+END
+sam_writer.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14065/trunk/core/include/seqan/bam_io/sam_writer.h
+END
+bam_tags_dict.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13930/trunk/core/include/seqan/bam_io/bam_tags_dict.h
+END
+bam_index_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/bam_io/bam_index_base.h
+END
+bam_reader.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13855/trunk/core/include/seqan/bam_io/bam_reader.h
+END
+xam_writer.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/14065/trunk/core/include/seqan/bam_io/xam_writer.h
+END
+cigar.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/seqan/!svn/ver/13970/trunk/core/include/seqan/bam_io/cigar.h
+END
+bam_alignment_record_util.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/seqan/!svn/ver/13938/trunk/core/include/seqan/bam_io/bam_alignment_record_util.h
+END

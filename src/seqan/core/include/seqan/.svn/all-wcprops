@@ -1,0 +1,179 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/seqan/!svn/ver/14083/trunk/core/include/seqan
+END
+gff_io.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/13855/trunk/core/include/seqan/gff_io.h
+END
+align.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/seqan/!svn/ver/13873/trunk/core/include/seqan/align.h
+END
+graph_algorithms.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/graph_algorithms.h
+END
+stream.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/13947/trunk/core/include/seqan/stream.h
+END
+store.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/seqan/!svn/ver/13855/trunk/core/include/seqan/store.h
+END
+parallel.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13855/trunk/core/include/seqan/parallel.h
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/seqan/!svn/ver/13034/trunk/core/include/seqan/LICENSE
+END
+pipe.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/seqan/!svn/ver/13855/trunk/core/include/seqan/pipe.h
+END
+modifier.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13791/trunk/core/include/seqan/modifier.h
+END
+graph_msa.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_msa.h
+END
+seeds.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/seqan/!svn/ver/13855/trunk/core/include/seqan/seeds.h
+END
+arg_parse.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13855/trunk/core/include/seqan/arg_parse.h
+END
+index.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/seqan/!svn/ver/13989/trunk/core/include/seqan/index.h
+END
+sequence.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13855/trunk/core/include/seqan/sequence.h
+END
+graph_align.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13873/trunk/core/include/seqan/graph_align.h
+END
+score.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/seqan/!svn/ver/13855/trunk/core/include/seqan/score.h
+END
+sequence_journaled.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/sequence_journaled.h
+END
+map.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/seqan/!svn/ver/13919/trunk/core/include/seqan/map.h
+END
+file.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file.h
+END
+seq_io.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/13855/trunk/core/include/seqan/seq_io.h
+END
+consensus.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13873/trunk/core/include/seqan/consensus.h
+END
+find.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/seqan/!svn/ver/13855/trunk/core/include/seqan/find.h
+END
+random.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/14026/trunk/core/include/seqan/random.h
+END
+basic.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/seqan/!svn/ver/13855/trunk/core/include/seqan/basic.h
+END
+platform.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/seqan/!svn/ver/13855/trunk/core/include/seqan/platform.h
+END
+system.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/13855/trunk/core/include/seqan/system.h
+END
+graph_types.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13855/trunk/core/include/seqan/graph_types.h
+END
+version.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/seqan/!svn/ver/13959/trunk/core/include/seqan/version.h
+END
+bam_io.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/seqan/!svn/ver/13855/trunk/core/include/seqan/bam_io.h
+END

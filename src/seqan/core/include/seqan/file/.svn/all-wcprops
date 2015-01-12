@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/seqan/!svn/ver/14082/trunk/core/include/seqan/file
+END
+file_format_cgviz.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_format_cgviz.h
+END
+file_mapping.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/seqan/!svn/ver/13946/trunk/core/include/seqan/file/file_mapping.h
+END
+stream.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/stream.h
+END
+file_format_guess.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_format_guess.h
+END
+cstream.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/cstream.h
+END
+file_interface.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/seqan/!svn/ver/13958/trunk/core/include/seqan/file/file_interface.h
+END
+file_format_raw.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_format_raw.h
+END
+file_format_mmap.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_format_mmap.h
+END
+file_filereader.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_filereader.h
+END
+file_cstyle.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_cstyle.h
+END
+file_format_fasta.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_format_fasta.h
+END
+INFO
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/INFO
+END
+string_external.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/14059/trunk/core/include/seqan/file/string_external.h
+END
+file_base.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/13935/trunk/core/include/seqan/file/file_base.h
+END
+file_filereaderiterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_filereaderiterator.h
+END
+file_page.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/seqan/!svn/ver/14059/trunk/core/include/seqan/file/file_page.h
+END
+file_format_genbank.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_format_genbank.h
+END
+chunk_collector.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/chunk_collector.h
+END
+file_format_fasta_align.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/seqan/!svn/ver/14082/trunk/core/include/seqan/file/file_format_fasta_align.h
+END
+string_mmap.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13935/trunk/core/include/seqan/file/string_mmap.h
+END
+stream_algorithms.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/stream_algorithms.h
+END
+file_format_embl.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_format_embl.h
+END
+file_forwards.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_forwards.h
+END
+meta.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/meta.h
+END
+file_format.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/seqan/!svn/ver/13855/trunk/core/include/seqan/file/file_format.h
+END
