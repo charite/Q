@@ -30,14 +30,43 @@
          <h1>Installation</h1>
 
          <h2>Installation for Linux</h2>
+         
+         <h3>Precompiled executable</h3>         
               
          <p>
          We provide a precompiled executable for <a href="downloads/executables/Linux_x86_64_binary/Q-1.0.0/Q">Linux x86_64 binary</a>,
          which does not require any runtime libraries.
          If you just want to use Q, you do not have to install from source.
          Try the following command (which will display help messages) to test the file.         
-         </p>    
+         </p>
+           
+         <pre><code>./Q --help</code></pre>        
+
+         <h3>Installation from source</h3> 
+
+         <h4>Preliminaries</h4>
+
+         <p>         
+         Q is written in C++ and makes use of several external libraries.
+         Q uses
+         <a href="http://www.seqan.de/">SeqAn</a>
+         for BAM file I/O,
+         and the SeqAn library is provided together with the Q source code and does not need to be installed separated.
+         The zlib, bz2, and gomp libraries are needed for operating with the (compressed) BAM files and for multiprocessor support.
+         Here, the dev versions of the libraries should be installed
+         (which are guaranteed to have the header files needed for compilation).
+         In addition, the boost library is used by Q for certain statistical calculations.
+         </p>
+
+         <p>
+         On Debian install all required packages using the following command line:
+         </p>
          
+         <pre><code>sudo apt-get install zlib1g-dev libbz2-dev libboost-dev libgomp1</code></pre>  
+
+         
+         
+
          </div>
     <script src="javascripts/scale.fix.js"></script>
   </body>
