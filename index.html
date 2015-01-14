@@ -1,100 +1,24 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta name="description" content="Reproducible saturation based peak calling" />
-  <meta name="keywords" content="ChIP-Seq, peak calling, software, bioinformatics, computational biology, genetics, epigenetics" />
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta http-equiv="Content-Script-Type" content="text/javascript" />
-  <title>
-
-	  Home
-
-	</title>
-	<script type="text/javascript">
-	function xch(chrcode) {
-	  return String.fromCharCode(chrcode);
-	  }
-	</script>
-
-
-  <link rel="shortcut icon" href="img/Q-logo.png" />
-  <link rel="stylesheet" href="stylesheets/layout_q.css" type="text/css" />
-  <style type="text/css" media="screen">
-	 .pageStyle #mainContent {
-	    background: none;
-	    background-color:transparent;
-			position: relative;
-			z-index:1;
-	   }
-		 .pageStyle #mainContent h3 {
-			 padding-top:2px;
-			 margin-top:4px;
-		 }
-		.pageStyle #mainContent h2 {
-			 padding-top:2px;
-			 margin-top:4px;
-		 }
-
-	</style>
-	  <!--[if lt IE 7]>
-     <style type="text/css" media="screen">
-	   .pageStyle #mainContent {
-	     /* border-top: 1px solid #FFF; 
-	     background: none;
-	     background-color:#FFFFFF; */	 
-	     float:left;
-	     clear:both;
-	    }
-	   .pageStyle #mainContent h4 { 
-	     background: #FFFFFF left center no-repeat url("img/Q_main_header.png"); 
-	     }	 
-	 	 .pageStyle hr {
-	     position:absolute;
-       border-top:2px solid #9AF;
-	     margin:2px 0;
-	     }
-     </style>
-	<![endif]-->
-	<!--[if lte IE 7]>
-     <style type="text/css" media="screen">
-		   .pageStyle {
-	       margin-top: expression(( 720 - this.height ) / 2); 
-	       }
-     </style>
-	<![endif]-->
-
-
-	
-</head>
-<body class="pageStyle">
-
-<div id="header" style="height:310px;z-index:1;">
-<div id="iheader">
-  <!-- div id="ihdr_r74" -->
-   
-
-<div class="hdrtitle">
-
-
- <!-- assume Title is defined as well -->
- <h2>
-	 
- </h2>
-
-</div> <!-- header title text -->
-</div> <!-- end #iheader -->
-</div> <!-- end #header -->
-
-<!-- the mainContent div should follow here -->
-
-<div id="mainContent">
-  <!-- disabled.#include virtual="topbar.inc.shtml"-->
-  <div id="subheader">
-    <table width="100%"><tbody><tr>
-    <td>
-    <strong>Q</strong>
-    is a fast saturation-based ChIP-seq peak caller.
+<!doctype html>
+<html>
+  <head>
+	 <meta name="description" content="Reproducible saturation based peak calling" />
+	 <meta name="keywords" content="ChIP-Seq, peak calling, software, bioinformatics, computational biology, genetics, epigenetics" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="shortcut icon" href="img/Q-logo.png" />
+    <title>Home</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+	 <img src="img/Q_main_header.png" align="top" width='100%'/>
+	 <br><br>
+	 <p class="header">
+    Q is a fast saturation-based ChIP-seq peak caller.
     Q works well in conjunction with the irreproducible discovery rate
     (<a href="http://statistics.berkeley.edu/sites/default/files/tech-reports/790.pdf" target="_idr">IDR</a>)
     procedure.
@@ -123,128 +47,34 @@
     <a href="http://genome.ucsc.edu/">UCSC's genome browser</a>,
     where they can be displayed in the context of other related data such as 
     for example ChIP-seq data for histone modifications and cofactors or expression data.
-
-	  </td><td valign="middle" align="right">
-    </td></tr>
-    </tbody></table>
-  </div>
-  <div id="main">
-	<div id="rightside">
-	<h2>Site Map</h2>
-<div class="box">
- <ul>
-   <li><a href="index.html">Home</a></li>
-   <li><a href="tutorial.html">Tutorial</a></li>
-   <li><a href="installation.html">Installation</a></li>
- </ul>
-</div>
-
-<a href="./downloads"><h2><u>Download</u></h2></a>
-<div class="box">
- <ul>
-   <table width="100%"><tbody><tr><td>Q - version 1.0.0</td> <td align="right">09/01/2015</td></tr>
-	 <tr>
-		 <td><a href="downloads/source_code/Q-1.0.0.tar.gz">&nbsp;&nbsp;&nbsp;Source code</a></td>
-	 </tr>
-	 <tr>
-		 <td><a href="downloads/executables/Linux x86_64 binary/Q-1.0.0/Q">&nbsp;&nbsp;&nbsp;Linux x86_64 binary</a></td>
-	 </tr>
-   </tbody></table>
- </ul>
-</div>
-
-<h2>Related Resources</h2>
-<div class="box">
- <ul>
-    <table width="100%">
-    <tbody><tr><td>Read mapping</td> <td align="right"></td></tr>
-	 <tr>
-		 <td><a href="http://bowtie-bio.sourceforge.net/index.shtml">&nbsp;&nbsp;&nbsp;Bowtie</a></td>
-	 </tr>
-	 <tr>
-		 <td><a href="http://bio-bwa.sourceforge.net/">&nbsp;&nbsp;&nbsp;BWA</a></td>
-	 </tr>
-   </tbody>
-   </table>
-   
-    <table width="100%">
-    <tbody><tr><td>Published ChIP-seq data</td> <td align="right"></td></tr>
-	 <tr>
-		 <td><a href="http://genome.ucsc.edu/ENCODE/search.html">&nbsp;&nbsp;&nbsp;Search ENCODE Data at UCSC</a></td>
-	 </tr>
-	 <tr>
-		 <td><a href="https://www.encodeproject.org/">&nbsp;&nbsp;&nbsp;ENCODE: Encyclopedia of DNA Elements</a></td>
-	 </tr>
-   </tbody>
-   </table>
-   
-    <table width="100%">
-    <tbody><tr><td>Irreproducible Discovery Rate (IDR)</td> <td align="right"></td></tr>
-	 <tr>
-		 <td><a href="http://statistics.berkeley.edu/sites/default/files/tech-reports/790.pdf">&nbsp;&nbsp;&nbsp;Detailed description</a></td>
-	 </tr>
-	 <tr>
-		 <td><a href="http://www.personal.psu.edu/users/q/u/qul12/IDR101.pdf">&nbsp;&nbsp;&nbsp;Short intuitive description</a></td>
-	 </tr>
-	 <tr>
-		 <td><a href="https://sites.google.com/site/anshulkundaje/projects/idr">&nbsp;&nbsp;&nbsp;Application recommendations</a></td>
-	 </tr>	 
-   </tbody>
-   </table>
-   
-    <table width="100%">
-    <tbody><tr><td>Visualization and integration</td> <td align="right"></td></tr>
-	 <tr>
-		 <td><a href="http://genome.ucsc.edu/">&nbsp;&nbsp;&nbsp;UCSC genome browser</a></td>
-	 </tr>
-   </tbody>
-   </table>
-      
- </ul>
-</div>
-
-
-<h2>Involved people</h2>
-<div class="box">
- <ul>
-   <li><a href="http://compbio.charite.de/contao/index.php/phansen.html">Peter Hansen</a></li>
-   <li><a href="http://compbio.charite.de/contao/index.php/peter-n-robinson.html">Peter N. Robinson</a></li>
-   <li><a href="http://www.b-crt.de/forschung/multiuser-funktionseinheiten/next-generation-sequencing/">Jochen Hecht</a></li>
-   <li><a href="https://www.bsrt.de/index.php?option=com_zooprofiles&task=userProfile&user=4273&Itemid=485/">Daniel Ibrahim</a></li>
-   <li>Alexander Krannich</li>   
- </ul>
-</div>
-
-<h2>Links</h2>
-<div class="box">
- <ul>
-   <li><a href="http://compbio.charite.de/">Computational biology group - Charité-Universitätsmedizin Berlin</a></li>
- </ul>
-</div>        
-
-	</div> <!-- End of "rightside" -->
-	<div id="leftside">
-	<h1>NEWS</h1>
-	<h2>09/01/2015: Q version 1.0.0 has been released</h2>
-	   <pp>This is the first release of Q</pp>
-	   <ul>
-	   <li>This is the first release of Q
-	    </li>
-	   </ul>
-	   <br>
-</div>
-  </div>
-</div>
-
-<div id="footer">
-  <table cellspacing="15" width="100%"><tbody><tr><td>
-   
-   </td><td align="right">
-   Administrator: <a href="mailto:peter.hansen@charite.de">Peter Hansen</a>
-   </td></tr></tbody></table>
-</div>
-
-</body>
+    </p>
+    <hr/>
+    <div class="wrapper">
+      <header>
+        <ul>
+          <li><a href="https://github.com/charite/Q/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/charite/Q/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="http://github.com/charite/Q">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      <p class="view"><a href="http://github.com/charite/Q">View the Project on GitHub</a></p>
+      <p class="view"><a href="installation.html">Installation</a></p>
+      <p class="view"><a href="tutorial.html">Tutorial</a></p>      
+      </header>
+      <section>
+        <h1>NEWS</h1>
+        <dl>
+          <dt>12/01/2015: First release of Q</dt>
+          <dd>The first release of Q is now available on GitHub.</dd>
+        </dl>
+        <br>
+        <br>
+        <br>                
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="http://compbio.charite.de/contao/index.php/phansen.html">Peter Hansen</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+  </body>
 </html>
-
-
