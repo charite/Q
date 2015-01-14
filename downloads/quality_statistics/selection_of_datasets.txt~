@@ -1,0 +1,6 @@
+The quality metrics were determined on all 805 ENCODE datasets for transcription factors in BAM format.
+For the determination of quality metric thresholds only 392 datasets were used.
+234 datasets with a read length different from 36 were discarded.
+Furthermore, 139 datasets with an estimated average fragment length less than 100 were discarded.
+40 datasets of the remaining 432 datasets were controls.
+Only the 392 datasets for treatments were used.

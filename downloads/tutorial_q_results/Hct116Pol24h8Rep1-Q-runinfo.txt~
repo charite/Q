@@ -1,0 +1,48 @@
+Q - RUN INFO
+############
+
+General information
+===================
+Q Version:              0.06
+Authors:                Peter Hansen <peter.hansen@charite.de>
+                        Peter Nick Robinson <peter.robinson@charite.de>
+Execution time:         Mon Dec  8 11:56:31 2014
+
+Input
+=====
+treatment-sample:      wgEncodeHaibTfbsHct116Pol24h8V0416101AlnRep1.bam
+control-sample:        wgEncodeHaibTfbsHct116RxlchV0416101AlnRep1.bam
+bed-hit-dist:          None
+
+Peak Calling Parameters
+=======================
+fragment-length-average:         -1
+fragment-length-deviation:       50
+keep-dup:                        0
+top-n:                           100000
+p-value-cutoff:                  -1
+
+General Parameters
+==================
+out-prefix:                      Hct116Pol24Rep1
+thread-num:                      7
+verbose:                         1
+
+Binding Characteristics Parameters
+==================================
+step-num:                        1000
+binding-characteristics-only:    0
+
+Advanced Options
+==================
+write-bed:                       None
+bed-radius:                      1000
+
+Output
+======
+out-info:                  Hct116Pol24Rep1-Q-runinfo.txt
+binding-characteristics:   Hct116Pol24Rep1-Q-binding-characteristics.R
+chromosome-info:           Hct116Pol24Rep1-Q-chromosome-info.tab
+summit-info:               Hct116Pol24Rep1-Q-summit-info.tab
+narrowPeak:                Hct116Pol24Rep1-Q-narrowPeak.bed
+

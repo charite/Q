@@ -1,0 +1,55 @@
+Q - RUN INFO
+############
+
+General information
+===================
+Q Version:              0.06
+Authors:                Peter Hansen <peter.hansen@charite.de>
+                        Peter Nick Robinson <peter.robinson@charite.de>
+Execution time:         Mon Dec 29 17:01:41 2014
+
+Input
+=====
+treatment-sample:       wgEncodeHaibTfbsHct116Pol24h8V0416101AlnRep1.bam
+control-sample:         wgEncodeHaibTfbsHct116RxlchV0416101AlnRep1.bam
+bed-hit-dist:           None
+
+Peak Calling Arguments
+======================
+fragment-length-average:           not specified, will be determined
+fragment-length-deviation:         50
+keep-dup:                          0
+top-n:                             100000
+p-value-cutoff:                    not specified, will use top-n
+
+General Arguments
+=================
+out-prefix:                        Hct116Pol24h8Rep1
+thread-num:                        7
+verbose:                           1
+
+Binding Characteristics Arguments For Fragment Length Estimation
+================================================================
+step-num:                          1000
+binding-characteristics-only:      0
+
+UCSC Track Options
+==================
+write-bedgraph-treatment:          1
+write-bedgraph-control:            1
+
+Advanced Options
+================
+write-bed:                         None
+bed-radius:                        1000
+
+Output
+======
+runinfo:                           Hct116Pol24h8Rep1-Q-runinfo.txt
+binding-characteristics:           Hct116Pol24h8Rep1-Q-binding-characteristics.R
+quality-statistics:                Hct116Pol24h8Rep1-Q-quality-statistics.tab
+summit-info:                       Hct116Pol24h8Rep1-Q-summit-info.tab
+narrowPeak:                        Hct116Pol24h8Rep1-Q-narrowPeak.bed
+bedGraph-treatment:                Hct116Pol24h8Rep1-Q-treatment.bedgraph
+bedGraph-control:                  Hct116Pol24h8Rep1-Q-control.bedgraph
+
