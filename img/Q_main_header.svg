@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="Q_main_header.png">
+   sodipodi:docname="Q_main_header.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -24,7 +24,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.92083333"
-     inkscape:cx="403.43891"
+     inkscape:cx="405.61086"
      inkscape:cy="193.43891"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -8693,7 +8693,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -8787,13 +8787,13 @@
     <text
        xml:space="preserve"
        style="font-size:220px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Goudy-Old-Style;-inkscape-font-specification:Goudy-Old-Style"
-       x="6.7410002"
+       x="26.741001"
        y="951.42169"
        id="text11003"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan11005"
-         x="6.7410002"
+         x="26.741001"
          y="951.42169">Q</tspan></text>
     <g
        style="fill:none;stroke:#ffffff;stroke-width:0.86104506;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -9743,7 +9743,7 @@
          sodipodi:role="line"
          id="tspan11703"
          x="10.160749"
-         y="1036.2743">Reproducible saturation based peak calling </tspan></text>
+         y="1036.2743">Reproducible saturation based ChIP-seq peak calling </tspan></text>
     <image
        y="767.48846"
        x="221.88425"
