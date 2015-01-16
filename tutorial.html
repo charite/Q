@@ -3,14 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link rel="shortcut icon" href="img/Q-logo.png" />
-    <title>Tutorial</title>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <title>ChIP-seq peak caller - Tutorial</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
   </head>
   
          <body>
@@ -181,14 +182,14 @@
 		   If SPP is applied to the same dataset (following duplicate removal by samtools),
 		   an analogous, but vertically flipped curve with nearly identical characteristics is generated, shown on the right.
 		   </p>
-		   
-			<center>	
-			<iframe src="img/Hct116Pol24h8Rep1-Q-binding-characteristics.pdf#view=fitH" width="350"  height="350">
-			</iframe>
-			<iframe src="img/Hct116Pol24h8Rep1-SPP-binding-characteristics.pdf#view=fitH" width="350"  height="350">
-			</iframe>
-			<p>Binding characteristics plot for Hct116Pol2Rep1 for Q (left) and SPP (right)</p>
-		   </center>	   
+
+         <center>		   
+         <div style="float:center;"> 
+         <img alt="logo" width="35%" src="img/Hct116Pol24h8Rep1-Q-binding-characteristics.png" /><img alt="background" width="35%" src="img/Hct116Pol24h8Rep1-SPP-binding-characteristics.png" />
+         </div>
+         <p>Binding characteristics plot for Hct116Pol2Rep1 for Q (left) and SPP (right)</p>
+         </center>	   
+
 
 		   <p>
 		   The main difference is that Q calculates the <a href="http://en.wikipedia.org/wiki/Hamming_distance" target="_hamming">Hamming distance</a>,
@@ -405,9 +406,9 @@
 		   See the following figure for an illustrative example.
 		   </p>
 
-			<center>	
-			<iframe src="img/hgt_genome_euro_5689_a8ed60.pdf#view=fitH" width="750"  height="310">
-			</iframe>
+
+		   <center>	
+		   <img src="img/hgt_genome_euro_5689_a8ed60.png" width="95%"/>
 			<p>
 			Example for a figure generated in the UCSC genome browser.
 			The upper two tracks display the bigWig files generated in the course of this tutorial.
