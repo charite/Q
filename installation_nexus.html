@@ -46,10 +46,11 @@
               
          <p>
          We provide precompiled binaries for Linux x86_64, a compilation from source is not neccessary. 
-         If you want to use the ChiP-Nexus preprocessing capabilities, it is neccessary to install Bowtie and Samtools. 
+         If you want to use the ChiP-Nexus preprocessing capabilities, it is neccessary to install Bowtie, Samtools 
+         and Python. 
          If you are using Ubuntu, this can be done using the following command
 			</p>
-         <pre><code>sudo apt-get install samtools bowtie</code></pre>
+         <pre><code>sudo apt-get install samtools bowtie python</code></pre>
 
          <p>
          To proceed with precompiled binaries, download <a href="downloads/Q-1.1.0.zip">Q-1.1.0.zip</a>.
@@ -58,7 +59,7 @@
          <p>         
          Unzip the the downloaded archive
 			</p>
-         <pre><code>gzip ~/Q-1.1.0.zip</code></pre>
+         <pre><code>unzip ~/Q-1.1.0.zip</code></pre>
 			
          <p>
 			Make the binaries and scripts executable using:
@@ -91,7 +92,7 @@
 			
 			<pre><code>Q --help</code></pre>
 			<pre><code>nexus-pre --help</code></pre>
-   		
+			<pre><code>seqan_flexbar --help</code></pre>
 			
          <h3 id="h3_installation_from_source">Installation from source</h3> 
 
