@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" href="img/favicon-192x192.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon-180x180.png">
+    <title>Nexus-Tools Preprocessing - Tutorial</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+  
+         <body>
+         <div class="round-button">
+         <a href="index.html">
+           <img src="img/Home_Icon.svg" alt="Home" />
+         </a>
+         </div>
+         <img src="img/Nexus-Tools_tutorial_header.png" align="top" width='100%'/>
+         <br><br><br>
+         <div class="wrapper">
+         <h1>Tutorial</h1>
+        
+			<p>
+			This tutorial will take users through the process of Preprocessing with the Nexus-Tools Preprocessing Toolkit. This Toolkit is especially optimized for 
+            ChiP-Nexus and ChiP-Exo reads.
+			If you have not yet downloaded Nexus-Tools, please see the 
+			section on <a href="installation.html">installation</a> before going further.
+			</p>
+			
+			<p>
+			This tutorial is subdivided into the following sections:
+			<ul>
+			 <li><a href="#adapter_trimming_and_fixed_barcode_detection" >Adapter trimming and fixed barcode detection</a></li>
+			 <li><a href="#mapping" >Mapping the reads to the reference genome</a></li>
+			 <li><a href="#post_mapping_filtering" >Post-mapping filtering</a></li>
+			 <li><a href="#executing_the_script" >Executing the script</a></li>
+			 <li><a href="#binding_characteristics" >Binding Characteristics</a></li>
+			 <li><a href="#visualization_and_statistics" >Visualization and Statistics</a></li>
+			</ul>
+			</p>
+			 
+			<hr/>
+			
+		   <h2 id="adapter_trimming_and_fixed_barcode_detection">Adapter Trimming and filtering for fixed Barcode</h3>
+			<p>
+			Nexus-Tools requires as input a files a file representing the <a href="http://www.nature.com/nbt/journal/v33/n4/abs/nbt.3121.htmlChIP-Nexus">ChiP-Nexus</a> or ChiP-Exo reads data in fastq or format, and a file representing the reference genome in fasta format. 
+            In order t perform this task, we have extended the flexbar tool from the <a href="http://www.seqan.de">Seqan Project</a> for our purpose, the binary of this application is called 
+            seqan_flexbar and will be automatically called by our preprocessing script. The following options are used for this application
+                </p>
+	
+        <table>
+          <tbody>
+              <tr>
+            <th>Option</th><th>Description</th>
+          </tr>
+              <tr>
+            <th>-fr [N]</th><th>Process only first N reads, default is all reads</th>
+          </tr>
+              <tr>
+            <th>-tl 5</th><th>Trim 5 bases from the 5" end of each read, this removes the random barcode from the read sequence</th>
+          </tr>
+              <tr>
+            <th>-tt</th><th>Store trimmed sequences in the corresponding id, this is neccessary to process the trimmed random barcode at a later stage</th>
+          </tr>
+              <tr>
+            <th>-t</th><th>Tag sequences with removed adapters</th>
+          </tr>
+              <tr>
+            <th>-fm 0</th><th>Set the final minimum length of reads that will be accepted, default is 0</th>
+          </tr>
+              <tr>
+            <th>-er 0.2</th><th>Error rate for adapter matching, default is 0.2</th>
+          </tr>
+              <tr>
+            <th>-ol 4</th><th>Minimum required overlap for adapter matching, default is 4</th>
+          </tr>
+              <tr>
+            <th>-app</th><th>Allow 1 base error for fixed barcode matching</th>
+          </tr>
+              <tr>
+            <th>-tnum</th><th>Number of threads, set according to tnum script parameter</th>
+          </tr>
+              <tr>
+            <th>-ss</th><th>Display processing speed in reads per second</th>
+          </tr>
+              </tbody>
+        </table>
+            <p>The adapter sequences can be specified in the file adapters.fa, which is located in the Q/data/ directory. This file could for example look like this</p>
+             <pre><code>>adapter1.1
+CAT
+>adapter1.2
+AGATCGGAAGAGCACACGTCTGGATCCACGACGCTCTTCC
+>adapter2.1
+CAT
+>adapter2.2
+GATCGGAAGAGCACACGTCTGGATCCACGACGCTCTTCC
+>adapter3.1
+CAT
+>adapter3.2
+ATCGGAAGAGCACACGTCTGGATCCACGACGCTCTTCC
+>adapter4.1
+CAT
+>adapter4.2
+TCGGAAGAGCACACGTCTGGATCCACGACGCTCTTCC
+</code></pre>
+			<p>For single paired reads, adapter*.1 is omitted, therefore we only wrote CAT at these positions. The adapters in this example file are chosen to match 
+                ChiP-Nexus protocol. If you use another another protocol, for example ChiP-Exo, this file probably needs to be modified.
+			</p>
+                 <p>ChiP-Nexus reads have in contrast to ChiP-Exo reads two barcodes at the 5"-end of each read. The first barcode is a random barcode of length 5, the second barcode immediately follows 
+        the first barcode and is a fixed barcode of length 4. The fixed barcode is used to identify valid ChiP-Nexus reads. Therefore Reads at this processing step will be filtered for the fixed barcode,
+        and only those who match the fixed barcode in Q/data/barcodes.fa with an allowed matching error of 1 base will be used for further processing. For the standard ChiP-Nexus protocol, the 
+        barcodes.fa file looks like this
+		    </p>
+                          <pre><code>>matched_barcode
+CTGA             </pre></code>
+
+
+			<h2 id="mapping" >Mapping the reads to the reference genome</h2>
+			<p>Mapping is done using <a href="http://bowtie-bio.sourceforge.net/index.shtml">Bowtie 1.1.2</a>. Although there is already Bowtie 2 available, the authors 
+                of Bowtie say, that Bowtie 1.1.2 is better suitable for short reads. The following options are used for bowtie
+			</p>
+			        <table>
+          <tbody>
+              <tr>
+            <th>Option</th><th>Description</th>
+          </tr>
+              <tr>
+            <th>-k 1</th><th>report up to 1 valid alignment per read</th>
+          </tr>
+              <tr>
+            <th>-m 1</th><th>only map reads that are uniquely mappable</th>
+          </tr>
+              <tr>
+            <th>--chunkmbs 512</th><th>each thread can use 512 MBs memory</th>
+          </tr>
+              <tr>
+            <th>--strata --best</th><th>See <a href="http://bowtie-bio.sourceforge.net/manual.shtml#bowtie-options-best description">Bowtie manual</a> for detailed </th>
+          </tr>
+              <tr>
+            <th>-S</th><th>Output file format is SAM</th>
+          </tr>
+              <tr>
+            <th>-p</th><th>Number of threads, set according to tnum script parameter</th>
+          </tr>
+              <tr>
+            <th>-v 2</th><th>Set verbosity level to 2, however this output will only be displayed, if the 
+ script is executed with --verbose
+                         </th>
+          </tr>
+              </tbody>
+        </table>
+
+		   
+
+		   <h2 id="post_mapping_filtering">Post-mapping filtering</h2>
+	   <p>The mapped reads need to be further processed, because for ChiP-Nexus we want to remove reads that are mapped to the same position and have the same random barcode. This 
+           enabled us to distinguish PCR artifact duplicates from real duplicates. For this preprocessing stage, the binary nexus-pre is used with the following settings
+	   </p>
+
+			        <table>
+          <tbody>
+              <tr>
+            <th>Option</th><th>Description</th>
+          </tr>
+              <tr>
+            <th>-fc chrU,chrUextra,chrM</th><th>filter chromosomes, this option can be used to filter chromosomes that are not uniquely mappable. For the dm3 genome 
+                we filter chrU, chrUextra and chrM
+                                            </th>
+          </tr>
+
+              </tbody>
+        </table>
+
+
+
+         <h2 id="executing_the_script">Executing the whole process</h2>
+
+		   <p>
+            We provide a script called preprocess.py, that enabled you to run all the above mentioned preprocessing steps 
+               with one command. We recommend the following directory structure.</p>
+			        <table>
+          <tbody>
+              <tr>
+            <th>Directory</th><th>Description</th>
+          </tr>
+              <tr>
+            <th>data</th><th>a directory where all the input and output data of the preprocessing resides</th>
+          </tr>
+              <tr>
+            <th>data/fastq</th><th>raw reads</th>
+          </tr>
+              <tr>
+            <th>data/genomes</th><th>reference genomes</th>
+          </tr>
+              <tr>
+            <th>data/preprocessed</th><th>directory where all the output data of the preprocessing goes</th>
+          </tr>
+
+              </tbody>
+        </table>
+        <p>
+             Now you can start the preprocessing pipeline be executing this command</p>
+                                       <pre><code>~/Q/scripts/preprocess.py ~/data/fastq/input_reads_ID01.fastq ~/data/genome/ref_genome.fa --clean --output_dir ~/data/preprocessed/ID01 --verbose --overwrite
+CTGA             </pre></code>
+        <p>The following table explains the options that can be used with this script</p>
+			        <table>
+          <tbody>
+              <tr>
+            <th>Option</th><th>Description</th>
+          </tr>
+              <tr>
+            <th>[INPUT FILE]</th><th>path the the input file with raw reads (fastq or fastq.gz)</th>
+          </tr>
+              <tr>
+            <th>[GENOME FILE]</th><th>path to the reference genome file (fasta or fasta.gz)</th>
+          </tr>
+              <tr>
+            <th>--exo</th><th>don't do barcode trimming (use this option if you process ChiP-Exo reads)</th>
+          </tr>
+              <tr>
+            <th>--clean</th><th>delete intermediate files, such as the mapping output generated by bowtie</th>
+          </tr>
+              <tr>
+            <th>--overwrite</th><th>overwrite existing output files, if this option is not used, preprocessing steps will be skipped if the corresponding output file already exists</th>
+          </tr>
+              <tr>
+            <th>--verbose</th><th>display output of the different preprocessing stages on screen</th>
+          </tr>
+              <tr>
+            <th>--bowtie_location [PATH]</th><th>specify the path to the bowtie executable, this is neccessary if bowtie is not in the path and for all windows installations</th>
+          </tr>
+              <tr>
+            <th>--num_threads [N]</th><th>use N threads, default is 4</th>            
+          </tr>
+              <tr>
+            <th>--output_dir [PATH]</th><th>directory where the output files will be created, default is the current working directory</th>
+          </tr>
+              <tr>
+            <th>--output_dir [PATH]</th><th>directory where the output files will be created, default is the current working directory</th>
+          </tr>
+              <tr>
+            <th>--filter_chromosomes [comma seperated list]</th><th>names of chromosomes that should be dropped from further analysis</th>
+          </tr>
+
+              </tbody>
+        </table>
+
+		   
+		   <h2 id="binding_characteristics">Binding Characteristics</h2>
+
+
+		   <h2 id="visualization_and_statistics">Visualization and Statistics</h2>
+		   
+ 		   <br>
+ 		   <br>		   
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+  </body>
+</html>
