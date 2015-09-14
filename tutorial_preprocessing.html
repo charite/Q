@@ -41,8 +41,8 @@
 			 <li><a href="#mapping" >Mapping the reads to the reference genome</a></li>
 			 <li><a href="#post_mapping_filtering" >Post-mapping filtering</a></li>
 			 <li><a href="#executing_the_script" >Executing the script</a></li>
-			 <li><a href="#binding_characteristics" >Binding Characteristics</a></li>
 			 <li><a href="#visualization_and_statistics" >Visualization and Statistics</a></li>
+			 <li><a href="#binding_characteristics" >Binding Characteristics</a></li>
 			</ul>
 			</p>
 			 
@@ -170,7 +170,7 @@ CTGA             </pre></code>
             <th>Option</th><th>Description</th>
           </tr>
               <tr>
-            <th>-fc chrU,chrUextra,chrM</th><th>filter chromosomes, this option can be used to filter chromosomes that are not uniquely mappable. For the dm3 genome 
+            <th>-fc chrU,chrUextra,chrM</th><th>filter chromosomes for binding characteristics analysis, this option can be used to filter chromosomes that are not uniquely mappable. For the dm3 genome 
                 we filter chrU, chrUextra and chrM
                                             </th>
           </tr>
@@ -252,14 +252,42 @@ CTGA             </pre></code>
               </tbody>
         </table>
 
+		   <h2 id="visualization_and_statistics">Visualization and Statistics</h2>
+			<p>
+			The preprocessing pipeline generates a file which is called [INPUT_PREFIX]_duplication_rate.txt. This file containts information 
+                about how many reads with a specific coverage rate exist. We also supply and R-script that can generate the following graph out of 
+                this txt file.
+			</p>
 		   
+		   <center>	
+		   <img src="img/duplication_rate.png" width="100%"/>
+			</center>
+			<p>
+            On the x-axis of this graph is the coverage rate, the left y-axis show the number of reads. The right y-axis show the percentage of 
+                non unique duplet reads out of all duplet reads. The discrimination of unique and non unique duplicates is for the first time possible, because 
+                of the random barcodes used by the ChiP-nexus protocol. The preprocessing output can be further analyzed using the tool 
+                <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a>.
+			</p>
+			<p>
+			The preprocessing pipeline also generates a file with statistical information about the preprocessed data. It could look like this
+                          <pre><code>Total reads	17102794
+Filtered reads (-fc Option)	0
+Mapped reads	9616348
+Non mappable reads	2082353
+Non uniquely mappable reads	5404093
+After barcode filtering	6891129	 (-2725219)
+PCR duplication rate	0.283394
+Total duplet reads	1274581
+Estimated fragment Length	18</pre></code>
+			</p>
+	
+ 		   <br>
+ 		   <br>		   
+
 		   <h2 id="binding_characteristics">Binding Characteristics</h2>
 
 
-		   <h2 id="visualization_and_statistics">Visualization and Statistics</h2>
-		   
- 		   <br>
- 		   <br>		   
+
     </div>
     <script src="javascripts/scale.fix.js"></script>
   </body>
