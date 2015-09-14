@@ -23,9 +23,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.93158671"
-     inkscape:cx="592.66762"
-     inkscape:cy="212.19112"
+     inkscape:zoom="0.65873128"
+     inkscape:cx="710.4664"
+     inkscape:cy="148.20441"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -10664,17 +10664,17 @@
          id="flowPara6034" /></flowRoot>    <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
-       x="361.88919"
+       x="363.84399"
        y="872.49207"
        id="text5459-7-2-2"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6060"
-         x="361.88919"
+         x="363.84399"
          y="872.49207">Trimmed reads</tspan><tspan
          sodipodi:role="line"
          id="tspan6062"
-         x="361.88919"
+         x="363.84399"
          y="891.24207">(.fastq)</tspan></text>
     <path
        id="path5402-3-6"
@@ -10780,5 +10780,28 @@
          id="tspan6086">Statistics</tspan><tspan
          sodipodi:role="line"
          id="tspan6088">(.txt)</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 265.13904,933.76372 c 0,0 7.51406,28.98281 44.01094,30.05624 36.49687,1.07344 178.1906,1.07344 178.1906,1.07344 0,0 26.83593,0 26.83593,21.46878"
+       id="path5909"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cscc" />
+    <path
+       sodipodi:nodetypes="cscc"
+       inkscape:connector-curvature="0"
+       id="path5911"
+       d="m 763.22998,933.76373 c 0,0 -7.51406,28.98281 -44.01094,30.05624 -36.49687,1.07344 -178.1906,1.07344 -178.1906,1.07344 0,0 -26.83593,0 -26.83593,21.46877"
+       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:20px;line-height:100%;font-family:Eraser;-inkscape-font-specification:'Eraser, Medium';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ccffaa;fill-opacity:1;stroke:none"
+       x="428.15747"
+       y="1010.6689"
+       id="text5459-5-5-6-7-0"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6803"
+         x="428.15747"
+         y="1010.6689">preprocess.py</tspan></text>
   </g>
 </svg>
