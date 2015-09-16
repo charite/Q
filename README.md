@@ -1,4 +1,3 @@
 #Q
-Q is a saturation-based ChIP-seq peak caller.
 
-TODO
+Please see http://charite.github.io/Q/ for more information.
