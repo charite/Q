@@ -25,7 +25,7 @@ where they can be displayed in the context of other related data for example ChI
 and cofactors or expression data.
 
 
-Please see http://compbio.charite.de/Q/ for more information.
+Please see http://charite.github.io/Q/ for more information.
 
 
 Q uses the SeqAn library revision 14083 (http://www.seqan.de/).
