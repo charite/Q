@@ -32,6 +32,5 @@ Q uses the SeqAn library revision 14083 (http://www.seqan.de/).
 All SeqAn files necessary for compilation are included within
 the distribution of Q (src/seqan).
 
-Q uses the Boost library version 1.49 (http://www.boost.org/).
-All Boost files necessary for compilation are included within
-the distribution of Q (src/boost).
+Q uses the Boost library (tested version 1.49) (http://www.boost.org/).
+
