@@ -147,7 +147,7 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 			//std::cout << record.rID << "\t" << chr_map[record.rID] << "\n";
 
 			Hit hit;
-			if(record.flag==16)
+			if(record.flag==16||record.flag==147||record.flag==83||record.flag==121||record.flag==153||record.flag==185||record.flag==115||record.flag==179||record.flag==81||record.flag==145||record.flag==113||record.flag==177)
 			{
 				hit.pos=record.beginPos+length(record.seq)-1;
 				hit.strand=1;
@@ -155,7 +155,7 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 				chromosome[chr_map[record.rID]].hit_num_ctrl++;
 				chromosome[chr_map[record.rID]].r_hit_num_ctrl++;
 			}
-			if(record.flag==0)
+			if(record.flag==0||record.flag==99||record.flag==163||record.flag==73||record.flag==89||record.flag==137||record.flag==131||record.flag==97||record.flag==161||record.flag==67||record.flag==65||record.flag==129)
 			{
 				hit.pos=record.beginPos;
 				hit.strand=0;
