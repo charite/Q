@@ -2,7 +2,7 @@
 bin_PROGRAMS = $(top_builddir)/bin/Q
 
 AM_CXXFLAGS=-lrt -I'seqan/core/include/' -Wall -Wno-long-long -pedantic -Wno-variadic-macros -fopenmp -static
-AM_CXXFLAGS+=-DSEQAN_HAS_ZLIB=1 -DSEQAN_HAS_BZIP2=1
+AM_CXXFLAGS+=-DSEQAN_HAS_ZLIB=1 -DSEQAN_HAS_BZIP2=1 -O3 -DNDEBUG -DSEQAN_ENABLE_TESTING=0 -DSEQAN_ENABLE_DEBUG=0
 AM_LDFLAGS=-lbz2 -fopenmp
 LDADD=-lz
 
