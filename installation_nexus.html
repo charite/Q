@@ -1,4 +1,4 @@
-<!doctype html>
+ubunt<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -131,15 +131,43 @@
 			</p>
 			
 			<h4>Installation</h4>
+				<p>
+			Install G++ 5.1 or newer
+			</p>
+			<pre><code>sudo add-apt-repository ppa:ubuntu-toolchain-r/test</code></pre>
+			<pre><code>sudo apt-get update</code></pre>
+			<pre><code>sudo apt-get install g++-5</code></pre>
+
+				<p>
+			Install Cmake 3.2 or newer
+			</p>
+			<pre><code>sudo apt-get install software-properties-common</code></pre>
+			<pre><code>sudo add-apt-repository ppa:george-edison55/cmake-3.x</code></pre>
+			<pre><code>sudo apt-get update</code></pre>
+			<pre><code>sudo apt-get install cmake</code></pre>
+				<p>
+			Install Boost
+			</p>
+			<pre><code>sudo apt-get install libboost-all-dev</code></pre>
+
 			
 			<p>
 			Clone the source code from the github repository:
 			</p>
 			
 			<pre><code>git clone https://github.com/charite/Q.git</code></pre>
+			<pre><code>git clone -b develop https://github.com/catkira/seqan</code></pre>
+			<pre><code>git clone https://github.com/catkira/nexus-tools</code></pre>
+
+			<p>
+			Change into the clones nexus-tools directory and execute the build script
+			</p>
+			<pre><code>cd nexus-tools</code></pre>
+			<pre><code>./build_linux_release.sh</code></pre>
+
 			
 			<p>
-			Change into the cloned directory
+			Change into the cloned Q directory
 			and use the following command to check if your system has the required libraries and to create a Makefile:
 			</p>
 			
