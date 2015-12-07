@@ -91,8 +91,8 @@ ubunt<!doctype html>
          </p>
 			
 			<pre><code>Q --help</code></pre>
-			<pre><code>nexus-pre --help</code></pre>
-			<pre><code>seqan_flexbar --help</code></pre>
+			<pre><code>flexcat --help</code></pre>
+			<pre><code>nexcat --help</code></pre>
 			<pre><code>Q/scripts/preprocess.py --help</code></pre>
 			
          <h3 id="h3_installation_from_source">Installation from source</h3> 
@@ -122,11 +122,10 @@ ubunt<!doctype html>
          On other linux distrubtions, install the libraries using the command appropriate to your system.
          We have tested Q using the following compiler and library versions.
 			<ul>
-			<li>g++: 4:4.7.2-1</li>
+			<li>g++: 5.1</li>
 			<li>libboost-dev: 1.49.0.1</li>
 			<li>zlib1g-dev: 1:1.2.7.dfsg-13</li>
 			<li>libbz2-dev: 1.0.6-4</li>
-			<li>libgomp1: 4.7.2-5</li>
 			</ul>
 			</p>
 			
@@ -154,13 +153,15 @@ ubunt<!doctype html>
 			</p>
 			
 			<pre><code>git clone https://github.com/charite/Q.git</code></pre>
-			<pre><code>git clone https://github.com/seqan/seqan.git</code></pre>
-			<pre><code>git clone https://github.com/catkira/nexus-tools</code></pre>
+			<pre><code>cd Q/src</code></pre>
+			<pre><code>git clone https://github.com/seqan/seqan.git seqan2</code></pre>
+			<pre><code>cd src/seqan2</code></pre>
+			<pre><code>git checkout seqan-v2.0.1</code></pre>
 
 			<p>
 			Change into the clones nexus-tools directory and execute the build script
 			</p>
-			<pre><code>cd nexus-tools</code></pre>
+			<pre><code>cd src</code></pre>
 			<pre><code>./build_linux_release.sh</code></pre>
 
 			
@@ -169,6 +170,7 @@ ubunt<!doctype html>
 			and use the following command to check if your system has the required libraries and to create a Makefile:
 			</p>
 			
+			<pre><code>cd ..</code></pre>
 			<pre><code>./configure</code></pre>
 
 			<p>
