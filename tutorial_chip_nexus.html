@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" href="img/favicon-192x192.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon-180x180.png">
+    <title>Nexus-Tools Preprocessing - Tutorial</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+  
+         <body>
+         <div class="round-button">
+         <a href="index.html">
+           <img src="img/Home_Icon.svg" alt="Home" />
+         </a>
+         </div>
+         <img src="img/Nexus-Tools_tutorial_header.png" align="top" width='100%'/>
+         <br><br><br>
+         <div class="wrapper">
+         <h1>Q-nexus Tutorial</h1>
+         
+			<p>
+			This tutorial is subdivided into the following sections:
+			<ul>
+			 <li><a href="#preprocessing" >Preprocessing</a></li>
+			<ul>
+			 <li><a href="#getting_reads" >Getting Reads</a></li>
+			 <li><a href="#adapter_trimming_and_fixed_barcode_detection" >Adapter trimming and fixed barcode detection</a></li>
+			 <li><a href="#mapping" >Mapping the reads to the reference genome</a></li>
+			 <li><a href="#post_mapping_filtering" >Post-mapping filtering</a></li>
+			 <li><a href="#executing_the_script" >Executing the script</a></li>
+			 <li><a href="#visualization_and_statistics" >Visualization and Statistics</a></li>
+			</ul>
+			 <li><a href="#peak_calling" >Running Q in nexus-mode</a></li>
+			<ul>
+				 <li><a href="#binding_characteristics" >Binding characteristics</a></li>
+				 <li><a href="#peak_calling" >Peak calling</a></li>
+			</ul>
+			</ul>
+			</p>
+						
+			<hr/>
+			
+		   <h2 id="preprocessing">Preprocessing</h2>
+			
+		   <h3 id="getting_reads">Getting Reads</h3>
+		   
+		   
+		   
+	To start the tutorial, download the dm3 reference genome and a ChIP-nexus dataset
+<pre><code>wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/SRA142/SRA142150/SRX475440/SRR1175698.fastq.bz2
+wget www.menkuec.de/dm3.fa</pre></code>
+
+<p>We recommend the following directory structure.</p>
+			        <table>
+          <tbody>
+              <tr>
+            <th>Directory</th><th>Description</th>
+          </tr>
+              <tr>
+            <th>data</th><th>a directory where all the input and output data of the preprocessing resides</th>
+          </tr>
+              <tr>
+            <th>data/fastq</th><th>raw reads</th>
+          </tr>
+              <tr>
+            <th>data/genomes</th><th>reference genomes</th>
+          </tr>
+              <tr>
+            <th>data/preprocessed</th><th>directory where all the output data of the preprocessing goes</th>
+          </tr>
+
+              </tbody>
+        </table>
+
+			
+		   <h3 id="adapter_trimming_and_fixed_barcode_detection">flexcat: Adapter Trimming and filtering for fixed Barcode</h3>
+			<p>
+	
+	
+	run <pre><code>cd data/preprocessed
+mkdir SRR1175698
+cd SRR1175698
+flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698_out.fastq.gz -a ~Q/data/adapters.fa -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13</pre></code>
+
+
+			<h3 id="mapping" >Mapping the reads to the reference genome</h3>
+			<p>Mapping is done using <a href="http://bowtie-bio.sourceforge.net/index.shtml">Bowtie 1.1.2</a>. Although there is already Bowtie 2 available, the authors 
+                of Bowtie say, that Bowtie 1.1.2 is better suitable for short reads. The following options are used for bowtie
+			</p>
+			If not done already, create an index for the reference genome
+	run <pre><code>bowtie-build -o 1 ../../genomes/dm3.fa</pre></code>
+			start the alignment process
+	run <pre><code>bowtie -S -p 4 --chunkmbs 512 -k 1 -m 1 -v 2 --strata --best ../../genomes/dm3 SRR1175698_out.fastq.gz SRR1175698_out.sam</pre></code>
+	
+			
+
+		   
+
+		   <h3 id="post_mapping_filtering">Post-mapping filtering</h3>
+	   <p>The mapped reads need to be further processed, because for ChiP-nexus we want to remove reads that are mapped to the same position and have the same random barcode. This 
+           enabled us to distinguish PCR artifact duplicates from real duplicates. 
+	   </p>
+	run <pre><code>nexcat -fc '(.*)[H|U|M|_]+(.*)' SRR1175698_out.sam</pre></code>
+	   <p>sort and convert to BAM file
+	   </p>
+	   <pre><code>samtools view -Sb SRR1175698_out.sam
+samtools sort SRR1175698_out.bam SRR1175698_out_sorted.bam
+samtools index SRR1175698_out_sorted.bam</pre></code>
+		
+	
+
+         <h3 id="executing_the_script">Executing the whole process using a python script</h3>
+
+		   <p>
+            We provide a script called preprocess.py, that enabled you to run all the above mentioned preprocessing steps 
+               with one command. 
+        <p>
+             Instead of performing all the steps aboive separately, you can start the preprocessing pipeline be executing this command</p>
+	   <pre><code>~/Q/scripts/preprocess.py ~/data/fastq/input_reads_ID01.fastq ~/data/genome/ref_genome.fa --clean --output_dir ~/data/preprocessed/SRR1175698 --verbose --overwrite</pre></code>
+
+		   <h3 id="visualization_and_statistics">Visualization and Statistics</h3>
+			<p>
+			The preprocessing pipeline generates a file which is called [INPUT_PREFIX]_duplication_rate.txt. This file containts information 
+                about how many reads with a specific coverage rate exist. We also supply and R-script that can generate the following graph out of 
+                this txt file.
+			</p>
+		   
+		   <center>	
+		   <img src="img/duplication_rate.png" width="100%"/>
+			</center>
+			<p>
+            On the x-axis of this graph is the coverage rate, the left y-axis show the number of reads. The right y-axis show the percentage of 
+                non unique duplet reads out of all duplet reads. The discrimination of unique and non unique duplicates is for the first time possible, because 
+                of the random barcodes used by the ChiP-nexus protocol. The preprocessing output can be further analyzed using the tool 
+                <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a>.
+			</p>
+			<p>
+			The preprocessing pipeline also generates a file with statistical information about the preprocessed data. It could look like this
+                          <pre><code>Total reads	17102794
+Filtered reads (-fc Option)	0
+Mapped reads	9616348
+Non mappable reads	2082353
+Non uniquely mappable reads	5404093
+After barcode filtering	6891129	 (-2725219)
+PCR duplication rate	0.283394
+Total duplet reads	1274581
+Estimated fragment Length	18</pre></code>
+			</p>
+	
+ 		   <br>
+ 		   <br>		   			 
+			 
+		   <h2 id="peak_calling">Running Q in nexus-mode</h2>
+			
+		   <h3 id="binding_characteristics">Binding characteristics</h3>
+		   <h3 id="peak_calling">Peak calling</h3>
+
+			 
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+  </body>
+</html>
