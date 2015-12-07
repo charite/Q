@@ -29,18 +29,19 @@ endif (NOT CXX14_FOUND)
 set (SEQAN_FIND_DEPENDENCIES ZLIB BZip2)
 find_package (SeqAn REQUIRED)
 
-find_package(Boost 1.36.0)
-if(NOT Boost_FOUND)
-    message (STATUS "  flexcat cannot be built without Boost.")
-    return ()
-endif()
+#find_package(Boost 1.36.0)
+#if(NOT Boost_FOUND)
+    #message (STATUS "  flexcat cannot be built without Boost.")
+    #return ()
+#endif()
 
 # ----------------------------------------------------------------------------
 # Build Setup
 # ----------------------------------------------------------------------------
 
 # Add include directories.
-include_directories (${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}  ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
+#include_directories (${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}  ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
+include_directories (${SEQAN_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
 
 # Add definitions set by find_package (SeqAn).
 add_definitions (${SEQAN_DEFINITIONS})

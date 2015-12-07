@@ -23,8 +23,9 @@ add_definitions (${SEQAN_DEFINITIONS})
 # ----------------------------------------------------------------------------
 # Build Setup
 # ----------------------------------------------------------------------------
-FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
-INCLUDE_DIRECTORIES(${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
+#FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
+#INCLUDE_DIRECTORIES(${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
+INCLUDE_DIRECTORIES(${SEQAN_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
 
 
 
@@ -42,5 +43,6 @@ INCLUDE_DIRECTORIES(${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} ${CMAKE_CURRENT_S
     SET(ALLSRC ${Sources} ${Headers})
     ADD_EXECUTABLE(nexcat ${ALLSRC})
 	
-    target_link_libraries (nexcat ${SEQAN_LIBRARIES} ${Boost_LIBRARIES} )
+#    target_link_libraries (nexcat ${SEQAN_LIBRARIES} ${Boost_LIBRARIES} )
+    target_link_libraries (nexcat ${SEQAN_LIBRARIES})
 				  
