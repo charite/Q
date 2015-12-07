@@ -24,9 +24,12 @@ ubunt<!doctype html>
          <br><br>
          <div class="wrapper">
 
-         <h1>Installation</h1>
+         <h1>Q-nexus: Installation of preprocessing tools</h1>
          
 			<p>
+			Q-nexus comprises two applications designed to preprocess ChIP-nexus FASTQ and alignment (BAM) files prior to
+			peak calling with the Q application (using a special flag for ChIP-exo and ChIP-nexus data). This installation
+			guide covers the installation of the preprocessing applications, flexbar and nexbar. 
 			This installation guide is subdivided into the following sections:
 			<ul>
 			 <li><a href="#h2_installation_for_linux" >Installation for Linux</a></li>
@@ -46,27 +49,24 @@ ubunt<!doctype html>
          <h3 id="h3_precompiled_binary" >Precompiled binary</h3>         
               
          <p>
-         We provide precompiled binaries for Linux x86_64, a compilation from source is not neccessary. 
-         If you want to use the ChiP-Nexus preprocessing capabilities, it is neccessary to install Bowtie, Samtools 
+         We provide precompiled binaries for Linux x86_64. The main Q application as well
+         as flexcat and nexcat can be downloaded as a part of the 
+         <a href="https://github.com/charite/Q">Q github repository</a>. Clone this repository in order
+         to download all the files (cd to the directory into which you would like to download Q and enter the
+          following command): 
+         <pre><code>git clone https://github.com/charite/Q.git</code></pre>
+         
+		You will now find executable (binary) files for the applications Q, flexcat, and nexcat as well as
+		a python script that can be used to carry out the entire process of preprocessing, alignment, and PCR duplicate
+		removal at once. Users can use an aligner of their choice. In order to use the script (which uses bowtie and samtools), 
+		it is necessary to install Bowtie, Samtools 
          and Python. 
          If you are using Ubuntu, this can be done using the following command
 			</p>
          <pre><code>sudo apt-get install samtools bowtie python</code></pre>
 
-         <p>
-         To proceed with precompiled binaries, download <a href="downloads/Q-1.1.0.zip">Q-1.1.0.zip</a>.
-         </p>
-         
-         <p>         
-         Unzip the the downloaded archive
-			</p>
-         <pre><code>unzip ~/Q-1.1.0.zip</code></pre>
-			
-         <p>
-			Make the binaries and scripts executable using:
-			</p>
-			      
-			<pre><code>chmod u+x ~/Q/bin/* ~/Q/scripts/*</code></pre> 
+               
+	
                   
          <p>         
          Open your hidden personal configuration file using a text editor of your choice
