@@ -111,7 +111,7 @@
 /**
  * @file
  * @authors  Peter Hansen <peter.hansen@charite.de>, Peter Nick Robinson <peter.robinson@charite.de>
- * @version 0.01
+ * @version 1.1.1
  *
  * @section DESCRIPTION
  *

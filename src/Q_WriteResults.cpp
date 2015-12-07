@@ -824,7 +824,7 @@ int writeBedGraph(std::vector<Chromosome> &chromosome, seqan::CharString out_pre
 			{
 				for(int k=0;k<extension_length;k++)
 				{
-					if((int)COV.size()<(HITS[j].pos+k)) continue;
+					if((int)COV.size()<(HITS[j].pos+k+1)) continue;
 					COV[HITS[j].pos+k]++;
 				}
 			}
