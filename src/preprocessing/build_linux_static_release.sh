@@ -1,17 +1,13 @@
 cd ..
-rm -rf nexus-tools_build
-mkdir nexus-tools_build
-cd nexus-tools_build
+rm -rf preprocessing_build
+mkdir preprocessing_build
+cd preprocessing_build
 export CXX=/usr/bin/g++-5
-cmake -DLINUX_STATIC:BOOL=ON -DCMAKE_BUILD_TYPE=Release ../nexus-tools
+cmake -DLINUX_STATIC:BOOL=ON -DCMAKE_BUILD_TYPE=Release ../preprocessing
 make flexcat
 make nexcat
-make MappingAnalyzer
-make 5PrimeEndCounter
-cp -f bin/flexcat ../nexus-tools/bin/
-cp -f bin/nexcat ../nexus-tools/bin/
-cp -f bin/MappingAnalyzer ../nexus-tools/bin/
-cp -f bin/5PrimeEndCounter ../nexus-tools/bin/
+cp -f bin/flexcat ../../bin/
+cp -f bin/nexcat ../../bin/
 
 
 
