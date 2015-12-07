@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 
 project (NexusTools)
+set(seqan_dir ${CMAKE_CURRENT_SOURCE_DIR}/../seqan2)
 
 if(LINUX_STATIC)
     cmake_minimum_required (VERSION 3.1)
@@ -21,15 +22,16 @@ else()
 endif(LINUX_STATIC)
 
 set (CMAKE_INCLUDE_PATH
-    ${CMAKE_CURRENT_SOURCE_DIR}/../seqan/include
+    ${seqan_dir}/include
     ${CMAKE_INCLUDE_PATH})
 set (CMAKE_MODULE_PATH
-    ${CMAKE_CURRENT_SOURCE_DIR}/../seqan/util/cmake
+    ${seqan_dir}/util/cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_MODULE_PATH})
 include (SeqAnContribs)
 set (SEQAN_USE_SEQAN_BUILD_SYSTEM TRUE CACHE INTERNAL "Use SeqAn build system." FORCE)
 include (SeqAnBuildSystem)
-set (SEQAN_ROOT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}../seqan" CACHE INTERNAL "Root source directory." FORCE)
+set (SEQAN_ROOT_SOURCE_DIR ${seqan_dir} CACHE INTERNAL "Root source directory." FORCE)
 option(LINUX_STATIC "build with static libs" OFF)
 
 # include(include/seqan/CMakeLists.txt)
