@@ -1,0 +1,20 @@
+This is a fork of seqan_flexbar* which can be found at
+https://github.com/seqan/seqan/tree/master/apps/seqan_flexbar
+
+It has been extended and modified in the following ways
+
+- added support for multiple adapters
+- added support for 5'-end adapters
+- enhanced statistic output of adapter trimming
+- added feature to write trimmed sequences to id line
+- added feature to write statistics to file
+- switched the multithreading design from openMP to std::thread and semaphores
+- rewrote most parts of the program, with a generic programming approach
+
+In the future, we plan to integrate flexcat into flexbar.
+
+seqan_flexbar by Sebastian Roskosch is implemented after seqan, 
+if you use it, please cite 
+[1] Dodt, M.; Roehr, J.T.; Ahmed, R.; Dieterich, "
+C.  "FLEXBAR—Flexible Barcode and Adapter Processing for 
+Next-Generation Sequencing Platforms. Biology 2012, 1, 895-905.
