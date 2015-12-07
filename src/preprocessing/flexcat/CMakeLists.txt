@@ -40,7 +40,7 @@ endif()
 # ----------------------------------------------------------------------------
 
 # Add include directories.
-include_directories (${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+include_directories (${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}  ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
 
 # Add definitions set by find_package (SeqAn).
 add_definitions (${SEQAN_DEFINITIONS})
