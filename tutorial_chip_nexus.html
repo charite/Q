@@ -192,12 +192,59 @@ Estimated fragment Length	18</pre></code>
  		   <br>
  		   <br>		   			 
 			 
-		   <h2 id="peak_calling">Running Q in nexus-mode</h2>
+
 			
+ <h2 id="peak_calling">Running Q in nexus-mode</h2>
+			
+			<p>
+			The original implementation of Q has been designed for ChIP-seq data.
+			Due to the different nature of ChIP-seq and ChIP-nexus data,
+			we made some adjustments of Q to ChIP-nexus data.
+			Using the switch --nexus-mode will cause Q to use optimized parameter settings.
+			</p>
+			
+        <code><pre>Q --nexus-mode -t ~/data/preprocessed/SRR1175698/SRR1175698_filtered_sorted.bam -o SRR1175698 -s 100 -v</pre></code>
+
+			<p>
+			Running Q in nexus-mode will cause Q to keep duplicates (assuming only real and no PCR artifacts for ChIP-nexus data).
+			The parameter -l will be determined using a methodology especially designed for ChIP-nexus data.
+			Furthermore, the evaluation of predicted binding sites differs from the original implementation of Q.
+			Find more detailed informations regarding binding characteristics and peak calling below. 
+			</p>
+					
 		   <h3 id="binding_characteristics">Binding characteristics</h3>
+
+			<p>
+			If Q is invoked in nexus-mode and no value for fragment length (-l) is specified,
+			 it will be set automatically to the predominant qfrag-length observed in the data.
+			 This is done by determining the distribution of qfrag-lengths in the given data
+			 as well as in the pseudo-control (see publication).
+			 Q will produce an R script containing these distributions along with code for generating the corresponding plot (see below),
+			 which can be compiled to a pdf using the following command. 
+			</p>
+
+        <code><pre>Rscript SRR1175698-Q-qfrag-binding-characteristics.R</pre></code>
+
+			</p>
+			
+		 	<p>  
+		   <center>	
+		   <img src="img/SRR1175698-Q-qfrag-binding-characteristics.jpg" width="100%"/>
+			</center>
+			The plot above shows on the left hand side the distribution of qfrag-lengths in the original data (black) and in the pseudo-control (grey).
+			On the right hand site the difference between these two distributions is shown.
+			Q will use the length at which the difference reaches its maximum for -l. 
+			</p>
+
+			
 		   <h3 id="peak_calling">Peak calling</h3>
 
-			 
+			<p>
+			...	
+			</p>
+	
+		   <br>
+ 		   <br>			 
     </div>
     <script src="javascripts/scale.fix.js"></script>
   </body>
