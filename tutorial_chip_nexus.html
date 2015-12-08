@@ -101,7 +101,7 @@ cat *.fa > dm3.fa</code></pre>
 	 <pre><code>cd data/preprocessed
 mkdir SRR1175698
 cd SRR1175698
-flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698_out.fastq.gz -a ~Q/data/adapters.fa -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13
+flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698_out.fastq.gz -a ~/Q/data/adapters.fa -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13
 </pre></code>
 <p>
 flexcat removes the random and fixed ChIP-nexus barcodes, adds information about the random barcodes to toe FASTQ description
@@ -114,7 +114,7 @@ line, and performs 3' adapter trimming. The reads are now ready to be aligned to
 the short reads characcteristic of ChIP-nexus data. Note that bowtie requires an index of the reference
 genome, which can be generate using the following command.
 			</p>
-<pre><code>bowtie-build -o 1 ../../genomes/dm3.fa</pre></code>
+<pre><code>bowtie-build -o 1 ../../genomes/dm3.fa dm3</pre></code>
 <p>The following options are used for the alignment.</p>
 	 <pre><code>bowtie -S -p 4 --chunkmbs 512 -k 1 -m 1 -v 2 --strata --best ../../genomes/dm3 SRR1175698_out.fastq.gz SRR1175698_out.sam</pre></code>
 	
