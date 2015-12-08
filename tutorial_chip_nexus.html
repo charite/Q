@@ -55,9 +55,19 @@
 		   
 		   
 		   
-	To start the tutorial, download the dm3 reference genome and a ChIP-nexus dataset
+	To start the tutorial a ChIP-nexus dataset that was generated using an antibody against the Drosophila melanogaster
+	transcription factor
+	Dorsal (See <a href="http://www.ncbi.nlm.nih.gov/pubmed/25751057">He et al., 2015, ChIP-nexus enables improved detection of in vivo transcription factor binding footprints</a>).
 <pre><code>wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/SRA142/SRA142150/SRX475440/SRR1175698.fastq.bz2
-wget www.menkuec.de/dm3.fa</pre></code>
+</pre></code>
+
+The Drosophila melanogaster genome (version 3, dm3) can be downloaded from the UCSC Genome Browser site and unzipped. We note 
+that for Q-nexus, the reference genome should be contained in a single FASTA file. Since the UCSC Drosophila genome is
+spülit into files for each chromosome, we use the cat command to combine the data into a single FASTA file called dm3.fa.
+
+<pre><code>wget http://hgdownload.soe.ucsc.edu/goldenPath/dm3/bigZips/chromFa.tar.gz
+tar xvfz chromFa.tar.gz
+cat *.fa > dm3.fa</code></pre>
 
 <p>We recommend the following directory structure.</p>
 			        <table>
@@ -80,26 +90,33 @@ wget www.menkuec.de/dm3.fa</pre></code>
 
               </tbody>
         </table>
+<p>Place the above files into these directories (or directly download into them).</p>
 
 			
 		   <h3 id="adapter_trimming_and_fixed_barcode_detection">flexcat: Adapter Trimming and filtering for fixed Barcode</h3>
 			<p>
 	
 	
-	run <pre><code>cd data/preprocessed
+	Execute the following commands (If necessary, alter the path so that the shell finds the flexcat executable):
+	 <pre><code>cd data/preprocessed
 mkdir SRR1175698
 cd SRR1175698
-flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698_out.fastq.gz -a ~Q/data/adapters.fa -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13</pre></code>
+flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698_out.fastq.gz -a ~Q/data/adapters.fa -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13
+</pre></code>
+<p>
+flexcat removes the random and fixed ChIP-nexus barcodes, adds information about the random barcodes to toe FASTQ description
+line, and performs 3' adapter trimming. The reads are now ready to be aligned to the reference genome.
+</p>
 
 
-			<h3 id="mapping" >Mapping the reads to the reference genome</h3>
-			<p>Mapping is done using <a href="http://bowtie-bio.sourceforge.net/index.shtml">Bowtie 1.1.2</a>. Although there is already Bowtie 2 available, the authors 
-                of Bowtie say, that Bowtie 1.1.2 is better suitable for short reads. The following options are used for bowtie
+<h3 id="mapping" >Mapping the reads to the reference genome</h3>
+<p>Mapping is done using <a href="http://bowtie-bio.sourceforge.net/index.shtml">Bowtie 1.1.2</a>, which is suitable for
+the short reads characcteristic of ChIP-nexus data. Note that bowtie requires an index of the reference
+genome, which can be generate using the following command.
 			</p>
-			If not done already, create an index for the reference genome
-	run <pre><code>bowtie-build -o 1 ../../genomes/dm3.fa</pre></code>
-			start the alignment process
-	run <pre><code>bowtie -S -p 4 --chunkmbs 512 -k 1 -m 1 -v 2 --strata --best ../../genomes/dm3 SRR1175698_out.fastq.gz SRR1175698_out.sam</pre></code>
+<pre><code>bowtie-build -o 1 ../../genomes/dm3.fa</pre></code>
+<p>The following options are used for the alignment.</p>
+	 <pre><code>bowtie -S -p 4 --chunkmbs 512 -k 1 -m 1 -v 2 --strata --best ../../genomes/dm3 SRR1175698_out.fastq.gz SRR1175698_out.sam</pre></code>
 	
 			
 
@@ -109,9 +126,23 @@ flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698_out.fastq.gz -a ~Q/data/a
 	   <p>The mapped reads need to be further processed, because for ChiP-nexus we want to remove reads that are mapped to the same position and have the same random barcode. This 
            enabled us to distinguish PCR artifact duplicates from real duplicates. 
 	   </p>
-	run <pre><code>nexcat -fc '(.*)[H|U|M|_]+(.*)' SRR1175698_out.sam</pre></code>
-	   <p>sort and convert to BAM file
-	   </p>
+	run <pre><code>nexcat -fc '(.*)[H|U|M]+(.*)' SRR1175698_out.sam</pre></code>
+	
+<p>The Drosophila genome build 3 (dm3) contains two "chromosomes" that are used to place sequences that could not be localised to
+one of the six canonical chromosomes. ChrU (U="unknown"), chrUextra. There are also "Het" versions of the
+chromosomes (e.g., chrXhet) that contains sequences that could not be localized within the chromosome. These chromosomes are usually
+removed before downstream analysis for ChIP-seq and ChIP-nexus experiments. We remove the sequences using next cat with the <code>-fc</code>
+flag (filter chromosome). A regular expression can be used (in our example, the regular expression removes all chromosomes whose name
+includes the upper case letters U or H (from het), M (for mitochondrial)).
+ For human data it may be useful to include an underscore ("_") 
+ in the regular expression to remove chromosomes such as chr21_gl000210_random, but users should carefully consider this depending
+ on the organism and the experimental goals.
+ See also <a href="http://ucscbrowser.genenetwork.org/cgi-bin/hgGateway?hgsid=732&clade=insect&org=0&db=0">UCSC explanations</a>.
+</p>	
+<p>nexcat produces a SAM file from which PCR duplicates have been removed. The file now nbeeds to be sorted and converted
+to a BAM file prior to downstream analysis with Q-nexus.</p>	
+	
+	
 	   <pre><code>samtools view -Sb SRR1175698_out.sam
 samtools sort SRR1175698_out.bam SRR1175698_out_sorted.bam
 samtools index SRR1175698_out_sorted.bam</pre></code>
@@ -121,13 +152,13 @@ samtools index SRR1175698_out_sorted.bam</pre></code>
          <h3 id="executing_the_script">Executing the whole process using a python script</h3>
 
 		   <p>
-            We provide a script called preprocess.py, that enabled you to run all the above mentioned preprocessing steps 
+            We provide a script called <strong>preprocess.py</strong>, that enabled you to run all the above mentioned preprocessing steps 
                with one command. 
         <p>
-             Instead of performing all the steps aboive separately, you can start the preprocessing pipeline be executing this command</p>
+             Instead of performing all the steps above separately, you can start the preprocessing pipeline be executing this command</p>
 	   <pre><code>~/Q/scripts/preprocess.py ~/data/fastq/input_reads_ID01.fastq ~/data/genome/ref_genome.fa --clean --output_dir ~/data/preprocessed/SRR1175698 --verbose --overwrite</pre></code>
 
-		   <h3 id="visualization_and_statistics">Visualization and Statistics</h3>
+		   <h2 id="visualization_and_statistics">Visualization and Statistics</h2>
 			<p>
 			The preprocessing pipeline generates a file which is called [INPUT_PREFIX]_duplication_rate.txt. This file containts information 
                 about how many reads with a specific coverage rate exist. We also supply and R-script that can generate the following graph out of 
@@ -138,7 +169,8 @@ samtools index SRR1175698_out_sorted.bam</pre></code>
 		   <img src="img/duplication_rate.png" width="100%"/>
 			</center>
 			<p>
-            On the x-axis of this graph is the coverage rate, the left y-axis show the number of reads. The right y-axis show the percentage of 
+            On the x-axis of this graph is the coverage rate, the left y-axis shows the number of reads. 
+            The right y-axis shows the percentage of 
                 non unique duplet reads out of all duplet reads. The discrimination of unique and non unique duplicates is for the first time possible, because 
                 of the random barcodes used by the ChiP-nexus protocol. The preprocessing output can be further analyzed using the tool 
                 <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a>.
