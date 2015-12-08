@@ -101,7 +101,7 @@ cat *.fa > dm3.fa</code></pre>
 	 <pre><code>cd data/preprocessed
 mkdir SRR1175698
 cd SRR1175698
-flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698_out.fastq -a ~/Q/data/adapters.fa -b ~/Q/data/barcodes.fa -tl 5 -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13
+flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698.fastq -a ~/Q/data/adapters.fa -b ~/Q/data/barcodes.fa -tl 5 -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13
 </pre></code>
 <p>
 flexcat removes the random and fixed ChIP-nexus barcodes, adds information about the random barcodes to toe FASTQ description
