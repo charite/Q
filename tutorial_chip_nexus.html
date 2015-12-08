@@ -140,12 +140,11 @@ includes the upper case letters U or H (from het), M (for mitochondrial)).
  on the organism and the experimental goals.
  See also <a href="http://ucscbrowser.genenetwork.org/cgi-bin/hgGateway?hgsid=732&clade=insect&org=0&db=0">UCSC explanations</a>.
 </p>	
-<p>nexcat produces a SAM file from which PCR duplicates have been removed. The file now nbeeds to be sorted and converted
+<p>nexcat produces a BAM file from which PCR duplicates have been removed. The file now nbeeds to be sorted and converted
 to a BAM file prior to downstream analysis with Q-nexus.</p>	
 	
 	
-	   <pre><code>samtools view -Sb SRR1175698_filtered.sam
-samtools sort SRR1175698_filtered.bam SRR1175698_filtered_sorted.bam
+	   <pre><code>samtools sort SRR1175698_filtered.bam SRR1175698_filtered_sorted
 samtools index SRR1175698_filtered_sorted.bam</pre></code>
 		
 	
