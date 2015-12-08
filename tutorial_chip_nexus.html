@@ -102,11 +102,12 @@ cat *.fa > dm3.fa</code></pre>
 	 <pre><code>cd data/preprocessed
 mkdir SRR1175698
 cd SRR1175698
-flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698_out.fastq.gz -a ~/Q/data/adapters.fa -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13
+flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698.fastq -a ~/Q/data/adapters.fa -b ~/Q/data/barcodes.fa -tl 5 -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13
 </pre></code>
 <p>
 flexcat removes the random and fixed ChIP-nexus barcodes, adds information about the random barcodes to toe FASTQ description
-line, and performs 3' adapter trimming. The reads are now ready to be aligned to the reference genome.
+line, and performs 3' adapter trimming. The reads are now ready to be aligned to the reference genome. If your mapper supports compressed input files, 
+you can also choose your output file to have the ending fastq.gz (Bowtie 1.1.2 does not support compressed input files).
 </p>
 
 
@@ -115,9 +116,9 @@ line, and performs 3' adapter trimming. The reads are now ready to be aligned to
 the short reads characcteristic of ChIP-nexus data. Note that bowtie requires an index of the reference
 genome, which can be generate using the following command.
 			</p>
-<pre><code>bowtie-build -o 1 ../../genomes/dm3.fa dm3</pre></code>
+<pre><code>bowtie-build -o 1 ../../genomes/dm3.fa ../../genomes/dm3</pre></code>
 <p>The following options are used for the alignment.</p>
-	 <pre><code>bowtie -S -p 4 --chunkmbs 512 -k 1 -m 1 -v 2 --strata --best ../../genomes/dm3 SRR1175698_out.fastq.gz SRR1175698_out.sam</pre></code>
+	 <pre><code>bowtie -S -p 4 --chunkmbs 512 -k 1 -m 1 -v 2 --strata --best ../../genomes/dm3 SRR1175698_matched_barcode.fastq SRR1175698.sam</pre></code>
 	
 			
 
@@ -127,7 +128,7 @@ genome, which can be generate using the following command.
 	   <p>The mapped reads need to be further processed, because for ChiP-nexus we want to remove reads that are mapped to the same position and have the same random barcode. This 
            enabled us to distinguish PCR artifact duplicates from real duplicates. 
 	   </p>
-	run <pre><code>nexcat -fc '(.*)[H|U|M]+(.*)' SRR1175698_out.sam</pre></code>
+	run <pre><code>nexcat -fc '(.*)[H|U|M]+(.*)' SRR1175698.sam</pre></code>
 	
 <p>The Drosophila genome build 3 (dm3) contains two "chromosomes" that are used to place sequences that could not be localised to
 one of the six canonical chromosomes. ChrU (U="unknown"), chrUextra. There are also "Het" versions of the
@@ -140,13 +141,12 @@ includes the upper case letters U or H (from het), M (for mitochondrial)).
  on the organism and the experimental goals.
  See also <a href="http://ucscbrowser.genenetwork.org/cgi-bin/hgGateway?hgsid=732&clade=insect&org=0&db=0">UCSC explanations</a>.
 </p>	
-<p>nexcat produces a SAM file from which PCR duplicates have been removed. The file now nbeeds to be sorted and converted
+<p>nexcat produces a BAM file from which PCR duplicates have been removed. The file now nbeeds to be sorted and converted
 to a BAM file prior to downstream analysis with Q-nexus.</p>	
 	
 	
-	   <pre><code>samtools view -Sb SRR1175698_out.sam
-samtools sort SRR1175698_out.bam SRR1175698_out_sorted.bam
-samtools index SRR1175698_out_sorted.bam</pre></code>
+	   <pre><code>samtools sort SRR1175698_filtered.bam SRR1175698_filtered_sorted
+samtools index SRR1175698_filtered_sorted.bam</pre></code>
 		
 	
 
@@ -157,7 +157,7 @@ samtools index SRR1175698_out_sorted.bam</pre></code>
                with one command. 
         <p>
              Instead of performing all the steps above separately, you can start the preprocessing pipeline be executing this command</p>
-	   <pre><code>~/Q/scripts/preprocess.py ~/data/fastq/input_reads_ID01.fastq ~/data/genome/ref_genome.fa --clean --output_dir ~/data/preprocessed/SRR1175698 --verbose --overwrite</pre></code>
+	   <pre><code>~/Q/scripts/preprocess.py ~/data/fastq/SRR1175698.fastq.bz2 ~/data/genome/dm3.fa --clean --output_dir ~/data/preprocessed/SRR1175698 --verbose --overwrite</pre></code>
 
 		   <h2 id="visualization_and_statistics">Visualization and Statistics</h2>
 			<p>
@@ -167,7 +167,7 @@ samtools index SRR1175698_out_sorted.bam</pre></code>
 			</p>
 		   
 		   <center>	
-		   <img src="img/duplication_rate.png" width="100%"/>
+		   <img src="img/duplication_rate2.png" width="100%"/>
 			</center>
 			<p>
             On the x-axis of this graph is the coverage rate, the left y-axis shows the number of reads. 
