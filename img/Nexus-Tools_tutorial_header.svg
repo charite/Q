@@ -24,7 +24,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.8631734"
-     inkscape:cx="998.47752"
+     inkscape:cx="854.36855"
      inkscape:cy="185.25247"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -9872,7 +9872,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -10781,32 +10781,32 @@
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
        x="771.86969"
-       y="814.54968"
+       y="870.54968"
        id="text5459-7-2-2-4-2"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6035"
          x="771.86969"
-         y="814.54968">Mapped filtered reads</tspan><tspan
+         y="870.54968">Mapped filtered reads</tspan><tspan
          sodipodi:role="line"
          id="tspan6037"
          x="771.86969"
-         y="833.29968">(.bam)</tspan></text>
+         y="889.29968">(.bam)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
        x="772.00146"
-       y="873.23297"
+       y="811.23297"
        id="text5459-7-2-2-4-2-6"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6061"
          x="772.00146"
-         y="873.23297">Binding Characteristics</tspan><tspan
+         y="811.23297">Binding Characteristics</tspan><tspan
          sodipodi:role="line"
          id="tspan6063"
          x="772.00146"
-         y="891.98297">(.txt)</tspan></text>
+         y="829.98297">(.txt)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
