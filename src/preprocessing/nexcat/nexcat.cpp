@@ -313,7 +313,7 @@ int main(int argc, char const * argv[])
     {
         std::cout << "writing artifacts to file... ";
         auto t1 = std::chrono::steady_clock::now();
-        SaveBam<seqan::BamFileIn> saveArtifactsBam(header, bamFileIn, getFilePrefix(argv[1]) + "_artifacts");
+        SaveBam<seqan::BamFileIn> saveArtifactsBam(header, bamFileIn, getFilePrefix(seqan::toCString(fileName1)) + "_artifacts");
         for (auto element : artifacts)
             saveArtifactsBam.write(std::move(element));
         saveArtifactsBam.close();
@@ -321,7 +321,7 @@ int main(int argc, char const * argv[])
         std::cout << std::chrono::duration_cast<std::chrono::duration<float>>(t2 - t1).count() << "s" << std::endl;
     }
 
-    const std::string outFilename2 = getFilePrefix(argv[1]) + std::string("_filtered2");
+    const std::string outFilename2 = getFilePrefix(seqan::toCString(fileName1)) + std::string("_filtered2");
     if (filter)
     {
         t1 = std::chrono::steady_clock::now();
@@ -404,11 +404,11 @@ int main(int argc, char const * argv[])
 
     std::fstream fs,fs2,fs3;
 #ifdef _MSC_VER
-    fs.open(getFilePrefix(argv[1]) + "_duplication_rate_positions.txt", std::fstream::out, _SH_DENYNO);
-    fs2.open(getFilePrefix(argv[1]) + "_duplication_rate_reads.txt", std::fstream::out, _SH_DENYNO);
+    fs.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_positions.txt", std::fstream::out, _SH_DENYNO);
+    fs2.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_reads.txt", std::fstream::out, _SH_DENYNO);
 #else
-    fs.open(getFilePrefix(argv[1]) + "_duplication_rate_positions.txt", std::fstream::out);
-    fs2.open(getFilePrefix(argv[1]) + "_duplication_rate_reads.txt", std::fstream::out);
+    fs.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_positions.txt", std::fstream::out);
+    fs2.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_reads.txt", std::fstream::out);
 #endif
     fs << "rate" << "\t" << "unique" << "\t" << "non_unique" << std::endl;
     fs2 << "rate" << "\t" << "unique" << "\t" << "non_unique" << std::endl;
@@ -437,9 +437,9 @@ int main(int argc, char const * argv[])
 
     printStatistics(std::cout, stats, seqan::isSet(parser, "f"));
 #ifdef _MSV_VER
-    fs3.open(getFilePrefix(argv[1]) + "_statistics.txt", std::fstream::out, _SH_DENYNO);
+    fs3.open(getFilePrefix(seqan::toCString(fileName1)) + "_statistics.txt", std::fstream::out, _SH_DENYNO);
 #else
-    fs3.open(getFilePrefix(argv[1]) + "_statistics.txt", std::fstream::out);
+    fs3.open(getFilePrefix(seqan::toCString(fileName1)) + "_statistics.txt", std::fstream::out);
 #endif
     printStatistics(fs3, stats, seqan::isSet(parser, "f"), true);
     fs3 << "Command line\t";
