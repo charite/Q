@@ -23,9 +23,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.93158671"
-     inkscape:cx="642.23897"
-     inkscape:cy="217.47288"
+     inkscape:zoom="1.8631734"
+     inkscape:cx="998.47752"
+     inkscape:cy="185.25247"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -9872,7 +9872,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -10632,7 +10632,7 @@
        inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:14.57250023px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Medium';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ccffaa;fill-opacity:1;stroke:none"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:15px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Medium';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#ccffaa;fill-opacity:1;stroke:none;"
        x="219.89235"
        y="903.91602"
        id="text5459-5-5-6"
@@ -10713,15 +10713,15 @@
        inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ccffaa;fill-opacity:1;stroke:none"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:15px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Medium';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ccffaa;fill-opacity:1;stroke:none"
        x="465.88773"
-       y="897.14978"
+       y="895.14978"
        id="text5459-5-5-6-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6112"
          x="465.88773"
-         y="897.14978">bowtie</tspan></text>
+         y="895.14978">bowtie</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
@@ -10868,15 +10868,15 @@
          y="884.32495">(.bed)</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:14.88749981px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Medium';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ccffaa;fill-opacity:1;stroke:none"
-       x="1001.4546"
-       y="915.13861"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.06415558px;line-height:125%;font-family:Eraser;-inkscape-font-specification:'Eraser, Medium';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ccffaa;fill-opacity:1;stroke:none"
+       x="999.73102"
+       y="915.34454"
        id="text5459-5-5-6-7-6-1"
        sodipodi:linespacing="125%"
-       transform="scale(1.0242841,0.97629163)"><tspan
+       transform="scale(1.0240131,0.97655001)"><tspan
          sodipodi:role="line"
          id="tspan7486"
-         x="1001.4546"
-         y="915.13861">Q</tspan></text>
+         x="999.73102"
+         y="915.34454">Q</tspan></text>
   </g>
 </svg>
