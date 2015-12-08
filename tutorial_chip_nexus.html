@@ -6,7 +6,7 @@
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="icon" type="image/png" href="img/favicon-192x192.png" sizes="192x192">
     <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon-180x180.png">
-    <title>Nexus-Tools Preprocessing - Tutorial</title>
+    <title>ChIP-nexus peak caller - Tutorial</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -41,6 +41,7 @@
 			</ul>
 			 <li><a href="#peak_calling" >Running Q in nexus-mode</a></li>
 			<ul>
+				 <li><a href="#output_of_q" >Output of Q</a></li>
 				 <li><a href="#binding_characteristics" >Binding characteristics</a></li>
 				 <li><a href="#peak_calling" >Peak calling</a></li>
 			</ul>
@@ -184,8 +185,7 @@ Non mappable reads	2082353
 Non uniquely mappable reads	5404093
 After barcode filtering	6891129	 (-2725219)
 PCR duplication rate	0.283394
-Total duplet reads	1274581
-Estimated fragment Length	18</pre></code>
+Total duplet reads	1274581</pre></code>
 			</p>
 	
  		   <br>
@@ -196,7 +196,7 @@ Estimated fragment Length	18</pre></code>
  <h2 id="peak_calling">Running Q in nexus-mode</h2>
 			
 			<p>
-			The original implementation of Q has been designed for ChIP-seq data.
+			The original implementation of Q has been designed particularly for ChIP-seq data.
 			Due to the different nature of ChIP-seq and ChIP-nexus data,
 			we made some adjustments of Q to ChIP-nexus data.
 			Using the switch --nexus-mode will cause Q to use optimized parameter settings.
@@ -205,16 +205,44 @@ Estimated fragment Length	18</pre></code>
         <code><pre>Q --nexus-mode -t ~/data/preprocessed/SRR1175698/SRR1175698_filtered_sorted.bam -o SRR1175698 -s 100 -v</pre></code>
 
 			<p>
-			Running Q in nexus-mode will cause Q to keep duplicates (assuming only real and no PCR artifacts for ChIP-nexus data).
+			Running Q in nexus-mode will cause Q to keep duplicates (assuming only real and no PCR duplicates for ChIP-nexus data).
 			The parameter -l will be determined using a methodology especially designed for ChIP-nexus data.
 			Furthermore, the evaluation of predicted binding sites differs from the original implementation of Q.
 			Find more detailed informations regarding binding characteristics and peak calling below. 
 			</p>
+
+
+	      <h3 id="output_of_q">Output of Q in nexus-mode</h2>
+
+		   <p>
+			After the analysis is finished,  you will find the following files for replicate 1 (and analogous files for replicate 2).
+         <table>
+          <tbody><tr>
+            <th>Filename</th><th>Description</th>
+          </tr>
+          <tr>
+            <td><a href="downloads/tutorial_q_nexus_results/SRR1175698-Q-runinfo.txt">SRR1175698-Q-runinfo.txt</a></td>
+            <td>Contains all chosen parameters and general information about the run.</td>
+          </tr>
+          <tr>
+            <td><a href="downloads/tutorial_q_nexus_results/SRR1175698-Q-qfrag-binding-characteristics.txt">SRR1175698-Q-qfrag-binding-characteristics.R</a></td>
+            <td>R script that generates a plot for the fragment-length estimation procedure.</td>
+          </tr>
+          <tr>
+            <td><a href="downloads/tutorial_q_nexus_results/SRR1175698-Q-narrowPeak.tab">SRR1175698-Q-narrowPeak.bed</a></td>
+            <td>
+               The actual result and contains the predicted binding sites.
+               Find a detailed description of the narrowPeak format
+               <a href="http://genome.ucsc.edu/FAQ/FAQformat.html#format12">here</a>.
+            </td>
+          </tr>
+         </tbody></table>
+		   </p>
 					
 		   <h3 id="binding_characteristics">Binding characteristics</h3>
 
 			<p>
-			If Q is invoked in nexus-mode and no value for fragment length (-l) is specified,
+			If Q is invoked in nexus-mode and no value for the average fragment length (-l) is specified,
 			 it will be set automatically to the predominant qfrag-length observed in the data.
 			 This is done by determining the distribution of qfrag-lengths in the given data
 			 as well as in the pseudo-control (see publication).
@@ -228,18 +256,24 @@ Estimated fragment Length	18</pre></code>
 			
 		 	<p>  
 		   <center>	
-		   <img src="img/SRR1175698-Q-qfrag-binding-characteristics.jpg" width="100%"/>
+		   <img src="img/SRR1175698-Q-qfrag-binding-characteristics.jpg" width="80%"/>
 			</center>
 			The plot above shows on the left hand side the distribution of qfrag-lengths in the original data (black) and in the pseudo-control (grey).
 			On the right hand site the difference between these two distributions is shown.
-			Q will use the length at which the difference reaches its maximum for -l. 
+			Q will use the length at which the difference reaches its maximum to set -l. 
 			</p>
 
 			
 		   <h3 id="peak_calling">Peak calling</h3>
 
 			<p>
-			...	
+			For the original ChIP-seq dedicated implementation of Q peaks are evaluated
+			regarding of positions around the predicted binding sites that are saturated by at least one 5' end.
+			In contrast, for ChIP-nexus pile-ups of reads mapping to the same position are to be expected.
+			Therefore, peaks are evaluated with regard to the total number of 5' end positions of mapped reads around predicted binding sites.
+			This number is tested for significance using a Poisson distribution. Peaks are reported in
+			<a href="http://genome.ucsc.edu/FAQ/FAQformat.html#format12">narrowPeak format</a>
+			and counts, P-values as well as P-values corrected for multiple tesing can be found in column 7, 8 and 9, respectively.
 			</p>
 	
 		   <br>
