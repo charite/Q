@@ -233,9 +233,9 @@ int main(int argc, char const * argv[])
     if (res != seqan::ArgumentParser::PARSE_OK)
         return res == seqan::ArgumentParser::PARSE_ERROR;
 
-    // Check if one or two input files (single or paired-end) were given.
+    // Check if one input file is given.
     int fileCount = getArgumentValueCount(parser, 0);
-    if (!(fileCount == 1 || fileCount == 2)) {
+    if (fileCount != 1) {
         printShortHelp(parser);
         return 1;
     }
@@ -250,7 +250,7 @@ int main(int argc, char const * argv[])
     seqan::BamFileIn bamFileIn(seqan::toCString(fileName1));
     
     std::string outFilename;
-    outFilename = getFilePrefix(argv[1]) + std::string("_filtered");
+    outFilename = getFilePrefix(seqan::toCString(fileName1)) + std::string("_filtered");
 
     const bool filter = seqan::isSet(parser, "f");
     const bool bedOutputEnabled = seqan::isSet(parser, "b");
