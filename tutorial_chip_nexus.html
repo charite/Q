@@ -191,9 +191,58 @@ Estimated fragment Length	18</pre></code>
  		   <br>
  		   <br>		   			 
 			 
-		   <h2 id="peak_calling">Running Q in nexus-mode</h2>
+	   <h2 id="peak_calling">Running Q in nexus-mode</h2>
 			
+			<p>
+			The original implementation of Q has been adapted to ChIP-nexus data.
+			Using the switch --nexus-mode will cause Q to use optimized parameter settings.
+			</p>
+			
+        <code><pre>Q --nexus-mode -t ~/data/preprocessed/SRR1175698/SRR1175698_filtered_sorted.bam -o SRR1175698 -v</pre></code>
+		
 		   <h3 id="binding_characteristics">Binding characteristics</h3>
+
+			<p>
+			If Q is invoked in nexus-mode and no value for fragment length (-l) is specified,
+			 it will be set automatically to the predominant qfrag length observed in the data.
+			</p>
+
+			</p>
+		   
+		   <center>	
+		   <img src="img/SRR1175698-Q-qfrag-binding-characteristics.jpg" width="100%"/>
+			</center>
+			<p>
+			legend
+			</p>
+
+			
+ <h2 id="peak_calling">Running Q in nexus-mode</h2>
+			
+			<p>
+			The original implementation of Q has been adapted to ChIP-nexus data.
+			Using the switch --nexus-mode will cause Q to use optimized parameter settings.
+			</p>
+			
+        <code><pre>Q --nexus-mode -t ~/data/preprocessed/SRR1175698/SRR1175698_filtered_sorted.bam -o SRR1175698 -v</pre></code>
+		
+		   <h3 id="binding_characteristics">Binding characteristics</h3>
+
+			<p>
+			If Q is invoked in nexus-mode and no value for fragment length (-l) is specified,
+			 it will be set automatically to the predominant qfrag length observed in the data.
+			</p>
+
+			</p>
+		   
+		   <center>	
+		   <img src="img/SRR1175698-Q-qfrag-binding-characteristics.png" width="90%"/>
+			</center>
+			<p>
+			legend
+			</p>
+
+			
 		   <h3 id="peak_calling">Peak calling</h3>
 
 			 
