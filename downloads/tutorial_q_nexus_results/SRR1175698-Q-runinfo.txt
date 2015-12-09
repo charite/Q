@@ -1,0 +1,55 @@
+Q - RUN INFO
+############
+
+General information
+===================
+Q Version:              1.2.0
+Authors:                Peter Hansen <peter.hansen@charite.de>
+                        Peter Nick Robinson <peter.robinson@charite.de>
+Execution time:         Mon Dec  7 19:40:56 2015
+
+Input
+=====
+treatment-sample:       ../data/preprocessed_final/SRR1175698_chr_filtered/SRR1175698_chr_filtered_filtered_sorted.bam
+control-sample:         None
+bed-hit-dist:           None
+
+Peak Calling Arguments
+======================
+nexus-mode:                        1
+fragment-length-average:           not specified, will be determined by qfrag-length-distribution plot
+fragment-length-deviation:         5
+keep-dup:                          1
+top-n:                             100000
+p-value-cutoff:                    not specified, will use top-n
+
+General Arguments
+=================
+out-prefix:                        SRR1175698
+thread-num:                        1
+verbose:                           1
+
+Binding Characteristics Arguments For Fragment Length Estimation
+================================================================
+step-num:                          100
+binding-characteristics-only:      0
+qfrag-length-distribution:      0
+
+UCSC Track Options
+==================
+write-bedgraph-treatment:          0
+write-bedgraph-control:            0
+
+Advanced Options
+================
+write-bed:                         None
+bed-radius:                        1000
+
+Output
+======
+runinfo:                           SRR1175698-Q-runinfo.txt
+binding-characteristics:           SRR1175698-Q-binding-characteristics.R
+quality-statistics:                SRR1175698-Q-quality-statistics.tab
+summit-info:                       SRR1175698-Q-summit-info.tab
+narrowPeak:                        SRR1175698-Q-narrowPeak.bed
+
