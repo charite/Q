@@ -176,6 +176,14 @@ samtools index SRR1175698_filtered_sorted.bam</pre></code>
                 <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a>.
 			</p>
 			<p>
+			If you have the UCSC tools installed, you can also generate bigWig files out of the bedGraph files that nexcat generates.
+	   <pre><code>fetchChromSizes dm3 > dm3.sizes
+bedGraphToBigWig SRR1175698_filtered_forward.bedGraph dm3.sizes SRR1175698_filtered_forward.bw
+bedGraphToBigWig SRR1175698_filtered_reverse.bedGraph dm3.sizes SRR1175698_filtered_reverse.bw</pre></code>			
+			These files can then be loaded into a viewer like IGV.
+			</p>
+
+			<p>
 			The preprocessing pipeline also generates a file with statistical information about the preprocessed data. It could look like this
                           <pre><code>Total reads	17102794
 Filtered reads (-fc Option)	0
