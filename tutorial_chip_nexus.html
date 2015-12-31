@@ -93,19 +93,16 @@ cat *.fa > dm3.fa</code></pre>
         </table>
 <p>Place the above files into these directories (or directly download into them).</p>
 
-			
-		   <h3 id="adapter_trimming_and_fixed_barcode_detection">flexcat: Adapter Trimming and filtering for fixed Barcode</h3>
-			<p>
-	
-	
-	Execute the following commands (If necessary, alter the path so that the shell finds the flexcat executable):
-	 <pre><code>cd data/preprocessed
+<h3 id="adapter_trimming_and_fixed_barcode_detection">flexcat: Adapter Trimming and filtering for fixed Barcode</h3>
+<p>
+ Execute the following commands (If necessary, alter the path so that the shell finds the flexcat executable):
+<pre><code>cd data/preprocessed
 mkdir SRR1175698
 cd SRR1175698
 flexcat ../../fastq/SRR1175698.fastq.bz2 -o SRR1175698.fastq -a ~/Q/data/adapters.fa -b ~/Q/data/barcodes.fa -tl 5 -times 5 -t -tt -ss -st -app -tnum 4 -er 0.2 -ol 4 -fm 13
 </pre></code>
 <p>
-flexcat removes the random and fixed ChIP-nexus barcodes, adds information about the random barcodes to toe FASTQ description
+flexcat removes the random and fixed ChIP-nexus barcodes, adds information about the random barcodes to the FASTQ description
 line, and performs 3' adapter trimming. The reads are now ready to be aligned to the reference genome. If your mapper supports compressed input files, 
 you can also choose your output file to have the ending fastq.gz (Bowtie 1.1.2 does not support compressed input files).
 </p>
@@ -114,22 +111,24 @@ you can also choose your output file to have the ending fastq.gz (Bowtie 1.1.2 d
 <h3 id="mapping" >Mapping the reads to the reference genome</h3>
 <p>Mapping is done using <a href="http://bowtie-bio.sourceforge.net/index.shtml">Bowtie 1.1.2</a>, which is suitable for
 the short reads characcteristic of ChIP-nexus data. Note that bowtie requires an index of the reference
-genome, which can be generate using the following command.
+  genome, which can be generate using the following command (assuming that your current working directory is "genome" and the bowtie binaries are
+  on your path; otherwise, adjust the paths) Note the first argument is the name of the FASTA genome file we created above and the second
+  argument is the name of the prefix which will be used for the index files to be written (ebwt_base).
 			</p>
-<pre><code>bowtie-build -o 1 ../../genomes/dm3.fa ../../genomes/dm3</pre></code>
-<p>The following options are used for the alignment.</p>
-	 <pre><code>bowtie -S -p 4 --chunkmbs 512 -k 1 -m 1 -v 2 --strata --best ../../genomes/dm3 SRR1175698_matched_barcode.fastq SRR1175698.sam</pre></code>
-	
-			
+<pre><code>bowtie-build -o 1 dm3.fa dm3</pre></code>
+<p>The following options are used for the alignment (assuming you start the command from within the preprocessed/SRR1175698 directory; otherwise, adjust the paths).</p>
+<pre><code>bowtie -S -p 4 --chunkmbs 512 -k 1 -m 1 -v 2 --strata --best ../../genomes/dm3 SRR1175698_matched_barcode.fastq SRR1175698.sam</pre></code>
+<p>If all goes well, this command will create a file, <i>SRR1175698.sam</i> representing the alignment of the ChIP-nexus reads from SRR1175698 to the Drosophila genome.</p>		
+<h3 id="post_mapping_filtering">Post-mapping filtering</h3>
+<p>The mapped reads need to be further processed in order to remove PCR duplicates. ChiP-nexus allows sophisticated processing of PCR duplicates because of the random
+  bar codes of ChIP-nexus adapters, which allow PCR duplicates (same random bar code) to be distinguished from reads that originate from different fragments but
+  map to the same genomic position (different random bar code). The latter occurs much more frequently in ChIP-nexus than in ChIP-seq because of the exonuclease
+  digestion of immunoprecipitated fragments. We remove PCR duplicates using the <b>nexcat</b> application. nexcat also allows reads from noncanonical chromosomes
+  to be removed (which is recommended in general for ChIP-nexus analysis, because such chromosomes tend to be highly enriched for mapping artefacts).
+</p>
+run
+<pre><code>nexcat -fc '(.*)[H|U|M]+(.*)' SRR1175698.sam</pre></code>
 
-		   
-
-		   <h3 id="post_mapping_filtering">Post-mapping filtering</h3>
-	   <p>The mapped reads need to be further processed, because for ChiP-nexus we want to remove reads that are mapped to the same position and have the same random barcode. This 
-           enabled us to distinguish PCR artifact duplicates from real duplicates. 
-	   </p>
-	run <pre><code>nexcat -fc '(.*)[H|U|M]+(.*)' SRR1175698.sam</pre></code>
-	
 <p>The Drosophila genome build 3 (dm3) contains two "chromosomes" that are used to place sequences that could not be localised to
 one of the six canonical chromosomes. ChrU (U="unknown"), chrUextra. There are also "Het" versions of the
 chromosomes (e.g., chrXhet) that contains sequences that could not be localized within the chromosome. These chromosomes are usually
