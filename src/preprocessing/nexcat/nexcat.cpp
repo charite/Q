@@ -13,7 +13,6 @@ License: LGPL
 #include <algorithm>
 #include <chrono>
 #include <cassert>
-#include <stdio.h>
 
 #include "peak.h"
 #include "BamRecordKey.h"
@@ -89,7 +88,7 @@ seqan::ArgumentParser buildParser(void)
     addOption(parser, recordFilterCluster);
 
     seqan::ArgParseOption recordWriteBed = seqan::ArgParseOption(
-        "nb", "noBedGraph", "Don't create a BedGraph file");
+        "b", "bedGraph", "Create a BedGraph file");
     addOption(parser, recordWriteBed);
 
     seqan::ArgParseOption outputArtifactsOpt = seqan::ArgParseOption(
@@ -254,7 +253,7 @@ int main(int argc, char const * argv[])
     outFilename = getFilePrefix(seqan::toCString(fileName1)) + std::string("_filtered");
 
     const bool filter = seqan::isSet(parser, "f");
-    const bool bedOutputEnabled = !seqan::isSet(parser, "nb");
+    const bool bedOutputEnabled = seqan::isSet(parser, "b");
     const bool outputArtifacts = seqan::isSet(parser, "oa");
     const bool randomSplit = seqan::isSet(parser, "rs");
     seqan::CharString _filterChromosomes;
@@ -402,11 +401,6 @@ int main(int argc, char const * argv[])
     });
     saveBedForwardStrand.close();
     saveBedReverseStrand.close();
-    if (bedOutputEnabled)
-    {
-        rename(std::string(outFilename + "_forward.bed").c_str(), std::string(outFilename + "_forward.bedGraph").c_str() );
-        rename(std::string(outFilename + "_reverse.bed").c_str(), std::string(outFilename + "_reverse.bedGraph").c_str() );
-    }
 
     std::fstream fs,fs2,fs3;
 #ifdef _MSC_VER
@@ -443,9 +437,9 @@ int main(int argc, char const * argv[])
 
     printStatistics(std::cout, stats, seqan::isSet(parser, "f"));
 #ifdef _MSV_VER
-    fs3.open(getFilePrefix(seqan::toCString(fileName1)) + "_statistics.txt", std::fstream::out, _SH_DENYNO);
+    fs3.open(getFilePrefix(seqan::toCString(fileName1)) + "_nexcat_statistics.txt", std::fstream::out, _SH_DENYNO);
 #else
-    fs3.open(getFilePrefix(seqan::toCString(fileName1)) + "_statistics.txt", std::fstream::out);
+    fs3.open(getFilePrefix(seqan::toCString(fileName1)) + "_nexcat_statistics.txt", std::fstream::out);
 #endif
     printStatistics(fs3, stats, seqan::isSet(parser, "f"), true);
     fs3 << "Command line\t";

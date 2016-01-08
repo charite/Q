@@ -9,7 +9,16 @@
 class OutputStreams
 {
     using TSeqStream = std::unique_ptr<seqan::SeqFileOut>;
-    using TStreamPair = std::pair<TSeqStream, TSeqStream>;
+    struct StreamPair
+    {
+        TSeqStream first;
+        TSeqStream second;
+        std::string firstFilename;
+        std::string secondFilename;
+    };
+    //using TStreamPair = std::pair<TSeqStream, TSeqStream>;
+    using TStreamPair = StreamPair;
+
     std::map<int, TStreamPair> fileStreams;
     const std::string basePath;
     std::string extension;
@@ -30,9 +39,8 @@ class OutputStreams
     }
 
     //Adds a new output streams to the collection of streams.
-    void _addStream(TSeqStream& stream, const std::string fileName, int id, bool useDefault)
+    std::string createStream(TSeqStream& stream, const std::string fileName, bool useDefault)
     {
-        (void)id;
         std::string path = getBaseFilename();
         if (fileName != "")
             path += "_";
@@ -41,6 +49,7 @@ class OutputStreams
 
         path += fileName + extension;
         stream = std::make_unique<seqan::SeqFileOut>(path.c_str());
+        return path;
     }
 
 
@@ -65,15 +74,26 @@ public:
         return prefix(basePath, length(basePath) - length(extension));
     }
 
+    inline std::string getFilename(const int streamIndex) const
+    {
+        auto it = fileStreams.find(streamIndex);
+        if (it != fileStreams.end())
+            return it->second.firstFilename;
+        return std::string();
+    }
+
     void addStream(const std::string fileName, const int streamIndex, const bool useDefault)
     {
-        _addStream(fileStreams[streamIndex].first, fileName, streamIndex, useDefault);
+        auto filename = createStream(fileStreams[streamIndex].first, fileName, useDefault);
+        fileStreams[streamIndex].firstFilename = filename;
     }
     
     void addStreams(const std::string fileName1, const std::string fileName2, const int streamIndex, const bool useDefault)
     {
-        _addStream(fileStreams[streamIndex].first, fileName1, streamIndex, useDefault);
-        _addStream(fileStreams[streamIndex].second, fileName2, streamIndex, useDefault);
+        auto filename = createStream(fileStreams[streamIndex].first, fileName1, useDefault);
+        fileStreams[streamIndex].firstFilename = filename;
+        filename = createStream(fileStreams[streamIndex].second, fileName2, useDefault);
+        fileStreams[streamIndex].secondFilename = filename;
     }
 
     void addStream(const std::string fileName, const int id)

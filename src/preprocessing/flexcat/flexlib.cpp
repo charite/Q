@@ -190,12 +190,12 @@ void postprocessingStage(const ProcessingParams& params, std::vector<TRead>& rea
 // END PROGRAM STAGES ---------------------
 template <typename TOutStream, typename TStats>
 void printStatistics(const ProgramParams& programParams, const TStats& generalStats, DemultiplexingParams& demultiplexParams,
-                const AdapterTrimmingParams& adapterParams, const bool timing, TOutStream &outStream)
+                const AdapterTrimmingParams& adapterParams, const OutputStreams& outputStreams, const bool timing, TOutStream &outStream)
 {
     bool paired = programParams.fileCount == 2;
     bool adapter = adapterParams.run;
     outStream << std::endl;
-    outStream << "\r\rRead statistics\n";
+    outStream << "Read statistics\n";
     outStream << "===============\n";
     outStream << "Reads processed:\t" << generalStats.readCount;
     if (paired) 
@@ -269,9 +269,10 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
         - demultiplexParams.exclude * generalStats.removedDemultiplex;
     // In percentage points.
     double surv_proc = (double)survived / (double)generalStats.readCount * 100;
-    outStream << "File 1:\n";
+// TODO: add support for multiple output files
+    outStream << outputStreams.getFilename(0) + ":\n";
     outStream << "-------\n";
-    outStream << "  Surviving: " << survived << "/" << generalStats.readCount
+    outStream << "  Surviving Reads: " << survived << "/" << generalStats.readCount
               << " (" << std::setprecision(3) << surv_proc << "%)\n";
     outStream << std::endl;
     if (adapter)
@@ -858,7 +859,7 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
     double loop = SEQAN_PROTIMEDIFF(loopTime);
     generalStats.processTime = loop - generalStats.ioTime;
 
-    printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, !isSet(parser, "ni"), std::cout);
+    printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
     if (isSet(parser, "st"))
     {
         std::fstream statFile;
@@ -871,7 +872,7 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         for (int i = 0;i < argc;++i)
             statFile << argv[i] << " ";
         statFile << std::endl;
-        printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, !isSet(parser, "ni"), statFile);
+        printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), statFile);
         statFile.close();
     }
     return 0;

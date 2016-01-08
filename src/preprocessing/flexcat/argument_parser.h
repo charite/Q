@@ -126,7 +126,7 @@ class AllStepsParserBuilder : public ArgumentParserBuilder
 public:
     seqan::ArgumentParser build() override
     {
-        seqan::ArgumentParser parser("Flexcat");
+        seqan::ArgumentParser parser("flexcat");
         addHeader(parser);
         addGeneralOptions(parser, FlexiProgram::ALL_STEPS);
         addFilteringOptions(parser);
@@ -457,7 +457,7 @@ void FilteringParserBuilder::addHeader(seqan::ArgumentParser & parser)
         "sequence independent trimming options");
 
     addDescription(parser, "[1] Dodt, M.; Roehr, J.T.; Ahmed, R.; Dieterich, "
-        "C.  FLEXBAR—Flexible Barcode and Adapter Processing for "
+        "C. FLEXBAR   Flexible Barcode and Adapter Processing for "
         "Next-Generation Sequencing Platforms. Biology 2012, 1, 895-905.");
 
     seqan::setVersion(parser, SEQAN_APP_VERSION " [" SEQAN_REVISION "]");
@@ -479,7 +479,7 @@ void AdapterRemovalParserBuilder::addHeader(seqan::ArgumentParser & parser)
         " the original flexbar[1]) and removes adapter sequences from reads.");
 
     addDescription(parser, "[1] Dodt, M.; Roehr, J.T.; Ahmed, R.; Dieterich, "
-        "C.  FLEXBAR—Flexible Barcode and Adapter Processing for "
+        "C.  FLEXBAR   Flexible Barcode and Adapter Processing for "
         "Next-Generation Sequencing Platforms. Biology 2012, 1, 895-905.");
 
     seqan::setVersion(parser, SEQAN_APP_VERSION " [" SEQAN_REVISION "]");
@@ -503,7 +503,7 @@ void DemultiplexingParserBuilder::addHeader(seqan::ArgumentParser & parser)
         " the original flexbar[1]) and can be used for demultiplexing of reads.");
 
     addDescription(parser, "[1] Dodt, M.; Roehr, J.T.; Ahmed, R.; Dieterich, "
-        "C.  FLEXBAR—Flexible Barcode and Adapter Processing for "
+        "C.  FLEXBAR   Flexible Barcode and Adapter Processing for "
         "Next-Generation Sequencing Platforms. Biology 2012, 1, 895-905.");
 
 
@@ -526,7 +526,7 @@ void QualityControlParserBuilder::addHeader(seqan::ArgumentParser & parser)
         " the original flexbar [1]) and can be used for quality controlling of reads.");
 
     addDescription(parser, "[1] Dodt, M.; Roehr, J.T.; Ahmed, R.; Dieterich, "
-        "C.  FLEXBAR—Flexible Barcode and Adapter Processing for "
+        "C.  FLEXBAR   Flexible Barcode and Adapter Processing for "
         "Next-Generation Sequencing Platforms. Biology 2012, 1, 895-905.");
 
     seqan::setVersion(parser, SEQAN_APP_VERSION " [" SEQAN_REVISION "]");
@@ -550,10 +550,13 @@ void AllStepsParserBuilder::addHeader(seqan::ArgumentParser & parser)
         "different kind of barcodes, to remove adapter contamination from "
         "reads, to trim low quality bases, filter N's or trim whole reads. The "
         "different tools are controlled through command line parameters and can "
-        "operate on both single- and paired-end read data.");
+        "operate on both single- and paired-end read data. ChIP-nexus reads can "
+        "be processed by using the trimLeft option together with the tagTrimming option to move the random barcodes "
+        "from the sequence into the description line of the read. After mapping has been done, "
+        "nexcat can then be used to process these random barcodes.");
 
     addDescription(parser, "[1] Dodt, M.; Roehr, J.T.; Ahmed, R.; Dieterich, "
-        "C.  FLEXBAR—Flexible Barcode and Adapter Processing for "
+        "C.  FLEXBAR   Flexible Barcode and Adapter Processing for "
         "Next-Generation Sequencing Platforms. Biology 2012, 1, 895-905.");
 
     addDescription(parser, "(c) Copyright 2015 by Benjamin Menkuec.");
