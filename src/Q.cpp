@@ -111,7 +111,7 @@
 /**
  * @file
  * @authors  Peter Hansen <peter.hansen@charite.de>, Peter Nick Robinson <peter.robinson@charite.de>
- * @version 1.1.1
+ * @version 1.1.0
  *
  * @section DESCRIPTION
  *
@@ -155,6 +155,9 @@ bool compareSummitsChrByPvalue(const Summit_chr& a, const Summit_chr& b)
 
 int main(int argc, char const ** argv) 
 {
+	
+	//test_nexus_pvalues(2000, 2.4);
+	//return 0;
 
 	// Read command line
 	// -----------------
@@ -169,6 +172,10 @@ int main(int argc, char const ** argv)
 	if(options.verbose)
 	{
 		std::cout << "\n" << "Command line has been parsed..." << "\n";
+		if(options.nexus_mode)
+		{
+			std::cout << "\tQ runs in nexus mode..." << "\n";
+		}
 	}
 	
 	
@@ -178,7 +185,11 @@ int main(int argc, char const ** argv)
 	std::vector<Chromosome> chromosome;
 	int chr_num;
 	
-	int failed=ReadAlignmentFile(chromosome,chr_num,options.chip_sample,options.control_sample,options.keep_dup,options.thread_num);// add optional list of chromosomes
+	int failed=ReadAlignmentFile(chromosome,chr_num,options.chip_sample,options.control_sample,options.keep_dup,options.thread_num, options.use_pseudo_control);
+	if(options.use_pseudo_control)
+	{
+		options.control_sample="Pseudo";
+	}
 	if(failed)
 	{
 		std::cerr << "ERROR: Function 'ReadAlignmentFile' failed !" << "\n";
@@ -224,25 +235,54 @@ int main(int argc, char const ** argv)
 		}
 		return(0);
 	}
-	
+
+	if(options.make_qfrag_length_distribution)
+	{
+		std::cout << "Distribution of qfrag lengths will be determined..." << "\n";
+		int avg_qfl=getQfragLengthDistribution(chromosome, options.step_num,options.thread_num,toCString(options.out_prefix));
+		std::cout << "\tEstimation: " << avg_qfl << "\n\n";
+		return(0);
+	}
+
 	if(options.fragment_length_avg==-1)
 	{
-		if(options.verbose)
+		if(options.nexus_mode)
 		{
-			std::cout << "No average fragment length specified. Will guess it from the treatment data...\n";
+			if(options.verbose)
+			{
+				std::cout << "No average fragment length specified. Will guess it from the treatment data using qfrag-length distribution plot...\n";
+			}
+			options.fragment_length_avg=getQfragLengthDistribution(chromosome, options.step_num,options.thread_num,toCString(options.out_prefix));
+			if(options.verbose)
+			{
+				std::cout << "\tGuess for average fragment length: " << options.fragment_length_avg << "\n";
+				std::cout << "\tExecute 'Rscript " <<  options.out_prefix << "-Q-qfrag-binding-characteristics.R' to generate a pdf of the strand shift plot.\n";
+			}
 		}
-
-		options.fragment_length_avg=getFragLength(chromosome, options.step_num,options.thread_num,toCString(options.out_prefix));
-
-		if(options.verbose)
+		else
 		{
-			std::cout << "\tGuess for average fragment length: " << options.fragment_length_avg << "\n";
-			std::cout << "\tExecute 'Rscript " <<  options.out_prefix << "-Q-binding-characteristics.R' to generate a pdf of the strand shift plot.\n";
+			if(options.verbose)
+			{
+				std::cout << "No average fragment length specified. Will guess it from the treatment data using Hamming distance plot...\n";
+			}
+			options.fragment_length_avg=getFragLength(chromosome, options.step_num,options.thread_num,toCString(options.out_prefix));
+			if(options.verbose)
+			{
+				std::cout << "\tGuess for average fragment length: " << options.fragment_length_avg << "\n";
+				std::cout << "\tExecute 'Rscript " <<  options.out_prefix << "-Q-binding-characteristics.R' to generate a pdf of the strand shift plot.\n";
+			}
 		}
 	}
 
+	//options.lowerbound=6;
+	//options.upperbound=options.fragment_length_avg+options.fragment_length_dev;
+	
+	//options.lowerbound=options.fragment_length_avg-3;// best so far
+	//options.upperbound=options.lowerbound+2*options.fragment_length_dev;
+	
 	options.lowerbound=options.fragment_length_avg-options.fragment_length_dev;
 	options.upperbound=options.fragment_length_avg+options.fragment_length_dev;
+	
 	
 	if(options.verbose)
 	{
@@ -361,39 +401,72 @@ int main(int argc, char const ** argv)
 		std::cout << "\t" << "Saturation scores have been determined..." << "\n";
 	}
 
-	// calculate saturation-p-value
-	int g_t_f=0;
-	int g_t_r=0;
-	int g_c_f=0;
-	int g_c_r=0;
-	int g_length=0;
-	for(int i=0;i<chr_num;i++)
-	{
-		g_t_f=g_t_f+chromosome[i].f_hit_num_chip;
-		g_t_r=g_t_r+chromosome[i].r_hit_num_chip;		
-		g_c_f=g_c_f+chromosome[i].f_hit_num_ctrl;
-		g_c_r=g_c_r+chromosome[i].r_hit_num_ctrl;
-		g_length=g_length+chromosome[i].len;		
-	}
-	bool has_ctrl;
-	if(options.control_sample=="None"){has_ctrl=false;}else{has_ctrl=true;}	
+	// get numbers of 5' ends around summits
 	SEQAN_OMP_PRAGMA(parallel for num_threads(options.thread_num))
 	for(int i=0;i<chr_num;i++)
 	{
-		failed = get_saturation_pvalues(chromosome[i], options.lowerbound, options.upperbound, g_length, g_t_f, g_t_r, g_c_f, g_c_r, has_ctrl); // used this for validation
+		failed=getKs(chromosome[i],options.upperbound);
 		if(failed)
 		{
-			std::cerr << "ERROR: Function 'get_all_pvalues_for_chromosome_global_success_prob' failed !" << "\n";
+			std::cerr << "ERROR: Function 'getKs' failed !" << "\n";
 		}
 	}
-	
 	if(options.verbose)
 	{
-		std::cout << "\t" << "Saturation p-values have been determined..." << "\n";
+		std::cout << "\t" << "Numbers of 5' ends around summits +/- " << options.upperbound << " have been determined..." << "\n";
 	}
 
+	// calculate P-values
+	if(options.nexus_mode)
+	{
+		SEQAN_OMP_PRAGMA(parallel for num_threads(options.thread_num))
+		for(int i=0;i<chr_num;i++)
+		{
+			if(chromosome[i].hit_num_chip==0) continue;
+			failed=get_nexus_pvalues(chromosome[i],options.upperbound);
+			if(failed)
+			{
+				std::cerr << "ERROR: Function 'getKs' failed !" << "\n";
+			}
+		}
+		if(options.verbose)
+		{
+			std::cout << "\t" << "Poisson p-values have been determined..." << "\n";
+		}
+	}
+	else
+	{
+		// calculate saturation-p-value
+		int g_t_f=0;
+		int g_t_r=0;
+		int g_c_f=0;
+		int g_c_r=0;
+		int g_length=0;
+		for(int i=0;i<chr_num;i++)
+		{
+			g_t_f=g_t_f+chromosome[i].f_hit_num_chip;
+			g_t_r=g_t_r+chromosome[i].r_hit_num_chip;		
+			g_c_f=g_c_f+chromosome[i].f_hit_num_ctrl;
+			g_c_r=g_c_r+chromosome[i].r_hit_num_ctrl;
+			g_length=g_length+chromosome[i].len;		
+		}
+		bool has_ctrl;
+		if(options.control_sample=="None"){has_ctrl=false;}else{has_ctrl=true;}	
+		SEQAN_OMP_PRAGMA(parallel for num_threads(options.thread_num))
+		for(int i=0;i<chr_num;i++)
+		{
+			failed = get_saturation_pvalues(chromosome[i], options.lowerbound, options.upperbound, g_length, g_t_f, g_t_r, g_c_f, g_c_r, has_ctrl); // used this for validation
+			if(failed)
+			{
+				std::cerr << "ERROR: Function 'get_saturation_pvalues' failed !" << "\n";
+			}
+		}
+		if(options.verbose)
+		{
+			std::cout << "\t" << "Saturation p-values have been determined..." << "\n";
+		}		
+	}
 
-	
 	// correct for multiple testing using Benjamini-Hochberg
 	// -----------------------------------------------------
 	
@@ -448,7 +521,7 @@ int main(int argc, char const ** argv)
 	}
 
 	// write file in narrowPeak format
-	failed=writeNarrowPeak(options.out_narrowPeak_file, ALL_SUMMITS_CHR, options.lowerbound, options); // lower bound performs better with IDR
+	failed=writeNarrowPeak(options.out_narrowPeak_file, ALL_SUMMITS_CHR, options.lowerbound, options);
 	if(failed)
 	{
 		std::cerr << "ERROR: Function 'writeNarrowPeak' failed !" << "\n";

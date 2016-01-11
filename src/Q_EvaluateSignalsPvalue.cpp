@@ -157,3 +157,37 @@ long double get_probability_of_success(int t_f, int t_r, int l, int q_min, int q
 	long double p_t = 1-expl(-r_t);
 	return p_t;
 }
+
+int get_nexus_pvalues(Chromosome &chromosome, int radius)
+{
+	// calculate lambda for given chromosome
+	long double lambda=(long double)(chromosome.hit_num_chip+chromosome.hit_num_chip)*2*radius/chromosome.len;
+	
+	// init Poisson distribution
+	boost::math::poisson_distribution<long double> PoissonTreatment(lambda);
+
+	// caluculate P-values for all summits on chromosome
+	for(int i=0;i<chromosome.sum_num;i++)
+	{
+		int k=
+			chromosome.SUMMITS[i].kfu_chip+
+			chromosome.SUMMITS[i].kfd_chip+
+			chromosome.SUMMITS[i].kru_chip+
+			chromosome.SUMMITS[i].krd_chip;
+			long double pval=cdf(complement(PoissonTreatment,k));
+			//std::cout << chromosome.name << "\t" << k << "\t" << -log10l(pval) << "\t" << lambda << "\n";
+			chromosome.SUMMITS[i].p_value=pval;
+	} 
+	return 0;
+}
+
+int test_nexus_pvalues(int n, long double lambda)
+{
+	boost::math::poisson_distribution<long double> PoissonTreatment(lambda);
+	for(int i=0;i<n;i++)
+	{
+		long double pval=cdf(complement(PoissonTreatment,i));
+		std::cout << i << "\t" << pval << "\t" << -log10l(pval) << "\t" << lambda << "\n";
+	}
+	return 0;
+}

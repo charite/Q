@@ -22,6 +22,9 @@ struct Options
 	
 	/** File name of ChIP-seq control sample (sam or bam) */
 	seqan::CharString control_sample;
+
+	/** If set, pseudo control will be generated from the treatment data */     
+	bool use_pseudo_control;
 	
 	/** If TRUE, duplicate reads will be kept. */     
 	bool keep_dup;
@@ -54,6 +57,9 @@ struct Options
 	
 	/** If TRUE only the binding characteristics will be determined and peak calling will be skipped */
 	bool binding_characteristics_only;
+
+	/** If TRUE additional output will be printed to the screen */     
+	bool make_qfrag_length_distribution;
 	
 	/** Average fragment length */ 
 	int fragment_length_avg;
@@ -72,7 +78,10 @@ struct Options
 	
 	/** Cutoff for adjusted P-value */
 	double p_value_cutoff;
-    
+
+	/** If TRUE, duplicate reads will be kept. */     
+	bool nexus_mode;
+   
     /** Maximal number of chromosomes to be processed in parallel */         
 	unsigned thread_num;
 	
@@ -110,7 +119,7 @@ struct Options
 	seqan::CharString out_bedgraph_control_file;	
 	
 	Options() :
-		control_sample("None"), keep_dup(true), step_num(1000), binding_characteristics_only(false), fragment_length_avg(-1), fragment_length_dev(50), p_value_cutoff(-1.0), thread_num(1), verbose(false), write_bed("None"), bed_hit_dist("None"), bed_radius(1000), write_bedgraph_treatment(false), write_bedgraph_control(false)
+		control_sample("None"), keep_dup(true), step_num(1000), binding_characteristics_only(false), make_qfrag_length_distribution(false), fragment_length_avg(-1), fragment_length_dev(50), p_value_cutoff(-1.0), nexus_mode(false), thread_num(1), verbose(false), write_bed("None"), bed_hit_dist("None"), bed_radius(1000), write_bedgraph_treatment(false), write_bedgraph_control(false)
 	{}
 };
 
@@ -118,4 +127,3 @@ struct Options
 seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, char const ** argv);
 
 #endif
-

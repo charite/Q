@@ -13,12 +13,15 @@
 
 #include "Q_ReadInFiles.h"
 #include <boost/math/distributions/binomial.hpp>
+#include <boost/math/distributions/poisson.hpp>
 #include <cmath>
 
 
 long double get_probability_of_success(int t_f, int t_r, int l, int q_min, int q_max);
 int get_saturation_score(Chromosome &chromosome, int radius);
 int get_saturation_pvalues(Chromosome &chromosome, int q_min, int q_max, int length, int t_f, int t_r, int c_f, int c_r, bool ctrl);
+int get_nexus_pvalues(Chromosome &chromosome, int radius);
+int test_nexus_pvalues(int n, long double lambda);
 
 struct Pvalues
 {
@@ -34,7 +37,7 @@ struct Pvalues
 	// probability of success for control
 	long double p_c;
 	
-	// map containing p-values für differences -n,...,0,...n
+	// map containing p-values for differences -n,...,0,...n
 	std::map<int, long double> p_values;
 	std::map<int, long double> p_values_10log;
 	
@@ -52,6 +55,5 @@ struct Pvalues
 	long double get_p_value(int k, bool lg10);
 	
 };
-
 
 #endif

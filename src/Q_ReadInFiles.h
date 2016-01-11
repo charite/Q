@@ -63,6 +63,8 @@ struct Hit
 	
 	/** \brief True if hit belongs to a qfrag. */	
 	bool is_q_hit;
+	
+	int read_length;
 
 	Hit() :
 		is_q_hit(false)
@@ -288,7 +290,7 @@ struct Chromosome
  * 
  * 
  */
-int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::CharString chip_sample, seqan::CharString control_sample, bool keep_dup, int thread_num);
+int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::CharString chip_sample, seqan::CharString control_sample, bool keep_dup, int thread_num, bool use_pseudo_control);
 
 
 /**

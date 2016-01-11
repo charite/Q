@@ -184,8 +184,8 @@ int getQfragEnds(Chromosome &chromosome, int min, int max)
 			S.push_back(chromosome.SUMMITS[i]);
 		}
 	}
-	chromosome.SUMMITS=S;
-	chromosome.sum_num=S.size();	
+	//chromosome.SUMMITS=S;
+	//chromosome.sum_num=S.size();	
 	
 	// if there is no control, return
 	if(chromosome.hit_num_ctrl==0){return 0;}
@@ -239,5 +239,102 @@ int getQfragEnds(Chromosome &chromosome, int min, int max)
 		chromosome.SUMMITS[i].q_end_ctrl=end.size();
 	}
 	
+	return 0;
+}
+
+int getKs(Chromosome &chromosome, int radius)
+{
+	for(int i=0;i<chromosome.sum_num;i++)
+	{
+		// jump to the first hit after the summit
+		int hit_idx=chromosome.SUMMITS[i].anchor_hit_chip;
+		
+		// go back to the first hit before sum_pos-max
+		while((chromosome.SUMMITS[i].pos-radius)<chromosome.CHIP_HITS[hit_idx].pos)
+		{
+			hit_idx--;
+			if(hit_idx<0) break;
+		}
+		hit_idx++;
+		while(chromosome.CHIP_HITS[hit_idx].pos<(chromosome.SUMMITS[i].pos+radius))
+		{
+			if(chromosome.CHIP_HITS[hit_idx].pos<chromosome.SUMMITS[i].pos)
+			{
+				if(chromosome.CHIP_HITS[hit_idx].strand==0)
+				{
+					chromosome.SUMMITS[i].kfu_chip++;
+				}
+				else
+				{
+					chromosome.SUMMITS[i].kru_chip++;
+				}
+			}
+			else
+			{
+				if(chromosome.CHIP_HITS[hit_idx].strand==0)
+				{
+					chromosome.SUMMITS[i].kfd_chip++;
+				}
+				else
+				{
+					chromosome.SUMMITS[i].krd_chip++;
+				}
+			}
+			hit_idx++;
+			if(chromosome.hit_num_chip<hit_idx) break;
+		}
+		chromosome.SUMMITS[i].q_cov_chip=
+			chromosome.SUMMITS[i].kfu_chip+
+			chromosome.SUMMITS[i].krd_chip+
+			chromosome.SUMMITS[i].kfd_chip+
+			chromosome.SUMMITS[i].kru_chip;
+	}
+
+	
+	// if there is no control, return
+	if(chromosome.hit_num_ctrl==0){return 0;}
+	
+	// else do it again for the control
+	for(int i=0;i<chromosome.sum_num;i++)
+	{
+		// jump to the first hit after the summit
+		int hit_idx=chromosome.SUMMITS[i].anchor_hit_ctrl;
+		
+		// go back to the first hit before sum_pos-max
+		while((chromosome.SUMMITS[i].pos-radius)<chromosome.CTRL_HITS[hit_idx].pos)
+		{
+			hit_idx--;
+			if(hit_idx<0) break;
+		}
+		hit_idx++;
+
+		while(chromosome.CTRL_HITS[hit_idx].pos<(chromosome.SUMMITS[i].pos+radius))
+		{
+			if(chromosome.CTRL_HITS[hit_idx].pos<chromosome.SUMMITS[i].pos)
+			{
+				if(chromosome.CTRL_HITS[hit_idx].strand==0)
+				{
+					chromosome.SUMMITS[i].kfu_ctrl++;
+				}
+				else
+				{
+					chromosome.SUMMITS[i].kru_ctrl++;
+				}
+			}
+			else
+			{
+				if(chromosome.CTRL_HITS[hit_idx].strand==0)
+				{
+					chromosome.SUMMITS[i].kfd_ctrl++;
+				}
+				else
+				{
+					chromosome.SUMMITS[i].krd_ctrl++;
+				}
+			}
+			hit_idx++;
+			if(chromosome.hit_num_ctrl<hit_idx) break;
+		}
+	}	
 	return 0;
 }

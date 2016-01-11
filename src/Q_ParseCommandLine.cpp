@@ -22,7 +22,7 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 	
 	seqan::ArgumentParser parser("Q");
 	setShortDescription(parser, "Saturation based ChIP-seq peak caller");
-	setVersion(parser, "1.1.1");
+	setVersion(parser, "1.2.0");
 	setDate(parser, "November 2015");
 	addUsageLine(parser,"[\\fIOPTIONS\\fP] --treatment-sample [\\fIinput-file\\fP] --out-prefix [\\fISTRING\\fP]");
 	addDescription(parser,"Q is a fast saturation-based ChIP-seq peak caller. Q works well in conjunction with the irreproducible discovery rate (IDR) procedure. Q was extensively tested on publicly available datasets from ENCODE and shown to perform well with respect to reproducibility of the called peak set, consistency of the peak sets with respect to predicted transcription factor binding motifs contained in them, as well as overall run time. Q is implemented in C++ making use of the Boost and SeqAn library. There are a number of useful features for the primary analysis of ChIP-seq data. Q can be run with or without data from a  control experiment. Duplicate reads are removed on the fly without altering the original BAM file, and the number of duplicated reads is then shown in Q's output. The average fragment length of the sequencing library, which is an essential parameter for peak calling and for downstream analysis, is estimated automatically from the data. This is done by examing the vector of read start positions along individual chromosomes and calcuting the shift that is associated with the smallest Hamming distance. This procedure yields an equivalent estimation of the average fragment length as the cross-correlation plot of SPP but is approximately three times faster. As a part of this procedure, Q also calculates the relative strand cross-correlation coefficient (RSC), which allows a global quality assessment of the enrichment. In addition Q offers its own quality metrics, which can be used for trouble-shooting and quality control of the results. If desired, Q also generates fragment coverage profiles which can be uploaded to UCSC's genome browser, where they can be displayed in the context of other related data such as for example ChIP-seq data for histone modifications and cofactors or expression data.");
@@ -43,7 +43,7 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 		"c", "control-sample", "Input file.",
 		seqan::ArgParseArgument::INPUTFILE, "IN"));
 	//setValidValues(parser, "control-sample", "sam bam");
-	
+
 	addOption(parser, seqan::ArgParseOption(
 		"l", "fragment-length-average", "The average length of fragments in the sequencing library of the treatment sample. If not given this value will be determined from the treatment data via binding characteristics.",
 	seqan::ArgParseArgument::INTEGER, "INT"));
@@ -66,6 +66,9 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 		"pc", "p-value-cutoff", "Cutoff for the negative decadic logarithm of the adjusted p-values (i.e. 6 means 1e-06). Overrides --top-n.",
 		seqan::ArgParseArgument::DOUBLE, "DOUBLE"));
 	setDefaultValue(parser, "pc", -1);
+
+	addOption(parser, seqan::ArgParseOption(
+		"nm", "nexus-mode", "If set, appropriate settings for ChIP-nexus will be used. Duplicate reads will be kept. If not set, the fragment length l will be estimated using the qfrag-length-distribution method and x will be set to 10."));
 		
 	addSection(parser, "General Options");
 
@@ -92,6 +95,8 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 	addOption(parser, seqan::ArgParseOption(
 		"bco", "binding-characteristics-only", "If set, only the binding characteristics will be determined and peak calling will be skipped."));
 
+	addOption(parser, seqan::ArgParseOption(
+		"qld", "qfrag-length-distribution", "If set, the distribution of qfrag lengths will be determined and peak calling will be skipped."));
 
 	addSection(parser, "UCSC Track Options");
 	
@@ -110,11 +115,14 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 	addOption(parser, seqan::ArgParseOption(
 		"b", "bed-hit-dist", "Input BED file containing summits. Summit position is always the center of a given region. Chromosome IDs in BED file must be consistent with IDs in SAM/BAM file. Default radius around summits is 1000. The radius can be changed via the -r option. Distribution of hits around summits on forward and reverse strand will be written to a text file. Output is a tab separated table containing three columns and 2 times radius rows. The first column contains the relative positions to the summits. The second and third column contain the accumulated counts of hits for all summits in the BED file. Second column for forward and third column for reverse strand. Peak calling will be skipped.",
 		seqan::ArgParseArgument::INPUTFILE, "IN"));
-		
+
 	addOption(parser, seqan::ArgParseOption(
 		"r", "bed-radius", "Radius around summits for counting hits (-b).",
 		seqan::ArgParseArgument::INTEGER, "INT"));
 	setDefaultValue(parser, "r", 1000);		
+
+	addOption(parser, seqan::ArgParseOption(
+		"psc", "use-pseudo-control", "If set, a pseudo control will be generated from the treatment data, by switching the strand of each read and shifting the 5' end towards 3' direction by one read length."));
 	
 
 	// Add a section for the description of the outout to help screen
@@ -175,6 +183,9 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 
 	if (!isSet(parser,"control-sample"))
 		options.control_sample="None";
+
+	options.use_pseudo_control = isSet(parser, "use-pseudo-control");
+
 		
 	options.keep_dup = isSet(parser, "keep-dup");		
 		
@@ -187,10 +198,15 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 	getOptionValue(options.top_n, parser, "top-n");
 	
 	getOptionValue(options.p_value_cutoff, parser, "p-value-cutoff");
+
+	options.nexus_mode = isSet(parser, "nexus-mode");		
 	
 	getOptionValue(options.step_num, parser, "step-num");
 	
 	options.binding_characteristics_only = isSet(parser, "binding-characteristics-only");
+	
+	options.make_qfrag_length_distribution = isSet(parser, "qfrag-length-distribution");
+
 
 	getOptionValue(options.thread_num, parser, "thread-num");
 
@@ -238,7 +254,7 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 	struct tm * timeinfo;
 	time ( &rawtime ); 
 	timeinfo = localtime ( &rawtime );
-
+	
 	std::ofstream INFO; 
 	INFO.open (toCString(options.out_info_file));
 	INFO      << "Q - RUN INFO" << '\n' << "############\n" << '\n'
@@ -255,14 +271,29 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 			  << "bed-hit-dist:           " << options.bed_hit_dist << '\n' << '\n'
 			  
 			  << "Peak Calling Arguments" << '\n' << "======================\n";
+
+			  if(options.nexus_mode)
+			  {              
+				INFO << "nexus-mode:                        " << options.nexus_mode << '\n';
+				options.keep_dup=1;
+				options.fragment_length_dev=5;
+				if(options.fragment_length_avg!=-1)
+				{
+					INFO << "fragment-length-average:           " << options.fragment_length_avg << '\n';
+				}
+				else
+				{
+					INFO << "fragment-length-average:           " << "not specified, will be determined by qfrag-length-distribution plot" << '\n';
+				}
+			  }
 			  
-			  if(options.fragment_length_avg!=-1)
+			  if(options.fragment_length_avg!=-1 && !options.nexus_mode)
 			  {              
 				INFO << "fragment-length-average:           " << options.fragment_length_avg << '\n';
 			  }
-			  else
+			  else if(!options.nexus_mode)
 			  {
-				INFO << "fragment-length-average:           " << "not specified, will be determined" << '\n';
+				INFO << "fragment-length-average:           " << "not specified, will be determined by Hamming distance plot" << '\n';
 			  }
 	INFO      << "fragment-length-deviation:         " << options.fragment_length_dev << '\n'
 			  << "keep-dup:                          " << options.keep_dup << '\n'			  
@@ -283,8 +314,9 @@ INFO		  << "General Arguments" << '\n' << "=================\n"
 			  
 			  << "Binding Characteristics Arguments For Fragment Length Estimation" << '\n' << "================================================================\n" 			  
 			  << "step-num:                          " << options.step_num << '\n'
-			  << "binding-characteristics-only:      " << options.binding_characteristics_only << '\n' << '\n'
-
+			  << "binding-characteristics-only:      " << options.binding_characteristics_only << '\n'
+			  << "qfrag-length-distribution:      " << options.make_qfrag_length_distribution << '\n' << '\n'
+			  
 			  << "UCSC Track Options" << '\n' << "==================\n" 			  
 			  << "write-bedgraph-treatment:          " << options.write_bedgraph_treatment << '\n'
 			  << "write-bedgraph-control:            " << options.write_bedgraph_control   << '\n' << '\n'

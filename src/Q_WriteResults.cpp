@@ -383,8 +383,12 @@ int writeSummitInfo(seqan::CharString summit_info_file, std::vector<Summit_chr> 
 		<< "\"q_end_chip\""        << "\t"
 		<< "\"q_beg_ctrl\""        << "\t"					
 		<< "\"q_end_ctrl\""        << "\t"	
-		<< "\"saturation-score\""  << "\t"
-		<< "\"p-value\""           << "\t"	
+		<< "\"saturation-score\""  << "\t";
+	if(options.nexus_mode)
+	{	
+		OUT	<< "\"#_5'_ends\""     << "\t";
+	}
+	OUT	<< "\"p-value\""           << "\t"	
 		<< "\"q-value\""           << "\n";				
     
 	for(int i=0;i<sum_num;i++)
@@ -401,7 +405,7 @@ int writeSummitInfo(seqan::CharString summit_info_file, std::vector<Summit_chr> 
 			break;
 		}
 		
-		OUT	<< summit[i].chr_name                        << "\t"
+		OUT	<< summit[i].chr_name                << "\t"
 			<< summit[i].summit.pos              << "\t"			
 			<< summit[i].summit.pos+1            << "\t"
 			<< summit[i].summit.q_cov_chip       << "\t"
@@ -409,9 +413,16 @@ int writeSummitInfo(seqan::CharString summit_info_file, std::vector<Summit_chr> 
 			<< summit[i].summit.q_beg_chip       << "\t"				
 			<< summit[i].summit.q_end_chip       << "\t"
 			<< summit[i].summit.q_beg_ctrl       << "\t"				
-			<< summit[i].summit.q_end_ctrl       << "\t"				
-			<< summit[i].summit.saturation_score << "\t"
-			<< -log10l(summit[i].summit.p_value) << "\t"
+			<< summit[i].summit.q_end_ctrl       << "\t"
+			<< summit[i].summit.saturation_score << "\t";
+		if(options.nexus_mode)
+		{				
+			OUT	<< summit[i].summit.kfu_chip+
+				   summit[i].summit.kfd_chip+
+				   summit[i].summit.kru_chip+
+				   summit[i].summit.krd_chip	<< "\t";
+		}
+		OUT	<< -log10l(summit[i].summit.p_value) << "\t"
 			<< -log10l(summit[i].summit.q_value) << "\n";				
 	}
 	OUT.close();
@@ -465,9 +476,20 @@ int writeNarrowPeak(seqan::CharString narrowPeak_file, std::vector<Summit_chr> &
 			<< end                                                << "\t"
 			<< "."                                                << "\t"
 			<< int(round(summit[i].summit.saturation_score*1000)) << "\t"
-			<< "."                                                << "\t"
-			<< summit[i].summit.saturation_score                  << "\t"
-			<< -log10l(summit[i].summit.p_value)                  << "\t"
+			<< "."                                                << "\t";
+		if(options.nexus_mode)
+		{
+			OUT	<< summit[i].summit.kfu_chip+
+				   summit[i].summit.kfd_chip+
+				   summit[i].summit.kru_chip+
+				   summit[i].summit.krd_chip					<< "\t";
+		}
+		else
+		{
+			OUT	<< summit[i].summit.saturation_score                  << "\t";
+		}
+
+		OUT	<< -log10l(summit[i].summit.p_value)                  << "\t"
 			<< -log10l(summit[i].summit.q_value)                  << "\t"
 			<< radius                                             << "\n";
 	}

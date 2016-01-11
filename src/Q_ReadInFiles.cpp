@@ -1,5 +1,7 @@
 #include "Q_ReadInFiles.h"
 #include <boost/unordered_map.hpp>
+#include "Q_GetFragLength.h"
+
 
 bool compareHitsByPos(const Hit& a, const Hit& b)
 {
@@ -42,7 +44,7 @@ bool compareHitsByPos(const Hit& a, const Hit& b)
  * 
  * 
  */
-int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::CharString chip_sample, seqan::CharString control_sample, bool keep_dup, int thread_num)
+int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::CharString chip_sample, seqan::CharString control_sample, bool keep_dup, int thread_num, bool use_pseudo_control)
 {
 	// Open input stream, BamStream can read SAM and BAM files
     seqan::BamStream bamStreamInChIP(toCString(chip_sample));
@@ -80,6 +82,7 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 			chromosome[record.rID].read_len_chip=length(record.seq);
 		}
 	
+	
 		if (readRecord(record, bamStreamInChIP) != 0)
         {
             std::cerr << "ERROR: Could not read record!\n";
@@ -91,6 +94,7 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 		{
 			hit.pos=record.beginPos+length(record.seq)-1;
 			hit.strand=1;
+			hit.read_length=length(record.seq);
 		    chromosome[record.rID].CHIP_HITS.push_back(hit);
 		    chromosome[record.rID].hit_num_chip++;
 		    chromosome[record.rID].r_hit_num_chip++;
@@ -99,11 +103,18 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 		{
 			hit.pos=record.beginPos;
 			hit.strand=0;
+			hit.read_length=length(record.seq);
 			chromosome[record.rID].CHIP_HITS.push_back(hit);
 		    chromosome[record.rID].hit_num_chip++;
 		    chromosome[record.rID].f_hit_num_chip++;		    
 		}
+		
+		if(chromosome[record.rID].read_len_chip<length(record.seq))
+		{
+			chromosome[record.rID].read_len_chip=length(record.seq);
+		}
 	}
+
 
 	// If there is a control,
     if(control_sample != "None")
@@ -151,6 +162,7 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 			{
 				hit.pos=record.beginPos+length(record.seq)-1;
 				hit.strand=1;
+				hit.read_length=length(record.seq);
 				chromosome[chr_map[record.rID]].CTRL_HITS.push_back(hit);
 				chromosome[chr_map[record.rID]].hit_num_ctrl++;
 				chromosome[chr_map[record.rID]].r_hit_num_ctrl++;
@@ -159,6 +171,7 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 			{
 				hit.pos=record.beginPos;
 				hit.strand=0;
+				hit.read_length=length(record.seq);
 				chromosome[chr_map[record.rID]].CTRL_HITS.push_back(hit);
 				chromosome[chr_map[record.rID]].hit_num_ctrl++;
 				chromosome[chr_map[record.rID]].f_hit_num_ctrl++;		    
@@ -166,6 +179,18 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 		}
     }
   
+	// pseudo control
+	if(use_pseudo_control)
+	{
+		for(int i=0;i<chr_num;i++)
+		{
+			chromosome[i].CTRL_HITS=getPseudoControlSwitchStrandAndFlip(chromosome[i].CHIP_HITS,chromosome[i].read_len_chip,chromosome[i].len);
+			chromosome[i].hit_num_ctrl=chromosome[i].hit_num_chip;
+			chromosome[i].f_hit_num_ctrl=chromosome[i].f_hit_num_chip;
+			chromosome[i].r_hit_num_ctrl=chromosome[i].r_hit_num_chip;
+		}
+	}
+
 	
 	// sort hits according to starting position
 	SEQAN_OMP_PRAGMA(parallel for num_threads(thread_num))

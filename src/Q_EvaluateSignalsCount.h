@@ -96,4 +96,6 @@ int getQFragsCoverage(Chromosome &chromosome, int min, int max);
  */
 int getQfragEnds(Chromosome &chromosome, int min, int max);
 
+int getKs(Chromosome &chromosome, int radius);
+
 #endif
