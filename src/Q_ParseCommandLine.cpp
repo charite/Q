@@ -22,8 +22,8 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 	
 	seqan::ArgumentParser parser("Q");
 	setShortDescription(parser, "Saturation based ChIP-seq peak caller");
-	setVersion(parser, "1.2.0");
-	setDate(parser, "November 2015");
+	setVersion(parser, "1.3.0");
+	setDate(parser, "January 2016");
 	addUsageLine(parser,"[\\fIOPTIONS\\fP] --treatment-sample [\\fIinput-file\\fP] --out-prefix [\\fISTRING\\fP]");
 	addDescription(parser,"Q is a fast saturation-based ChIP-seq peak caller. Q works well in conjunction with the irreproducible discovery rate (IDR) procedure. Q was extensively tested on publicly available datasets from ENCODE and shown to perform well with respect to reproducibility of the called peak set, consistency of the peak sets with respect to predicted transcription factor binding motifs contained in them, as well as overall run time. Q is implemented in C++ making use of the Boost and SeqAn library. There are a number of useful features for the primary analysis of ChIP-seq data. Q can be run with or without data from a  control experiment. Duplicate reads are removed on the fly without altering the original BAM file, and the number of duplicated reads is then shown in Q's output. The average fragment length of the sequencing library, which is an essential parameter for peak calling and for downstream analysis, is estimated automatically from the data. This is done by examing the vector of read start positions along individual chromosomes and calcuting the shift that is associated with the smallest Hamming distance. This procedure yields an equivalent estimation of the average fragment length as the cross-correlation plot of SPP but is approximately three times faster. As a part of this procedure, Q also calculates the relative strand cross-correlation coefficient (RSC), which allows a global quality assessment of the enrichment. In addition Q offers its own quality metrics, which can be used for trouble-shooting and quality control of the results. If desired, Q also generates fragment coverage profiles which can be uploaded to UCSC's genome browser, where they can be displayed in the context of other related data such as for example ChIP-seq data for histone modifications and cofactors or expression data.");
 	
@@ -68,7 +68,7 @@ seqan::ArgumentParser::ParseResult parseCommandLine(Options &options, int argc, 
 	setDefaultValue(parser, "pc", -1);
 
 	addOption(parser, seqan::ArgParseOption(
-		"nm", "nexus-mode", "If set, appropriate settings for ChIP-nexus will be used. Duplicate reads will be kept. If not set, the fragment length l will be estimated using the qfrag-length-distribution method and x will be set to 10."));
+		"nm", "nexus-mode", "If set, appropriate settings for ChIP-nexus will be used. Duplicate reads will be kept. If not set, the fragment length l will be estimated using the qfrag-length-distribution method and x will be set to 5."));
 		
 	addSection(parser, "General Options");
 

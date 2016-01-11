@@ -109,7 +109,7 @@ int ReadAlignmentFile(std::vector<Chromosome> &chromosome, int &chr_num, seqan::
 		    chromosome[record.rID].f_hit_num_chip++;		    
 		}
 		
-		if(chromosome[record.rID].read_len_chip<length(record.seq))
+		if(chromosome[record.rID].read_len_chip<(int)length(record.seq))
 		{
 			chromosome[record.rID].read_len_chip=length(record.seq);
 		}
