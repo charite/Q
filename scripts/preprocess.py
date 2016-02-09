@@ -184,17 +184,21 @@ if results.random_split == True:
 	nexusOutputFilenameSplit2 = (outputDir + "/" + inFilenamePrefixWithoutPath + 
 	"_filtered_split2.bam")
 
+if (results.exo == True):
+    nexusOutputFilename = bowtieOutputFilename
+
 # platform independant way of calling nexus-pre
 nexcat_path = script_path+"/../bin/nexcat"
 if(platform.system() == "Windows"):
 	nexcat_path += ".exe"
-	
-# call nexcat if overwrite is true or output files dont exist	
-if (os.path.isfile(nexusOutputFilename) == False or 
+
+# call nexcat if its non exo data and (overwrite is true or output files dont exist)
+if (results.exo == False and
+    (os.path.isfile(nexusOutputFilename) == False or 
 	(results.random_split == True and 
 		(os.path.isfile(nexusOutputFilenameSplit1) == False or 
 			os.path.isfile(nexusOutputFilenameSplit2) == False)) or
-		results.overwrite == True):
+		results.overwrite == True)):
     args = (nexcat_path, bowtieOutputFilename,  "-fc", results.filter_chromosomes)
     if results.random_split == True:
 		args += ("-rs",)
