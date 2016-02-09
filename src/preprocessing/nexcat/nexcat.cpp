@@ -64,8 +64,8 @@ seqan::ArgumentParser buildParser(void)
 {
     seqan::ArgumentParser parser;
 
-    setCategory(parser, "Chip Nexus/Exo Data Processing");
-    setShortDescription(parser, "Preprocessing Pipeline for Chip-Nexus and Chip-Exo data");
+    setCategory(parser, "Chip Nexus Processing");
+    setShortDescription(parser, "Preprocessing Pipeline for Chip-Nexus data");
     addUsageLine(parser, " \\fI<READ_FILE1>\\fP \\fI[OPTIONS]\\fP");
     addDescription(parser,
         "");

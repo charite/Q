@@ -42,7 +42,7 @@ if inFileExtension == ".sam":
  print inFilenamePrefix + ".bam created"
  inputFile = inFilenamePrefix + ".bam"
 
-args = ("samtools", "sort", results.input_file, outFilenamePrefix)
+args = ("samtools", "sort", inputFile, outFilenamePrefix)
 print "sorting..."
 #print args
 popen = subprocess.Popen(args, stdout=subprocess.PIPE)
