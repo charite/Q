@@ -222,10 +222,10 @@ if results.random_split == True:
 if results.clean:
     print "deleting intermediate files..."
     os.remove(bowtieOutputFilename)
-    os.remove(nexusOutputFilename)
     if results.exo:
         os.remove(flexcatOutputFilename)
     else:
+        os.remove(nexusOutputFilename)
         os.remove(outputDir + "/" + inFilenamePrefixWithoutPath + 
 			"_matched_barcode" + inFileExtension)
         os.remove(outputDir + "/" + inFilenamePrefixWithoutPath + 
