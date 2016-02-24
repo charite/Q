@@ -420,8 +420,7 @@ int main(int argc, char const * argv[])
     unsigned int sumNonUniqueReads = 0;
     for (unsigned i = 0; i < maxLen;++i)
     {
-        if (i > 0)
-            stats.totalSamePositionReads += (duplicationRate[i] * (i+1));
+		stats.totalSamePositionReads += (duplicationRate[i] * (i+1));
         fs << i + 1 << "\t" << duplicationRateUnique[i] << "\t" << duplicationRate[i] << std::endl;
         fs2 << i + 1 << "\t" << duplicationRateUnique[i]*(i+1) << "\t" << (duplicationRate[i])*(i+1) <<std::endl;
         sumUniqueReads += duplicationRateUnique[i] * (i + 1);
