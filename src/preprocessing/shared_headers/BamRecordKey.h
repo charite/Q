@@ -19,6 +19,10 @@ bool isRev(const seqan::BamAlignmentRecord &record)
 
 template <typename THasBarcode = NoBarcode>
 struct BamRecordKey
+{};
+
+template<>
+struct BamRecordKey<NoBarcode>
 {
     BamRecordKey init(const seqan::BamAlignmentRecord &record) noexcept
     {
@@ -35,6 +39,7 @@ struct BamRecordKey
         return *this;
     }
     BamRecordKey(const uint64_t pos) : pos(pos) {};
+    BamRecordKey() : pos(0) {};
 
     template <typename TRecord, typename X =
         disable_if_same_or_derived<BamRecordKey, TRecord >>
@@ -61,28 +66,45 @@ struct BamRecordKey
     {
         return lhs.pos < rhs.pos;
     }
+    bool friend operator>(const BamRecordKey<NoBarcode>& lhs, const BamRecordKey<NoBarcode>& rhs)
+    {
+        return operator<(rhs,lhs);
+    }
     bool friend operator<=(const BamRecordKey<NoBarcode>& lhs, const BamRecordKey<NoBarcode>& rhs)
     {
-        return lhs.pos <= rhs.pos;
+        return !operator>(lhs,rhs);
     }
-    bool friend lessEqualWithoutStrand(const BamRecordKey<THasBarcode>& rhs, const BamRecordKey<THasBarcode>& lhs)
+    bool friend lessEqualWithoutStrand(const BamRecordKey<NoBarcode>& rhs, const BamRecordKey<NoBarcode>& lhs)
     {
         return (rhs.pos & 0xFFFFFFFFFFFFFFFE) <= (lhs.pos & 0xFFFFFFFFFFFFFFFE);
     }
-    bool friend operator==(const BamRecordKey<THasBarcode>& rhs, const BamRecordKey<THasBarcode>& lhs)
+    bool friend operator==(const BamRecordKey<NoBarcode>& rhs, const BamRecordKey<NoBarcode>& lhs)
     {
         return rhs.pos == lhs.pos;
     }
-    bool friend isEqualWithoutStrand(const BamRecordKey<THasBarcode>& rhs, const BamRecordKey<THasBarcode>& lhs)
+    bool friend operator!=(const BamRecordKey<NoBarcode>& rhs, const BamRecordKey<NoBarcode>& lhs)
+    {
+        return !operator==(lhs,rhs);
+    }
+    const BamRecordKey<NoBarcode> operator=(const BamRecordKey<NoBarcode>& lhs)
+    {
+        pos = lhs.pos;
+        return *this;
+    }
+    bool friend isEqualWithoutStrand(const BamRecordKey<NoBarcode>& rhs, const BamRecordKey<NoBarcode>& lhs)
     {
         return (rhs.pos & 0xFFFFFFFFFFFFFFFE) == (lhs.pos & 0xFFFFFFFFFFFFFFFE);
     }
-private:
+    bool friend isEqualPositionOnly(const BamRecordKey<NoBarcode>& rhs, const BamRecordKey<NoBarcode>& lhs)
+    {
+        return (rhs.pos & 0xFFFFFFFFFFFFFFFF) == (lhs.pos & 0xFFFFFFFFFFFFFFFF);
+    }
+protected:
     uint64_t pos;
 };
 
 template <>
-struct BamRecordKey<WithBarcode> : BamRecordKey<NoBarcode>
+struct BamRecordKey<WithBarcode> : public BamRecordKey<NoBarcode>
 {
     template <typename TRecord>
     BamRecordKey(TRecord&& record) : BamRecordKey<NoBarcode>(record)
@@ -107,6 +129,10 @@ struct BamRecordKey<WithBarcode> : BamRecordKey<NoBarcode>
         if ((operator==(static_cast<const BamRecordKey<NoBarcode>&>(lhs), static_cast<const BamRecordKey<NoBarcode>&>(rhs))))
             return lhs.barcode < rhs.barcode;
         return false;
+    }
+    operator BamRecordKey<NoBarcode>() const
+    {
+        return BamRecordKey<NoBarcode>(pos);
     }
 private:
     std::string barcode;
