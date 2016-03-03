@@ -439,8 +439,8 @@ int main(int argc, char const * argv[])
 #else
     fs2.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_reads.txt", std::fstream::out);
 #endif
-    fs2 << "rate" << "\t" << "unique" << "\t" << "non_unique" << "\t" << "NUWORB"
-        << "\t" << "NUWRRB" << "\t" << "NUWRPOS"<< std::endl;
+    fs2 << "level" << "\t" << "unique" << "\t" << "non_unique" << "\t" << "SDL"
+        << "\t" << "IMIBDL" << "\t" << "NUWRPOS"<< std::endl;
     unsigned maxLen = std::max(std::max(std::max(std::max(duplicationRateUnique.size(), duplicationRate.size()), duplicationRateNUWORB.size()),
         duplicationRateNUWRRB.size()),duplicationRateNUWRPOS.size());
     duplicationRateUnique.resize(maxLen);
