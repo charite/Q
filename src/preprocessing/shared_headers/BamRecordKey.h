@@ -26,7 +26,7 @@ struct BamRecordKey<NoBarcode>
 {
     BamRecordKey init(const seqan::BamAlignmentRecord &record) noexcept
     {
-        pos = static_cast<uint64_t>(record.rID) << 32 |
+        pos = (static_cast<uint64_t>(record.rID) << 32) |
             static_cast<uint64_t>((record.beginPos + static_cast<uint64_t>((isRev(record) == true ? length(record.seq) : 0)))) << 1 |
             static_cast<uint64_t>(isRev(record));
         return *this;
@@ -134,9 +134,24 @@ struct BamRecordKey<WithBarcode> : public BamRecordKey<NoBarcode>
     {
         return BamRecordKey<NoBarcode>(pos);
     }
+    std::string getBarcode() const
+    {
+        return barcode;
+    }
 private:
     std::string barcode;
 };
+
+std::ostream& operator<<(std::ostream& os, const BamRecordKey<WithBarcode>& key)
+{
+    if(key.isReverseStrand())
+        os<<"Streand:- ";
+    else
+        os<<"Streand:+ ";
+    os<<"Chromosome:"<<key.getRID()<<" Pos:"<<key.get5EndPosition()<<" Barcode:"<<key.getBarcode();
+    return os;
+}
+
 
 // returns false if keys are from different chromosomes
 template <typename THasBarcode>

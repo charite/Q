@@ -172,8 +172,6 @@ void processBamFile(seqan::BamFileIn& bamFileIn, const TArtifactWriter& artifact
     while (!atEnd(bamFileIn))
     {
         readRecord(record, bamFileIn);
-        if (atEnd(bamFileIn))
-            break;
         ++stats.totalReads;
         if (chromosomeFilter.find(record.rID) != chromosomeFilter.end())
         {
@@ -196,15 +194,17 @@ void processBamFile(seqan::BamFileIn& bamFileIn, const TArtifactWriter& artifact
         ++stats.totalMappedReads;
         const BamRecordKey<WithBarcode> key(record);
         const auto findResult = occurenceMap.find(key);
+        std::cout<<key<<std::endl;
         if (findResult != occurenceMap.end())  // element is filtered out
         {
             findResult->second++;
-            //std::cout<<"pcr artifact"<<std::endl;
+            std::cout<<"pcr artifact"<<std::endl;
             artifactWriter(std::move(record));
             ++stats.removedReads; // stats.removedReads = total non unique hits
         }
         else
         {
+            std::cout<<"new"<<std::endl;
             occurenceMap.insert(findResult, std::pair<BamRecordKey<WithBarcode>, unsigned int>(key,(unsigned int)1));
             bamWriter(std::move(record));
         }
@@ -364,7 +364,19 @@ int main(int argc, char const * argv[])
     for(;genomePositionIterator!=occurenceMap.end();++genomePositionIterator)
     {
         current_position = genomePositionIterator->first;
-        if (current_position != last_position || std::next(genomePositionIterator) == occurenceMap.end())
+        const auto NUWRRB = genomePositionIterator->second;
+        if (NUWRRB > 0)
+        {
+            if (duplicationRateNUWRRB.size() < NUWRRB)
+                duplicationRateNUWRRB.resize(NUWRRB);
+            ++duplicationRateNUWRRB[NUWRRB - 1];
+        }
+        hits += genomePositionIterator->second;
+        if(genomePositionIterator->second > 1)
+            NUWRPOS += genomePositionIterator->second;
+        ++unique_hits;
+
+        if (current_position != std::next(genomePositionIterator)->first || std::next(genomePositionIterator) == occurenceMap.end())
         {
             last_position = current_position;
             if (bedOutputEnabled)
@@ -408,7 +420,7 @@ int main(int argc, char const * argv[])
                     duplicationRate.resize(nonUniqueHits);
                 ++duplicationRate[nonUniqueHits - 1];
             }
-            if (NUWRPOS > 1)
+            if (NUWRPOS > 0)
             {
                 if (duplicationRateNUWRPOS.size() < NUWRPOS)
                     duplicationRateNUWRPOS.resize(NUWRPOS);
@@ -419,16 +431,6 @@ int main(int argc, char const * argv[])
             unique_hits = 0;
             NUWRPOS = 0;
         }
-        const auto NUWRRB = genomePositionIterator->second;
-        if (NUWRRB > 0)
-        {
-            if (duplicationRateNUWRRB.size() < NUWRRB)
-                duplicationRateNUWRRB.resize(NUWRRB);
-            ++duplicationRateNUWRRB[NUWRRB - 1];
-        }
-        hits += genomePositionIterator->second;
-        NUWRPOS += genomePositionIterator->second - 1;
-        ++unique_hits;
     };
     std::cout<<"done"<<std::endl;
     saveBedForwardStrand.close();
@@ -442,13 +444,13 @@ int main(int argc, char const * argv[])
 #endif
     fs2 << "rate" << "\t" << "unique" << "\t" << "non_unique" << "\t" << "NUWORB"
         << "\t" << "NUWRRB" << "\t" << "NUWRPOS"<< std::endl;
-    unsigned maxLen = duplicationRateUnique.size() > duplicationRate.size() ? duplicationRateUnique.size() : duplicationRate.size();
+    unsigned maxLen = std::max(std::max(std::max(std::max(duplicationRateUnique.size(), duplicationRate.size()), duplicationRateNUWORB.size()),
+        duplicationRateNUWRRB.size()),duplicationRateNUWRPOS.size());
     duplicationRateUnique.resize(maxLen);
     duplicationRate.resize(maxLen);
     duplicationRateNUWORB.resize(maxLen);
     duplicationRateNUWRRB.resize(maxLen);
     duplicationRateNUWRPOS.resize(maxLen);
-    std::vector<unsigned>::iterator it = duplicationRateUnique.begin();
     unsigned int sumUniqueReads = 0;
     unsigned int sumNonUniqueReads = 0;
     for (unsigned i = 0; i < maxLen;++i)
