@@ -194,17 +194,14 @@ void processBamFile(seqan::BamFileIn& bamFileIn, const TArtifactWriter& artifact
         ++stats.totalMappedReads;
         const BamRecordKey<WithBarcode> key(record);
         const auto findResult = occurenceMap.find(key);
-        std::cout<<key<<std::endl;
         if (findResult != occurenceMap.end())  // element is filtered out
         {
             findResult->second++;
-            std::cout<<"pcr artifact"<<std::endl;
             artifactWriter(std::move(record));
             ++stats.removedReads; // stats.removedReads = total non unique hits
         }
         else
         {
-            std::cout<<"new"<<std::endl;
             occurenceMap.insert(findResult, std::pair<BamRecordKey<WithBarcode>, unsigned int>(key,(unsigned int)1));
             bamWriter(std::move(record));
         }
