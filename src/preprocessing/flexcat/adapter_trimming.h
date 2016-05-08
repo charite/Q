@@ -241,6 +241,7 @@ void alignPair(std::pair<int, seqan::Align<TSeq> >& ret, const TSeq& seq1, const
     int shiftPos = shiftStartPos;
     int bestShiftPos = shiftStartPos;
     int bestScore = std::numeric_limits<int>::min();
+    float bestErrorRate = std::numeric_limits<float>::max();
     unsigned int bestOverlap = 0;
 
     if (shiftEndPos < shiftStartPos)
@@ -254,16 +255,19 @@ void alignPair(std::pair<int, seqan::Align<TSeq> >& ret, const TSeq& seq1, const
         const unsigned int overlapPositiveShift = std::min(lenSeq1 - shiftPos, lenSeq2);
         const unsigned int overlap = std::min(overlapNegativeShift, overlapPositiveShift);
         const unsigned int overlapStart = std::max(shiftPos, 0);
-        int score = (int)overlap;
-        for (unsigned int pos = 0; pos < overlap && score >= bestScore; ++pos)
+        int score = 0;
+	unsigned int pos = 0;
+        for (; pos < overlap; ++pos)
         {
-            if (seq2[pos + std::min(0,shiftPos)*(-1)] != seq1[overlapStart + pos])
-                score -= 2;
-            else if (seq1[overlapStart + pos] == 'N')
+            if (seq2[pos + std::min(0,shiftPos)*(-1)] == seq1[overlapStart + pos])
+                 ++score;
+            else if (seq1[overlapStart + pos] != 'N')
                 --score;
         }
-        if (score > bestScore || (score == bestScore && overlap > bestOverlap))
+        const float errorRate = static_cast<float>((overlap-score)/2) / static_cast<float>(overlap);
+        if (errorRate < bestErrorRate || (errorRate == bestErrorRate && overlap > bestOverlap))
         {
+            bestErrorRate = errorRate;
             bestShiftPos = shiftPos;
             bestScore = score;
             bestOverlap = overlap;
@@ -405,8 +409,8 @@ unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats& stats, TAdapters const& a
                     continue;
                 const unsigned int overlap = getOverlap(ret.second);
                 const int mismatches = (overlap - score) / 2;
-                //std::cout << "score: " << ret.first << " er: " << (float)mismatches/overlap << " overlap: " << overlap << " mismatches: " << mismatches << std::endl;
-                //std::cout << ret.second << std::endl;
+                // std::cout << "score: " << ret.first << " er: " << (float)mismatches/overlap << " overlap: " << overlap << " mismatches: " << mismatches << std::endl;
+                // std::cout << ret.second << std::endl;
 
                 if (isMatch(overlap, mismatches, spec))
                     matches.push_back(std::make_tuple(score, overlap, ret.second, std::ref(adapterItem)));
