@@ -241,7 +241,6 @@ void alignPair(std::pair<int, seqan::Align<TSeq> >& ret, const TSeq& seq1, const
     int shiftPos = shiftStartPos;
     int bestShiftPos = shiftStartPos;
     int bestScore = std::numeric_limits<int>::min();
-    float bestErrorRate = std::numeric_limits<float>::max();
     unsigned int bestOverlap = 0;
 
     if (shiftEndPos < shiftStartPos)
@@ -255,20 +254,18 @@ void alignPair(std::pair<int, seqan::Align<TSeq> >& ret, const TSeq& seq1, const
         const unsigned int overlapPositiveShift = std::min(lenSeq1 - shiftPos, lenSeq2);
         const unsigned int overlap = std::min(overlapNegativeShift, overlapPositiveShift);
         const unsigned int overlapStart = std::max(shiftPos, 0);
-        int score = 0;
-        for (unsigned int pos = 0; pos < overlap; ++pos)
+        int score = (int)overlap;
+        for (unsigned int pos = 0; pos < overlap && score >= bestScore; ++pos)
         {
-            if (seq2[pos + std::min(0,shiftPos)*(-1)] == seq1[overlapStart + pos])
-                ++score;
-            else if (seq1[overlapStart + pos] != 'N')
+            if (seq2[pos + std::min(0,shiftPos)*(-1)] != seq1[overlapStart + pos])
+                score -= 2;
+            else if (seq1[overlapStart + pos] == 'N')
                 --score;
         }
-        const float errorRate = static_cast<float>((overlap-score)/2) / static_cast<float>(overlap);
-        if (errorRate < bestErrorRate || (errorRate == bestErrorRate && overlap > bestOverlap))
+        if (score > bestScore || (score == bestScore && overlap > bestOverlap))
         {
             bestShiftPos = shiftPos;
             bestScore = score;
-            bestErrorRate = errorRate;
             bestOverlap = overlap;
         }
         ++shiftPos;
