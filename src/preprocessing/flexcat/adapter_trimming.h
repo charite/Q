@@ -392,8 +392,8 @@ unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats& stats, TAdapters const& a
             //std::cout << "adapter: " << adapterItem.seq << std::endl;
             if (static_cast<unsigned>(length(adapterItem.seq)) < spec.min_length)
                 continue;
-            if (TStripAdapterDirection::value == adapterDirection::reverse && adapterItem.reverse == false ||
-                TStripAdapterDirection::value == adapterDirection::forward && adapterItem.reverse == true)
+            if ((TStripAdapterDirection::value == adapterDirection::reverse && adapterItem.reverse == false) ||
+                (TStripAdapterDirection::value == adapterDirection::forward && adapterItem.reverse == true))
                 continue;
 
             const auto& adapterSequence = adapterItem.seq;
