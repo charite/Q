@@ -196,6 +196,17 @@ namespace AlignAlgorithm
     struct Menkuec {};
 }
 
+struct AlignResult
+{
+    AlignResult() : score(std::numeric_limits<int>::min()), matches(0), ambiguous(0), overlap(0), errorRate(1), shiftPos(0) {};
+    int score;
+    unsigned int matches;
+    unsigned int ambiguous;
+    unsigned int overlap;
+    float errorRate;
+    int shiftPos;
+};
+
 template <typename TSeq, typename TAdapter>
 void alignPair(std::pair<int, seqan::Align<TSeq> >& ret, const TSeq& seq1, const TAdapter& seq2,
     const int leftOverhang, const int rightOverhang, const AlignAlgorithm::NeedlemanWunsch&) noexcept
@@ -220,6 +231,7 @@ void alignPair(std::pair<int, seqan::Align<TSeq> >& ret, const TSeq& seq1, const
     ret.first = globalAlignment(ret.second, adapterScore, config, shiftStartPos, shiftEndPos, seqan::LinearGaps());
 }
 
+
 /*
 - shifts adapterTemplate against sequence
 - calculate score for each shift position
@@ -227,69 +239,49 @@ void alignPair(std::pair<int, seqan::Align<TSeq> >& ret, const TSeq& seq1, const
 - return score of the shift position, where the errorRate was minimal
 */
 template <typename TSeq, typename TAdapter>
-void alignPair(std::pair<int, seqan::Align<TSeq> >& ret, const TSeq& seq1, const TAdapter& seq2,
-    const int leftOverhang, const int rightOverhang, const AlignAlgorithm::Menkuec&) noexcept
+void alignPairFast(AlignResult& ret, const TSeq& seq1, const TAdapter& seq2,
+    const int leftOverhang, const int rightOverhang) noexcept
 {
-    seqan::resize(rows(ret.second), 2);
-    seqan::assignSource(row(ret.second, 0), seq1);
-    seqan::assignSource(row(ret.second, 1), seq2);
-
     const int shiftStartPos = -leftOverhang;
     const int shiftEndPos = length(seq1) - length(seq2) + rightOverhang;
     const auto lenSeq1 = length(seq1);
     const auto lenSeq2 = length(seq2);
     int shiftPos = shiftStartPos;
-    int bestShiftPos = shiftStartPos;
-    int bestScore = std::numeric_limits<int>::min();
-    float bestErrorRate = std::numeric_limits<float>::max();
-    unsigned int bestOverlap = 0;
 
     if (shiftEndPos < shiftStartPos)
-    {
-        ret.first = bestScore; // invalid constraints
+    {   // invalid constraints
         return;
     }
+    AlignResult bestRes;
     while (shiftPos <= shiftEndPos)
     {
         const unsigned int overlapNegativeShift = std::min(shiftPos + lenSeq2, lenSeq1);
         const unsigned int overlapPositiveShift = std::min(lenSeq1 - shiftPos, lenSeq2);
         const unsigned int overlap = std::min(overlapNegativeShift, overlapPositiveShift);
         const unsigned int overlapStart = std::max(shiftPos, 0);
-        int score = 0;
+        unsigned int matches = 0;
+        unsigned int ambiguous = 0;
         unsigned int pos = 0;
         for (; pos < overlap; ++pos)
         {
-            score += seq2[pos + std::min(0, shiftPos)*(-1)] == seq1[overlapStart + pos];
-            score -= seq1[overlapStart + pos] == 'N';
-            //if (seq2[pos + std::min(0,shiftPos)*(-1)] == seq1[overlapStart + pos])
-            //  ++score;
-            //else if (seq1[overlapStart + pos] != 'N')
-            //    --score;
+            matches += seq2[pos + std::min(0, shiftPos)*(-1)] == seq1[overlapStart + pos];
+            ambiguous += seq1[overlapStart + pos] == 'N';
         }
-        const float errorRate = static_cast<float>((overlap - score) / 2) / static_cast<float>(overlap);
-        if (errorRate < bestErrorRate || (errorRate == bestErrorRate && overlap > bestOverlap))
+        const float errorRate = static_cast<float>(overlap - matches - ambiguous) / static_cast<float>(overlap);
+        if (errorRate < bestRes.errorRate || (errorRate == bestRes.errorRate && overlap > bestRes.overlap))
         {
-            bestErrorRate = errorRate;
-            bestShiftPos = shiftPos;
-            bestScore = score;
-            bestOverlap = overlap;
+            bestRes.matches = matches;
+            bestRes.ambiguous = ambiguous;
+            bestRes.errorRate = errorRate;
+            bestRes.shiftPos = shiftPos;
+            bestRes.score = matches - ambiguous;
+            bestRes.overlap = overlap;
         }
         ++shiftPos;
     }
-    if (bestShiftPos < 0)
-    {
-        seqan::insertGaps(row(ret.second, 0), 0, -bestShiftPos); // top left
-        seqan::insertGaps(row(ret.second, 0), lenSeq1 - bestShiftPos, std::max<int>(0, lenSeq2 - lenSeq1 + bestShiftPos)); // top right
-        seqan::insertGaps(row(ret.second, 1), lenSeq2, std::max<int>(0, lenSeq1 - lenSeq2 - bestShiftPos)); // bottom right
-    }
-    else
-    {
-        seqan::insertGaps(row(ret.second, 0), lenSeq1, std::max<int>(0, lenSeq2 - lenSeq1 + bestShiftPos)); // top right
-        seqan::insertGaps(row(ret.second, 1), 0, bestShiftPos); // bottom left
-        seqan::insertGaps(row(ret.second, 1), lenSeq2 + bestShiftPos, std::max<int>(0, lenSeq1 - lenSeq2 - bestShiftPos)); // bottom right
-    }
-    ret.first = bestScore;
+    ret = bestRes;
 }
+
 
 // used only for testing and paired end data
 template <typename TSeq, typename TAdapter>
@@ -380,12 +372,12 @@ unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats& stats, TAdapters const& a
     AlignAlgorithm::Menkuec alignAlgorithm;
 
     unsigned removed{ 0 };
-    std::tuple<int, unsigned int, TAlign, AdapterItem> bestMatch;
+    AlignResult alignResult;
+    std::tuple<AlignResult, AdapterItem> bestMatch;
     const int noMatch = std::numeric_limits<int>::min();
     for (unsigned int n = 0;n < spec.times; ++n)
     {
-        std::get<0>(bestMatch) = noMatch;
-        std::pair<int, TAlign> ret;
+        std::get<0>(bestMatch).score = noMatch;
         for (auto const& adapterItem : adapters)
         {
             //std::cout << "seq: " << seq << std::endl;
@@ -400,42 +392,44 @@ unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats& stats, TAdapters const& a
             const unsigned int oppositeEndOverhang = adapterItem.anchored == true ? length(adapterSequence) - length(seq) : adapterItem.overhang;
             const unsigned int sameEndOverhang = adapterItem.anchored == true ? 0 : length(adapterItem.seq) - spec.min_length;
             if (adapterItem.adapterEnd == AdapterItem::end3)
-                alignPair(ret, seq, adapterSequence, oppositeEndOverhang, sameEndOverhang, alignAlgorithm);
+                alignPairFast(alignResult, seq, adapterSequence, oppositeEndOverhang, sameEndOverhang);
+                //alignPair(ret, seq, adapterSequence, oppositeEndOverhang, sameEndOverhang, alignAlgorithm);
             else
-                alignPair(ret, seq, adapterSequence, sameEndOverhang, oppositeEndOverhang, alignAlgorithm);
+                alignPairFast(alignResult, seq, adapterSequence, sameEndOverhang, oppositeEndOverhang);
+                //alignPair(ret, seq, adapterSequence, sameEndOverhang, oppositeEndOverhang, alignAlgorithm);
 
-            const int score = ret.first;
-            if (score < 0)
+            if (alignResult.score < 0)
                 continue;
-            const unsigned int overlap = getOverlap(ret.second);
-            const int mismatches = (overlap - score) / 2;
+
             // std::cout << "score: " << ret.first << " er: " << (float)mismatches/overlap << " overlap: " << overlap << " mismatches: " << mismatches << std::endl;
             // std::cout << ret.second << std::endl;
 
-            if (isMatch(overlap, mismatches, spec) && std::get<0>(bestMatch) < score)
-                bestMatch = std::make_tuple(score, overlap, ret.second, adapterItem);
+            if (isMatch(alignResult.overlap, alignResult.overlap - alignResult.matches - alignResult.ambiguous, spec) 
+                    && std::get<0>(bestMatch).score < alignResult.score)
+                bestMatch = std::make_tuple(alignResult, adapterItem);
         }
-        if (std::get<0>(bestMatch) == noMatch)
+        if (std::get<0>(bestMatch).score == noMatch)
             return removed;
 
         // erase best matching adapter from sequence
         const auto& score = std::get<0>(bestMatch);
         const auto& overlap = std::get<1>(bestMatch);
-        const TAlign& align = std::get<2>(bestMatch);
-        const AdapterItem& adapterItem = std::get<3>(bestMatch);
-        const auto mismatches = (overlap - score) / 2;
+        const AdapterItem& adapterItem = std::get<1>(bestMatch);
+        const auto mismatches = std::get<0>(bestMatch).overlap - std::get<0>(bestMatch).matches - std::get<0>(bestMatch).ambiguous;
         unsigned eraseStart = 0;
         unsigned eraseEnd = 0;
         if (adapterItem.adapterEnd == AdapterItem::end3)
         {
-            eraseStart = toViewPosition(row(align, 1), 0);
+            //eraseStart = toViewPosition(row(align, 1), 0);
+            eraseStart = std::get<0>(bestMatch).shiftPos;
             eraseEnd = length(seq);
             //std::cout << "adapter start position: " << toViewPosition(row(ret.second, 1), 0) << std::endl;
         }
         else
         {
             eraseStart = 0;
-            eraseEnd = std::min<unsigned>(length(seq), toViewPosition(row(align, 1), length(adapterItem.seq)) - toViewPosition(row(align, 0), 0));
+            eraseEnd = std::min<unsigned>(length(seq), std::get<0>(bestMatch).shiftPos + length(adapterItem.seq));
+            //eraseEnd = std::min<unsigned>(length(seq), toViewPosition(row(align, 1), length(adapterItem.seq)) - toViewPosition(row(align, 0), 0));
             //std::cout << "adapter end position: " << toViewPosition(row(ret.second, 1), length(adapterItem.seq)) - toViewPosition(row(ret.second, 0), 0) << std::endl;
         }
 
@@ -460,9 +454,9 @@ unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats& stats, TAdapters const& a
         }
         ++stats.numRemoved[adapterItem.id];
 
-        stats.overlapSum += overlap;
-        stats.maxOverlap = std::max(stats.maxOverlap, overlap);
-        stats.minOverlap = std::min(stats.minOverlap, overlap);
+        stats.overlapSum += std::get<0>(bestMatch).overlap;
+        stats.maxOverlap = std::max(stats.maxOverlap, std::get<0>(bestMatch).overlap);
+        stats.minOverlap = std::min(stats.minOverlap, std::get<0>(bestMatch).overlap);
         // dont try more adapter trimming if the read is too short already
         if (static_cast<unsigned>(length(seq)) < spec.min_length)
             return removed;
