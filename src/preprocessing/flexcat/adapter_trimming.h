@@ -241,7 +241,6 @@ void alignPair(AlignResult &res, const TSeq& seq1, const TAdapter& seq2,
     res.errorRate = static_cast<float>(res.overlap - res.matches) / static_cast<float>(res.overlap);
 }
 
-
 /*
 - shifts adapterTemplate against sequence
 - calculate score for each shift position
@@ -249,13 +248,13 @@ void alignPair(AlignResult &res, const TSeq& seq1, const TAdapter& seq2,
 - return score of the shift position, where the errorRate was minimal
 */
 template <typename TSeq, typename TAdapter>
-void alignPair(AlignResult& ret, const TSeq& seq1, const TAdapter& seq2,
+void alignPair(AlignResult& ret, const TSeq& read, const TAdapter& adapter,
     const int leftOverhang, const int rightOverhang, const AlignAlgorithm::Menkuec&) noexcept
 {
+    const auto lenRead = length(read);
+    const auto lenAdapter = length(adapter);
     const int shiftStartPos = -leftOverhang;
-    const int shiftEndPos = length(seq1) - length(seq2) + rightOverhang;
-    const auto lenSeq1 = length(seq1);
-    const auto lenSeq2 = length(seq2);
+    const int shiftEndPos = lenRead - lenAdapter + rightOverhang;
     int shiftPos = shiftStartPos;
 
     if (shiftEndPos < shiftStartPos)
@@ -263,29 +262,101 @@ void alignPair(AlignResult& ret, const TSeq& seq1, const TAdapter& seq2,
         return;
     }
     AlignResult bestRes;
+    const auto NBase = ((seqan::Dna5)'N').value & 0x03;
     while (shiftPos <= shiftEndPos)
     {
-        const unsigned int overlapNegativeShift = std::min(shiftPos + lenSeq2, lenSeq1);
-        const unsigned int overlapPositiveShift = std::min(lenSeq1 - shiftPos, lenSeq2);
+        const unsigned int overlapNegativeShift = std::min(shiftPos + lenAdapter, lenRead);
+        const unsigned int overlapPositiveShift = std::min(lenRead - shiftPos, lenAdapter);
         const unsigned int overlap = std::min(overlapNegativeShift, overlapPositiveShift);
         const unsigned int overlapStart = std::max(shiftPos, 0);
         unsigned int matches = 0;
         unsigned int ambiguous = 0;
-        unsigned int pos = 0;
+        unsigned int remaining = overlap;
+        seqan::Iterator<const TSeq>::Type readIterator = seqan::begin(read) + overlapStart;
+        seqan::Iterator<const TAdapter>::Type adapterIterator = seqan::begin(adapter) + std::min(0, shiftPos)*(-1);
         //TODO: SSE / AVX optimizations
-        //while (pos > 32)
-        //{
-        //    for (unsigned char c = 0; c < 32; ++c)
-        //    {
-        //        matches += seq2[pos + std::min(0, shiftPos)*(-1)] == seq1[overlapStart + pos];
-        //        ambiguous += seq1[overlapStart + pos] == 'N';
-        //        ++pos;
-        //    }
-        //}
-        for (; pos < overlap; ++pos)
+        while (remaining >= 16)
         {
-            matches += seq2[pos + std::min(0, shiftPos)*(-1)] == seq1[overlapStart + pos];
-            ambiguous += seq1[overlapStart + pos] == 'N';
+            //for (unsigned char c = 0; c < 16; ++c)
+            //{
+            //    matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            //    ambiguous += readIterator->value & 0x03 == NBase;
+            //    ++adapterIterator;
+            //    ++readIterator;
+            //}
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+            ambiguous += readIterator->value & 0x03 == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            remaining -= 16;
+        }
+        while (remaining > 0)
+        {
+            matches += (adapterIterator->value & 0x03) == (readIterator->value & 0x03);
+            ambiguous += readIterator->value == NBase;
+            ++adapterIterator;
+            ++readIterator;
+            --remaining;
         }
         const float errorRate = static_cast<float>(overlap - matches - ambiguous) / static_cast<float>(overlap);
         if (errorRate < bestRes.errorRate || (errorRate == bestRes.errorRate && overlap > bestRes.overlap))
@@ -301,6 +372,8 @@ void alignPair(AlignResult& ret, const TSeq& seq1, const TAdapter& seq2,
     }
     ret = bestRes;
 }
+
+
 
 template <typename TSeq, typename TAdapter>
 void alignPair(AlignResult &res, const TSeq& seq1, const TAdapter& seq2, const AlignAlgorithm::NeedlemanWunsch&) noexcept
@@ -390,7 +463,6 @@ template <typename TSeq, typename TAdapters, typename TStripAdapterDirection>
 unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats& stats, TAdapters const& adapters, AdapterMatchSettings const& spec,
     const TStripAdapterDirection&)
 {
-    using TAlign = seqan::Align<TSeq>;
     AlignAlgorithm::Menkuec alignAlgorithm;
 
     unsigned removed{ 0 };
