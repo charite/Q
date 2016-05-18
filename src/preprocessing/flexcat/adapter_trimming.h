@@ -241,6 +241,32 @@ void alignPair(AlignResult &res, const TSeq& seq1, const TAdapter& seq2,
     res.errorRate = static_cast<float>(res.overlap - res.matches) / static_cast<float>(res.overlap);
 }
 
+template <unsigned int N>
+struct compareAdapter
+{
+    //static const auto NBase = ((seqan::Dna5)'N').value & 0x03;
+    static const unsigned char NBase = 0; // use this as long as seqan does not support constexpr initialization
+
+    template <typename TReadIterator, typename TAdapterIterator, typename TCounter>
+    inline static void apply(TReadIterator& readIterator, TAdapterIterator& adapterIterator, TCounter& matches, TCounter& ambiguous) noexcept
+    {
+        matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
+        ambiguous += readIterator->value & 0x03 == NBase;
+        ++adapterIterator;
+        ++readIterator;
+        compareAdapter<N-1>::apply(readIterator, adapterIterator, matches, ambiguous);
+    }
+};
+
+template <>
+struct compareAdapter<0>
+{
+    template <typename TReadIterator, typename TAdapterIterator, typename TCounter>
+    inline static void apply(TReadIterator& readIterator, TAdapterIterator& adapterIterator, TCounter& matches, TCounter& ambiguous) noexcept
+    {
+    }
+};
+
 /*
 - shifts adapterTemplate against sequence
 - calculate score for each shift position
@@ -257,12 +283,9 @@ void alignPair(AlignResult& ret, const TSeq& read, const TAdapter& adapter,
     const int shiftEndPos = lenRead - lenAdapter + rightOverhang;
     int shiftPos = shiftStartPos;
 
-    if (shiftEndPos < shiftStartPos)
-    {   // invalid constraints
-        return;
-    }
     AlignResult bestRes;
-    const auto NBase = ((seqan::Dna5)'N').value & 0x03;
+    //const auto NBase = ((seqan::Dna5)'N').value & 0x03;
+    const unsigned char NBase = 0; // use this as long as seqan does not support constexpr initialization
     while (shiftPos <= shiftEndPos)
     {
         const unsigned int overlapNegativeShift = std::min(shiftPos + lenAdapter, lenRead);
@@ -284,80 +307,69 @@ void alignPair(AlignResult& ret, const TSeq& read, const TAdapter& adapter,
             //    ++adapterIterator;
             //    ++readIterator;
             //}
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-            ambiguous += readIterator->value & 0x03 == NBase;
-            ++adapterIterator;
-            ++readIterator;
+            compareAdapter<16>::apply(readIterator, adapterIterator, matches, ambiguous);
             remaining -= 16;
         }
-        while (remaining > 0)
+        //compareAdapter<10>::apply(readIterator, adapterIterator, matches, ambiguous);
+        switch (remaining)
         {
-            matches += (adapterIterator->value & 0x03) == (readIterator->value & 0x03);
-            ambiguous += readIterator->value == NBase;
-            ++adapterIterator;
-            ++readIterator;
-            --remaining;
+        case 0:
+            compareAdapter<0>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 1:
+            compareAdapter<1>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 2:
+            compareAdapter<2>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 3:
+            compareAdapter<3>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 4:
+            compareAdapter<4>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 5:
+            compareAdapter<5>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 6:
+            compareAdapter<6>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 7:
+            compareAdapter<7>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 8:
+            compareAdapter<8>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 9:
+            compareAdapter<9>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 10:
+            compareAdapter<10>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 11:
+            compareAdapter<11>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 12:
+            compareAdapter<12>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 13:
+            compareAdapter<13>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 14:
+            compareAdapter<14>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
+        case 15:
+            compareAdapter<15>::apply(readIterator, adapterIterator, matches, ambiguous);
+            break;
         }
+        //while (remaining > 0)
+        //{
+        //    matches += (adapterIterator->value & 0x03) == (readIterator->value & 0x03);
+        //    ambiguous += readIterator->value == NBase;
+        //    ++adapterIterator;
+        //    ++readIterator;
+        //    --remaining;
+        //}
         const float errorRate = static_cast<float>(overlap - matches - ambiguous) / static_cast<float>(overlap);
         if (errorRate < bestRes.errorRate || (errorRate == bestRes.errorRate && overlap > bestRes.overlap))
         {
