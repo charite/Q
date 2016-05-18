@@ -250,8 +250,8 @@ struct compareAdapter
     template <typename TReadIterator, typename TAdapterIterator, typename TCounter>
     inline static void apply(TReadIterator& readIterator, TAdapterIterator& adapterIterator, TCounter& matches, TCounter& ambiguous) noexcept
     {
-        matches += adapterIterator->value & 0x03 == readIterator->value & 0x03;
-        ambiguous += readIterator->value & 0x03 == NBase;
+        matches += (adapterIterator->value & 0x03) == (readIterator->value & 0x03);
+        ambiguous += (readIterator->value & 0x03) == NBase;
         ++adapterIterator;
         ++readIterator;
         compareAdapter<N-1>::apply(readIterator, adapterIterator, matches, ambiguous);
@@ -264,6 +264,10 @@ struct compareAdapter<0>
     template <typename TReadIterator, typename TAdapterIterator, typename TCounter>
     inline static void apply(TReadIterator& readIterator, TAdapterIterator& adapterIterator, TCounter& matches, TCounter& ambiguous) noexcept
     {
+        (void)readIterator;
+        (void)adapterIterator;
+        (void)matches;
+        (void)ambiguous;
     }
 };
 
@@ -285,7 +289,7 @@ void alignPair(AlignResult& ret, const TSeq& read, const TAdapter& adapter,
 
     AlignResult bestRes;
     //const auto NBase = ((seqan::Dna5)'N').value & 0x03;
-    const unsigned char NBase = 0; // use this as long as seqan does not support constexpr initialization
+    // const unsigned char NBase = 0; // use this as long as seqan does not support constexpr initialization
     while (shiftPos <= shiftEndPos)
     {
         const unsigned int overlapNegativeShift = std::min(shiftPos + lenAdapter, lenRead);
@@ -295,8 +299,8 @@ void alignPair(AlignResult& ret, const TSeq& read, const TAdapter& adapter,
         unsigned int matches = 0;
         unsigned int ambiguous = 0;
         unsigned int remaining = overlap;
-        seqan::Iterator<const TSeq>::Type readIterator = seqan::begin(read) + overlapStart;
-        seqan::Iterator<const TAdapter>::Type adapterIterator = seqan::begin(adapter) + std::min(0, shiftPos)*(-1);
+        typename seqan::Iterator<const TSeq>::Type readIterator = seqan::begin(read) + overlapStart;
+        typename seqan::Iterator<const TAdapter>::Type adapterIterator = seqan::begin(adapter) + std::min(0, shiftPos)*(-1);
         //TODO: SSE / AVX optimizations
         while (remaining >= 16)
         {
