@@ -245,13 +245,13 @@ template <unsigned int N>
 struct compareAdapter
 {
     //static const auto NBase = ((seqan::Dna5)'N').value & 0x03;
-    static const unsigned char NBase = 0; // use this as long as seqan does not support constexpr initialization
+    static const unsigned char NBase = 4; // use this as long as seqan does not support constexpr initialization
 
     template <typename TReadIterator, typename TAdapterIterator, typename TCounter>
     inline static void apply(TReadIterator& readIterator, TAdapterIterator& adapterIterator, TCounter& matches, TCounter& ambiguous) noexcept
     {
-        matches += (adapterIterator->value & 0x03) == (readIterator->value & 0x03);
-        ambiguous += (readIterator->value & 0x03) == NBase;
+        matches += (adapterIterator->value & 0x07) == (readIterator->value & 0x07);
+        ambiguous += (readIterator->value & 0x07) == NBase;
         ++adapterIterator;
         ++readIterator;
         compareAdapter<N-1>::apply(readIterator, adapterIterator, matches, ambiguous);
