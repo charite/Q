@@ -158,7 +158,7 @@ public:
 };
 
 
-template<typename TOutputStreams, typename TProgramParams>
+template<typename TOutputStreams, typename TProgramParams, typename TGeneralStats>
 struct ReadWriter
 {
 private:
@@ -168,7 +168,7 @@ private:
     const TProgramParams& _programParams;
     std::chrono::time_point<std::chrono::steady_clock> _startTime;
     std::chrono::time_point<std::chrono::steady_clock> _lastScreenUpdate;
-    GeneralStats _stats;
+    TGeneralStats _stats;
 public:
     ReadWriter(TOutputStreams& outputStreams, const TProgramParams& programParams) :
         _outputStreams(outputStreams), _programParams(programParams), _startTime(std::chrono::steady_clock::now()) {};
@@ -194,11 +194,11 @@ public:
             _lastScreenUpdate = std::chrono::steady_clock::now();
         }
     }
-    GeneralStats get_result()
+    TGeneralStats get_result()
     {
         return _stats;
     }
-    void getStats(GeneralStats& stats)
+    void getStats(TGeneralStats& stats)
     {
         stats = _stats;
     }

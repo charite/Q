@@ -182,7 +182,7 @@ SEQAN_DEFINE_TEST(match_test)
 
 SEQAN_DEFINE_TEST(strip_adapter_test)
 {
-    typedef seqan::String<seqan::Dna5Q> TAda;
+    typedef std::string TAda;
     using AdapterSet = std::vector<AdapterItem>;
     AdapterSet adapterSet;
     using TRead = Read<seqan::Dna5QString>;
@@ -194,7 +194,7 @@ SEQAN_DEFINE_TEST(strip_adapter_test)
 	int len = length(read.seq);
     // overlap=4, error_rate = 0.2, times = 1
     AdapterMatchSettings matchSettings(4, 0, 0.2, 0, 1);
-    AdapterTrimmingStats stats;
+    AdapterTrimmingStats<unsigned char> stats;
     stats.numRemoved.resize(1);
  
     int removed = stripAdapter(read.seq, stats, AdapterSet{ AdapterItem(ada, AdapterItem::end3, 0,0, false, false) }, matchSettings, StripAdapterDirection<adapterDirection::forward>());
@@ -275,43 +275,43 @@ SEQAN_DEFINE_TEST(align_adapter_test)
 
 	TSeq seq = TSeq("AAAAAAAAAATTTTT");
 	TAda ada = TAda("TTTTTTTTTTT");
-	std::pair<int, seqan::Align<TSeq> > pair;
-    alignPair(pair, seq, ada, AlignAlgorithm::NeedlemanWunsch());
-	SEQAN_ASSERT_EQ(pair.first, 5);
+    AlignResult<unsigned char> result;
+    alignPair(result, seq, ada, AlignAlgorithm::NeedlemanWunsch());
+	SEQAN_ASSERT_EQ(result.score, 5);
 
 	seq = TSeq("AAAAAAAAAATATATTA");
 	//                    |||||		   
 	ada = TAda(       "GGTTATATATTT"); // front and back gaps are allowed
-    alignPair(pair, seq, ada, AlignAlgorithm::NeedlemanWunsch());
-	SEQAN_ASSERT_EQ(pair.first, 2);
+    alignPair(result, seq, ada, AlignAlgorithm::NeedlemanWunsch());
+	SEQAN_ASSERT_EQ(result.score, 2);
 
 	seq = TSeq("AAAAAAAAAATATATTA");
 	//                || |||||||		   
 	ada = TAda(     "GAATATATATTT"); // front and back gaps are allowed
-    alignPair(pair, seq, ada, AlignAlgorithm::NeedlemanWunsch());
-	SEQAN_ASSERT_EQ(pair.first, 6);
+    alignPair(result, seq, ada, AlignAlgorithm::NeedlemanWunsch());
+	SEQAN_ASSERT_EQ(result.score, 6);
 
     unsigned int rightOverhang = 4;
     unsigned int leftOverhang = 4;
     seq = TSeq("CATCATAAAAAATATATTA");
     //          ||||||		   
     ada = TAda("CATCAT"); 
-    alignPair(pair, seq, ada, leftOverhang, rightOverhang, AlignAlgorithm::NeedlemanWunsch());
-    SEQAN_ASSERT_EQ(pair.first, 6);
+    alignPair(result, seq, ada, leftOverhang, rightOverhang, AlignAlgorithm::NeedlemanWunsch());
+    SEQAN_ASSERT_EQ(result.score, 6);
 
     // just enough overlap
     seq = TSeq(    "CATCATAAAAAATATATTA");
     //              ||||		   
     ada = TAda("GGGGCATC"); 
-    alignPair(pair, seq, ada, leftOverhang, rightOverhang, AlignAlgorithm::NeedlemanWunsch());
-    SEQAN_ASSERT_EQ(pair.first, 4);
+    alignPair(result, seq, ada, leftOverhang, rightOverhang, AlignAlgorithm::NeedlemanWunsch());
+    SEQAN_ASSERT_EQ(result.score, 4);
 
     // not enough overlap, should report score 0
     seq = TSeq(     "CATCATAAAAAATATATTA");
     //               |||		   
     ada = TAda("GGGGGCAT");
-    alignPair(pair, seq, ada, leftOverhang, rightOverhang, AlignAlgorithm::NeedlemanWunsch());
-    SEQAN_ASSERT_EQ(pair.first, 0);
+    alignPair(result, seq, ada, leftOverhang, rightOverhang, AlignAlgorithm::NeedlemanWunsch());
+    SEQAN_ASSERT_EQ(result.score, 0);
 }
 
 SEQAN_DEFINE_TEST(strip_pair_test)

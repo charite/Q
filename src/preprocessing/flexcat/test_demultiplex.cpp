@@ -124,7 +124,7 @@ int loadBarcodes(char const * path, std::vector<std::string>& bcids, std::vector
 // Checks the correctness of the check function which checks the size of the barcodes and reads.
 SEQAN_DEFINE_TEST(check_test)
 {
-	GeneralStats generalStats;
+	GeneralStats<unsigned char> generalStats;
     using TRead = Read<seqan::Dna5QString>;
     std::vector<TRead> reads(5);
     
@@ -413,7 +413,7 @@ SEQAN_DEFINE_TEST(demultiplex_Exact_test)
     //indexRequire(indexSet, FibreSA());
     BarcodeMatcher BarcodeMatcher(barcodes);
 
-    GeneralStats stats(length(expectedReads),0);
+    GeneralStats<unsigned char> stats(length(expectedReads),0);
     demultiplex(reads, BarcodeMatcher, false, stats, ExactBarcodeMatching(), false);
 
     for (unsigned i = 0; i < length(expectedReads); ++i)
@@ -464,7 +464,7 @@ SEQAN_DEFINE_TEST(demultiplex_Exact_Multiplex_test)
 
     BarcodeMatcher BarcodeMatcher(barcodes);
 
-    GeneralStats stats(length(expectedReads),0);
+    GeneralStats<unsigned char> stats(length(expectedReads),0);
     demultiplex(reads, BarcodeMatcher, false, stats, ExactBarcodeMatching(), false);
 
     for (unsigned i = 0; i < length(expectedReads); ++i)
@@ -499,7 +499,7 @@ SEQAN_DEFINE_TEST(Input_test)
     BarcodeMatcher BarcodeMatcher(barcodes);
 
 	StringSet<String<int> > groups;
-    GeneralStats stats(barcodes.size(),0);
+    GeneralStats<unsigned char> stats(barcodes.size(),0);
     demultiplex(reads, BarcodeMatcher, false, stats, ExactBarcodeMatching(), false);
 }
 

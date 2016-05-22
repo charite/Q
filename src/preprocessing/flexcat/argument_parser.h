@@ -690,7 +690,8 @@ int loadAdapterTrimmingParams(seqan::ArgumentParser const& parser, AdapterTrimmi
         unsigned int adapterId = 0;
         while (!atEnd(adapterInFile))
         {
-            readRecord(id, adapterItem.seq, adapterInFile);
+            auto tempSeq = adapterItem.getSeq();
+            readRecord(id, tempSeq, adapterInFile);
             if (id.find("3'") != std::string::npos)
                 adapterItem.adapterEnd = AdapterItem::end3;
             else if (id.find("5'") != std::string::npos)
@@ -705,6 +706,7 @@ int loadAdapterTrimmingParams(seqan::ArgumentParser const& parser, AdapterTrimmi
 
             adapterItem.overhang = oh;
             adapterItem.id = adapterId++;
+            adapterItem.setSeq(tempSeq);
             seqan::appendValue(params.adapters, adapterItem);
         }
     }

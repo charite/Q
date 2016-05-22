@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8.2)
-project (Flexcat)
+project (flexcat)
 message (STATUS "Configuring flexcat")
 
 set (SEQAN_APP_VERSION "1.0.0")
@@ -29,19 +29,18 @@ endif (NOT CXX14_FOUND)
 set (SEQAN_FIND_DEPENDENCIES ZLIB BZip2)
 find_package (SeqAn REQUIRED)
 
-#find_package(Boost 1.36.0)
-#if(NOT Boost_FOUND)
-    #message (STATUS "  flexcat cannot be built without Boost.")
-    #return ()
-#endif()
+find_package(Boost 1.36.0)
+if(NOT Boost_FOUND)
+    message (STATUS "  flexcat cannot be built without Boost.")
+    return ()
+endif()
 
 # ----------------------------------------------------------------------------
 # Build Setup
 # ----------------------------------------------------------------------------
 
 # Add include directories.
-#include_directories (${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}  ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
-include_directories (${SEQAN_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
+include_directories (${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}  ${CMAKE_CURRENT_SOURCE_DIR}/../shared_headers)
 
 # Add definitions set by find_package (SeqAn).
 add_definitions (${SEQAN_DEFINITIONS})
@@ -93,7 +92,7 @@ set_target_properties (flexcatFilter PROPERTIES COMPILE_DEFINITIONS "FLEX_PROG=F
 
 # Set CXX flags 
 if (NOT MSVC)
-set (CMAKE_CXX_FLAGS "-pthread ${CMAKE_CXX_FLAGS}")
+set (CMAKE_CXX_FLAGS "-march=corei7-avx -mavx2 -pthread ${CMAKE_CXX_FLAGS}")
 endif (NOT MSVC)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN_CXX_FLAGS} ${CXX11_CXX_FLAGS} ${CXX14_CXX_FLAGS}")
