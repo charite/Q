@@ -368,8 +368,8 @@ struct compareAdapter<2>
         matches += popcnt64(_mm_and_si128(matchesMask, ONE_16));
         //ambiguous += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(NMask, ONE_128),0));
         //matches += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(matchesMask, ONE_128), 0));
-        readIterator += 8;
-        adapterIterator += 8;
+        readIterator += 2;
+        adapterIterator += 2;
     }
 };
 
@@ -389,8 +389,8 @@ struct compareAdapter<3>
         matches += popcnt64(_mm_and_si128(matchesMask, ONE_24));
         //ambiguous += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(NMask, ONE_128),0));
         //matches += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(matchesMask, ONE_128), 0));
-        readIterator += 8;
-        adapterIterator += 8;
+        readIterator += 3;
+        adapterIterator += 3;
     }
 };
 
@@ -410,8 +410,8 @@ struct compareAdapter<4>
         matches += popcnt64(_mm_and_si128(matchesMask, ONE_32));
         //ambiguous += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(NMask, ONE_128),0));
         //matches += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(matchesMask, ONE_128), 0));
-        readIterator += 8;
-        adapterIterator += 8;
+        readIterator += 4;
+        adapterIterator += 4;
     }
 };
 
@@ -431,8 +431,8 @@ struct compareAdapter<5>
         matches += popcnt64(_mm_and_si128(matchesMask, ONE_40));
         //ambiguous += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(NMask, ONE_128),0));
         //matches += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(matchesMask, ONE_128), 0));
-        readIterator += 8;
-        adapterIterator += 8;
+        readIterator += 5;
+        adapterIterator += 5;
     }
 };
 
@@ -452,8 +452,8 @@ struct compareAdapter<6>
         matches += popcnt64(_mm_and_si128(matchesMask, ONE_48));
         //ambiguous += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(NMask, ONE_128),0));
         //matches += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(matchesMask, ONE_128), 0));
-        readIterator += 8;
-        adapterIterator += 8;
+        readIterator += 6;
+        adapterIterator += 6;
     }
 };
 
@@ -473,8 +473,8 @@ struct compareAdapter<7>
         matches += popcnt64(_mm_and_si128(matchesMask, ONE_56));
         //ambiguous += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(NMask, ONE_128),0));
         //matches += _mm_popcnt_u64(_mm_extract_epi64(_mm_and_si128(matchesMask, ONE_128), 0));
-        readIterator += 8;
-        adapterIterator += 8;
+        readIterator += 7;
+        adapterIterator += 7;
     }
 };
 

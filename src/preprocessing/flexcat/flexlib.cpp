@@ -287,7 +287,7 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
             else
                 outStream << " 5'";
             outStream << "-adapter, ";
-            outStream << generalStats.adapterTrimmingStats.numRemoved[adapterItem.id] << "x, " << adapterItem.getSeq() << std::endl;
+            outStream << (unsigned int)generalStats.adapterTrimmingStats.numRemoved[adapterItem.id] << "x, " << adapterItem.getSeq() << std::endl;
             ++i;
         }
         outStream << std::endl;
@@ -296,16 +296,16 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
         outStream << std::endl;
         if (totalRemoved != 0)
         {
-            int mean = generalStats.adapterTrimmingStats.overlapSum / totalRemoved;
+            unsigned int mean = generalStats.adapterTrimmingStats.overlapSum / totalRemoved;
             outStream << "Adapter sizes:\n";
-            outStream << "Min: " << generalStats.adapterTrimmingStats.minOverlap << ", Mean: " << mean
-                << ", Max: " << generalStats.adapterTrimmingStats.maxOverlap << "\n\n";
+            outStream << "Min: " << (unsigned int)generalStats.adapterTrimmingStats.minOverlap << ", Mean: " << mean
+                << ", Max: " << (unsigned int)generalStats.adapterTrimmingStats.maxOverlap << "\n\n";
         }
         outStream << "Number of removed adapters\nmismatches\t0\t1\t2\t3\t4\t5\t6\t7\t8\nlength" << std::endl;
         i = 0;
         for (const auto adaptersSizeX : generalStats.adapterTrimmingStats.removedLength)
         {
-            outStream << ++i<<"\t";
+            outStream << (unsigned int)++i<<"\t";
             for (const auto adaptersSizeXMismatchesN : adaptersSizeX)
                 outStream << "\t" << (unsigned int)adaptersSizeXMismatchesN;
             outStream << std::endl;
@@ -315,11 +315,15 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
     // Print processing and IO time. IO is (approx.) the whole loop without the processing part.
     if (timing)
     {
+        const float totalTime = generalStats.writeTime + generalStats.processTime + generalStats.readTime;
         outStream << std::endl;
         outStream << "Time statistics:\n";
         outStream << "==================\n";
-        outStream << "Processing time: " << std::setw(5) << generalStats.processTime << " seconds.\n";
-        outStream << "       I/O time: " << std::setw(5) << generalStats.ioTime << " seconds.\n";
+        outStream << "read time        : " << std::setw(5) << generalStats.readTime << " seconds  " << generalStats.readTime/totalTime*100<< "%.\n";
+        outStream << "Processing time* : " << std::setw(5) << generalStats.processTime << " seconds  " << generalStats.processTime / totalTime * 100 << "%.\n";
+        outStream << "write time       : " << std::setw(5) << generalStats.writeTime << " seconds  " << generalStats.writeTime / totalTime * 100 << "%.\n";
+        outStream << "------------------\n";
+        outStream << "total time       : " << std::setw(5) << generalStats.writeTime + generalStats.processTime + generalStats.readTime << " seconds.\n";
         outStream << std::endl;
     }
 }
@@ -330,9 +334,11 @@ unsigned int readReads(std::vector<TRead<TSeq>>& reads, const unsigned int recor
     reads.resize(records);
     unsigned int i = 0;
     TSeq seq;
+    std::string id;
     while (i < records && !atEnd(inputFileStreams.fileStream1))
     {
-        readRecord(reads[i].id, seq, inputFileStreams.fileStream1);
+        readRecord(id, seq, inputFileStreams.fileStream1);
+        reads[i].id = id;
         reads[i].seq = seq;
         ++i;
     }
@@ -366,23 +372,65 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
     TReadWriter readWriter(outputStreams, programParams);
 
     unsigned int numReads = 0;
-    auto readReader = [&numReads, &programParams, &inputFileStreams]() {
+    auto readReader = [&numReads, &programParams, &inputFileStreams, &demultiplexingParams, &adapterTrimmingParams]() {
+        const auto t1 = std::chrono::steady_clock::now();
+        TStats stats = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
         auto item = std::make_unique<std::vector<TRead<TSeq>>>();
         if (numReads > programParams.firstReads)    // maximum read number reached -> dont do further reads
         {
-            item.release();   // return empty unique_ptr to signal end
-            return std::move(item);
+            // return empty unique_ptr to signal eof
+            item.release();
+            return std::unique_ptr<std::tuple<decltype(item), TStats>>();
         }
         readReads(*item, programParams.records, inputFileStreams);
         loadMultiplex(*item, programParams.records, inputFileStreams.fileStreamMultiplex);
         numReads += item->size();
         if (item->empty())    // no more reads available
-            item.release();   // return empty unique_ptr to signal eof
-        return std::move(item);
+        {
+            // return empty unique_ptr to signal eof
+            item.release();
+            return std::unique_ptr<std::tuple<decltype(item), TStats>>();
+        }
+        stats.readTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+        return std::make_unique<std::tuple<decltype(item), TStats>>(std::make_tuple(std::move(item), stats));
+    };
+    auto readReaderReuse = [&numReads, &programParams, &inputFileStreams, &demultiplexingParams, &adapterTrimmingParams](std::unique_ptr<std::tuple<std::unique_ptr<std::vector<TRead<TSeq>>>,TStats>>&& usedItem) {
+        const auto t1 = std::chrono::steady_clock::now();
+
+        auto item = std::move(usedItem);
+        if (item == nullptr)
+        {
+            item = std::make_unique<std::tuple<std::unique_ptr<std::vector<TRead<TSeq>>>, TStats>>();
+            std::get<0>(*item) = std::make_unique<std::vector<TRead<TSeq>>>();
+            std::get<1>(*item) = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
+        }
+        //if(std::get<0>(*item) == nullptr) // this check is not necessary
+        //    std::get<0>(*item) = std::make_unique<std::vector<TRead<TSeq>>>();
+        TStats& stats = std::get<1>(*item);
+        auto& reads = *std::get<0>(*item);
+        if (numReads > programParams.firstReads)    // maximum read number reached -> dont do further reads
+        {
+            // return empty unique_ptr to signal eof
+            item.release();
+            return std::unique_ptr<std::tuple<std::unique_ptr<std::vector<TRead<TSeq>>>, TStats>>();
+        }
+        readReads(reads, programParams.records, inputFileStreams);
+        loadMultiplex(reads, programParams.records, inputFileStreams.fileStreamMultiplex);
+        numReads += reads.size();
+        if (reads.empty())    // no more reads available
+        {
+            // return empty unique_ptr to signal eof
+            return std::unique_ptr<std::tuple<std::unique_ptr<std::vector<TRead<TSeq>>>, TStats>>();
+        }
+        stats.readTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+        return item;
     };
 
-    auto transformer = [&](auto reads){
-        TStats stats = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
+
+
+    auto transformer = [&](auto t){
+        auto reads = std::move(std::get<0>(*t));
+        TStats& stats = std::get<1>(*t);
         TlsBlockAdapterTrimming<typename TStats::TAdapterTrimmingStats> tlsBlock(stats.adapterTrimmingStats, adapterTrimmingParams);
         stats.readCount = reads->size();
         preprocessingStage(processingParams, *reads, stats);
@@ -391,26 +439,47 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
         adapterTrimmingStage(*reads, tlsBlock);
         qualityTrimmingStage(qualityTrimmingParams, *reads, stats);
         postprocessingStage(processingParams, *reads, stats);
-        return std::make_unique<std::tuple<decltype(reads), decltype(demultiplexingParams.barcodeIds), decltype(stats) >>(std::make_tuple(std::move(reads), demultiplexingParams.barcodeIds, stats));
+        return std::make_unique<std::tuple<decltype(reads), decltype(demultiplexingParams.barcodeIds), TStats>>(std::make_tuple(std::move(reads), demultiplexingParams.barcodeIds, stats));
     };
 
     TStats generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
 
+    bool reuse = true;
     if (programParams.num_threads > 1)
     {
-        if (programParams.ordered)
+        if (reuse)
         {
-            auto ptc_unit = ptc::ordered_ptc(readReader, transformer, readWriter, programParams.num_threads);
-            ptc_unit->start();
-            auto f = ptc_unit->get_future();
-            stats = f.get();
+            if (programParams.ordered)
+            {
+                auto ptc_unit = ptc::ordered_ptc(readReaderReuse, transformer, readWriter, programParams.num_threads);
+                ptc_unit->start();
+                auto f = ptc_unit->get_future();
+                stats = f.get();
+            }
+            else
+            {
+                auto ptc_unit = ptc::unordered_ptc(readReaderReuse, transformer, readWriter, programParams.num_threads);
+                ptc_unit->start();
+                auto f = ptc_unit->get_future();
+                stats = f.get();
+            }
         }
         else
         {
-            auto ptc_unit = ptc::unordered_ptc(readReader, transformer, readWriter, programParams.num_threads);
-            ptc_unit->start();
-            auto f = ptc_unit->get_future();
-            stats = f.get();
+            if (programParams.ordered)
+            {
+                auto ptc_unit = ptc::ordered_ptc(readReader, transformer, readWriter, programParams.num_threads);
+                ptc_unit->start();
+                auto f = ptc_unit->get_future();
+                stats = f.get();
+            }
+            else
+            {
+                auto ptc_unit = ptc::unordered_ptc(readReader, transformer, readWriter, programParams.num_threads);
+                ptc_unit->start();
+                auto f = ptc_unit->get_future();
+                stats = f.get();
+            }
         }
     }
     else
@@ -419,19 +488,18 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
         const auto tMain = std::chrono::steady_clock::now();
         while (generalStats.readCount < programParams.firstReads)
         {
-            readSet.reset(new std::vector<TRead<TSeq>>(programParams.records));
             auto t1 = std::chrono::steady_clock::now();
+            readSet.reset(new std::vector<TRead<TSeq>>(programParams.records));
             const auto numReadsRead = readReads(*readSet, programParams.records, inputFileStreams);
-            generalStats.ioTime += std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
             if (numReadsRead == 0)
                 break;
-
-            auto res = transformer(std::move(readSet));
+            generalStats.readTime += std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+            auto res = transformer(std::make_unique<std::tuple<decltype(readSet),decltype(generalStats)>>(std::make_tuple(std::move(readSet), generalStats)));
             generalStats += std::get<2>(*res);
 
             t1 = std::chrono::steady_clock::now();
             outputStreams.writeSeqs(std::move(*(std::get<0>(*res))), demultiplexingParams.barcodeIds);
-            generalStats.ioTime += std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+            generalStats.writeTime += std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
 
             // Print information
             const auto deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - tMain).count();
@@ -452,7 +520,7 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
 
 int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
 {
-    SEQAN_PROTIMESTART(loopTime);
+    const auto loopTime = std::chrono::steady_clock::now();
     seqan::ArgumentParser parser = initParser(flexiProgram);
 
     // Additional checks
@@ -833,8 +901,8 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         else
             mainLoop(Read<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
 
-        double loop = SEQAN_PROTIMEDIFF(loopTime);
-        generalStats.processTime = loop - generalStats.ioTime;
+        const auto loop = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - loopTime).count();
+        generalStats.processTime = loop - generalStats.readTime - generalStats.writeTime;
 
         printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
         if (isSet(parser, "st"))
@@ -863,8 +931,8 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         else
             mainLoop(ReadPairedEnd<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
 
-        double loop = SEQAN_PROTIMEDIFF(loopTime);
-        generalStats.processTime = loop - generalStats.ioTime;
+        const auto loop = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - loopTime).count();
+        generalStats.processTime = loop - generalStats.readTime - generalStats.writeTime;
 
         printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
         if (isSet(parser, "st"))

@@ -63,14 +63,15 @@ struct GeneralStats
     unsigned long uncalledBases;//Number of uncalled bases (evtl. Masked) in surviving sequences
     unsigned removedShort;  //Number of deleted sequences due to shortness.
     unsigned int readCount;
-    double processTime;
-    double ioTime;
+    float processTime;
+    float readTime;
+    float writeTime;
     std::vector<unsigned int> matchedBarcodeReads;
 
     using TAdapterTrimmingStats = AdapterTrimmingStats<TReadLen>;
     TAdapterTrimmingStats adapterTrimmingStats;
 
-    GeneralStats(): removedN(0), removedDemultiplex(0), removedQuality(0), uncalledBases(0), removedShort(0), readCount(0), processTime(0), ioTime(0) {};
+    GeneralStats(): removedN(0), removedDemultiplex(0), removedQuality(0), uncalledBases(0), removedShort(0), readCount(0), processTime(0), readTime(0), writeTime(0) {};
     GeneralStats(unsigned int N, unsigned int numAdapters) : GeneralStats() 
     { 
         matchedBarcodeReads.resize(N); 
@@ -115,7 +116,8 @@ struct GeneralStats
         removedShort += rhs.removedShort;
         readCount += rhs.readCount;
         processTime += rhs.processTime;
-        ioTime += rhs.ioTime;
+        readTime += rhs.readTime;
+        writeTime += rhs.writeTime;
         if (matchedBarcodeReads.size() != rhs.matchedBarcodeReads.size())
             matchedBarcodeReads.resize(rhs.matchedBarcodeReads.size());
         matchedBarcodeReads = matchedBarcodeReads + rhs.matchedBarcodeReads;

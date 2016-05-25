@@ -45,7 +45,9 @@ struct ReadBase
     std::string id;
     int demuxResult;
 
-    ReadBase() = default;
+    ReadBase() 
+    {
+    }
     ReadBase(const ReadBase& rhs) = default;
     ReadBase(ReadBase&& rhs) noexcept(std::is_nothrow_move_constructible<TSeq>::value)
     {
@@ -75,22 +77,6 @@ struct ReadBase
 template<typename TSeq>
 struct Read : ReadBase<TSeq>
 {
-    //Read() = default;
-    //Read(const Read& rhs) = default;
-    //Read(Read&& rhs) noexcept
-    //{
-    //    ReadBase<TSeq>::ReadBase(std::move(rhs));
-    //}
-    //bool operator==(const Read& rhs) const
-    //{
-    //    return ReadBase<TSeq>::operator==(rhs);
-    //}
-    //Read& operator=(const Read& rhs) = default;
-    //Read& operator=(const Read&& rhs) noexcept
-    //{
-    //    ReadBase<TSeq>::operator=(std::move(rhs));
-    //    return *this;
-    //}
 };
 
 template<typename TSeq>
