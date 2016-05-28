@@ -489,6 +489,7 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
         const auto tMain = std::chrono::steady_clock::now();
         while (stats.readCount < programParams.firstReads)
         {
+            generalStats = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
             auto t1 = std::chrono::steady_clock::now();
             readSet.reset(new std::vector<TRead<TSeq>>(programParams.records));
             const auto numReadsRead = readReads(*readSet, programParams.records, inputFileStreams);
@@ -499,7 +500,7 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
             generalStats = std::get<2>(*res);
 
             t1 = std::chrono::steady_clock::now();
-            outputStreams.writeSeqs(std::move(*(std::get<0>(*res))), demultiplexingParams.barcodeIds);
+            outputStreams.writeSeqs(*(std::get<0>(*res)), demultiplexingParams.barcodeIds);
             generalStats.writeTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
 
             // Print information

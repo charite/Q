@@ -74,6 +74,10 @@ public:
     OutputStreams(const std::string& base, bool /*noQuality*/) : basePath(base)
     {
         std::vector<std::string> tmpExtensions = seqan::SeqFileOut::getFileExtensions();
+        tmpExtensions.push_back(".fasta");
+        tmpExtensions.push_back(".fastq");
+        tmpExtensions.push_back(".fastq.gz");
+        tmpExtensions.push_back(".fastq.gz");
         for(const auto& tmpExtension : tmpExtensions)
         {
             if (seqan::endsWith(basePath, tmpExtension))
