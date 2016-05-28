@@ -429,6 +429,7 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
 
 
     auto transformer = [&](auto t){
+        const auto t1 = std::chrono::steady_clock::now();
         auto reads = std::move(std::get<0>(*t));
         TStats& stats = std::get<1>(*t);
         TlsBlockAdapterTrimming<typename TStats::TAdapterTrimmingStats> tlsBlock(stats.adapterTrimmingStats, adapterTrimmingParams);
@@ -439,6 +440,7 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
         adapterTrimmingStage(*reads, tlsBlock);
         qualityTrimmingStage(qualityTrimmingParams, *reads, stats);
         postprocessingStage(processingParams, *reads, stats);
+        stats.processTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
         return std::make_unique<std::tuple<decltype(reads), decltype(demultiplexingParams.barcodeIds), TStats>>(std::make_tuple(std::move(reads), demultiplexingParams.barcodeIds, stats));
     };
 
@@ -891,65 +893,43 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
     // Start processing. Different functions are needed for one or two input files.
     std::cout << "\nProcessing reads...\n" << std::endl;
 
+    GeneralStats<unsigned char> generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
     if (fileCount == 1)
     {
-        GeneralStats<unsigned char> generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
         if (!demultiplexingParams.run)
             outputStreams.addStream("", 0, useDefault);
         if(demultiplexingParams.runx)
             mainLoop(ReadMultiplex<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
         else
             mainLoop(Read<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
-
-        const auto loop = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - loopTime).count();
-        generalStats.processTime = loop - generalStats.readTime - generalStats.writeTime;
-
-        printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
-        if (isSet(parser, "st"))
-        {
-            std::fstream statFile;
-#ifdef _MSC_VER
-            statFile.open(std::string(seqan::toCString(outputStreams.getBaseFilename())) + "_flexcat_statistics.txt", std::fstream::out, _SH_DENYNO);
-#else
-            statFile.open(std::string(seqan::toCString(outputStreams.getBaseFilename())) + "_flexcat_statistics.txt", std::fstream::out);
-#endif
-            statFile << "command line: ";
-            for (int i = 0;i < argc;++i)
-                statFile << argv[i] << " ";
-            statFile << std::endl;
-            printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), statFile);
-            statFile.close();
-        }
     }
     else
     {
-        GeneralStats<unsigned int> generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
         if (!demultiplexingParams.run)
             outputStreams.addStreams("", "", 0, useDefault);
         if (demultiplexingParams.runx)
             mainLoop(ReadMultiplexPairedEnd<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
         else
             mainLoop(ReadPairedEnd<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
+    }
+    const auto loop = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - loopTime).count();
+    generalStats.processTime /= programParams.num_threads;
 
-        const auto loop = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - loopTime).count();
-        generalStats.processTime = loop - generalStats.readTime - generalStats.writeTime;
-
-        printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
-        if (isSet(parser, "st"))
-        {
-            std::fstream statFile;
+    printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
+    if (isSet(parser, "st"))
+    {
+        std::fstream statFile;
 #ifdef _MSC_VER
-            statFile.open(std::string(seqan::toCString(outputStreams.getBaseFilename())) + "_flexcat_statistics.txt", std::fstream::out, _SH_DENYNO);
+        statFile.open(std::string(seqan::toCString(outputStreams.getBaseFilename())) + "_flexcat_statistics.txt", std::fstream::out, _SH_DENYNO);
 #else
-            statFile.open(std::string(seqan::toCString(outputStreams.getBaseFilename())) + "_flexcat_statistics.txt", std::fstream::out);
+        statFile.open(std::string(seqan::toCString(outputStreams.getBaseFilename())) + "_flexcat_statistics.txt", std::fstream::out);
 #endif
-            statFile << "command line: ";
-            for (int i = 0;i < argc;++i)
-                statFile << argv[i] << " ";
-            statFile << std::endl;
-            printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), statFile);
-            statFile.close();
-        }
+        statFile << "command line: ";
+        for (int i = 0;i < argc;++i)
+            statFile << argv[i] << " ";
+        statFile << std::endl;
+        printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), statFile);
+        statFile.close();
     }
     return 0;
 }
