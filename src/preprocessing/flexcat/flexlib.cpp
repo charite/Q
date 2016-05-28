@@ -522,7 +522,6 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
 
 int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
 {
-    const auto loopTime = std::chrono::steady_clock::now();
     seqan::ArgumentParser parser = initParser(flexiProgram);
 
     // Additional checks
