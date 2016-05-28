@@ -189,7 +189,7 @@ void postprocessingStage(const ProcessingParams& params, std::vector<TRead>& rea
 
 // END PROGRAM STAGES ---------------------
 template <typename TOutStream, typename TStats>
-void printStatistics(const ProgramParams& programParams, const TStats& generalStats, DemultiplexingParams& demultiplexParams,
+void printStatistics(const ProgramParams& programParams, const TStats& generalStats, const float totalTime, DemultiplexingParams& demultiplexParams,
                 const AdapterTrimmingParams& adapterParams, const OutputStreams& outputStreams, const bool timing, TOutStream &outStream)
 {
     bool paired = programParams.fileCount == 2;
@@ -315,7 +315,6 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
     // Print processing and IO time. IO is (approx.) the whole loop without the processing part.
     if (timing)
     {
-        const float totalTime = generalStats.writeTime + generalStats.processTime + generalStats.readTime;
         outStream << std::endl;
         outStream << "Time statistics:\n";
         outStream << "==================\n";
@@ -323,7 +322,7 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
         outStream << "Processing time* : " << std::setw(5) << generalStats.processTime << " seconds  " << generalStats.processTime / totalTime * 100 << "%.\n";
         outStream << "write time       : " << std::setw(5) << generalStats.writeTime << " seconds  " << generalStats.writeTime / totalTime * 100 << "%.\n";
         outStream << "------------------\n";
-        outStream << "total time       : " << std::setw(5) << generalStats.writeTime + generalStats.processTime + generalStats.readTime << " seconds.\n";
+        outStream << "total time       : " << std::setw(5) << totalTime << " seconds.\n";
         outStream << std::endl;
     }
 }
@@ -488,29 +487,29 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
     {
         std::unique_ptr<std::vector<TRead<TSeq>>> readSet;
         const auto tMain = std::chrono::steady_clock::now();
-        while (generalStats.readCount < programParams.firstReads)
+        while (stats.readCount < programParams.firstReads)
         {
             auto t1 = std::chrono::steady_clock::now();
             readSet.reset(new std::vector<TRead<TSeq>>(programParams.records));
             const auto numReadsRead = readReads(*readSet, programParams.records, inputFileStreams);
             if (numReadsRead == 0)
                 break;
-            generalStats.readTime += std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+            generalStats.readTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
             auto res = transformer(std::make_unique<std::tuple<decltype(readSet),decltype(generalStats)>>(std::make_tuple(std::move(readSet), generalStats)));
-            generalStats += std::get<2>(*res);
+            generalStats = std::get<2>(*res);
 
             t1 = std::chrono::steady_clock::now();
             outputStreams.writeSeqs(std::move(*(std::get<0>(*res))), demultiplexingParams.barcodeIds);
-            generalStats.writeTime += std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+            generalStats.writeTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
 
             // Print information
             const auto deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - tMain).count();
             if (programParams.showSpeed)
-                std::cout << "\rreads processed: " << generalStats.readCount << "   (" << static_cast<int>(generalStats.readCount / deltaTime) << " Reads/s)";
+                std::cout << "\rreads processed: " << stats.readCount << "   (" << static_cast<int>(stats.readCount / deltaTime) << " Reads/s)";
             else
-                std::cout << "\rreads processed: " << generalStats.readCount;
+                std::cout << "\rreads processed: " << stats.readCount;
+            stats += generalStats;
         }
-        stats = generalStats;
     }
     return 0;
 }
@@ -522,6 +521,7 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
 
 int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
 {
+    auto t1 = std::chrono::steady_clock::now();
     seqan::ArgumentParser parser = initParser(flexiProgram);
 
     // Additional checks
@@ -911,10 +911,10 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         else
             mainLoop(ReadPairedEnd<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
     }
-    const auto loop = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - loopTime).count();
     generalStats.processTime /= programParams.num_threads;
 
-    printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
+    const float totalTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();;
+    printStatistics(programParams, generalStats, totalTime, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
     if (isSet(parser, "st"))
     {
         std::fstream statFile;
@@ -927,7 +927,7 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         for (int i = 0;i < argc;++i)
             statFile << argv[i] << " ";
         statFile << std::endl;
-        printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), statFile);
+        printStatistics(programParams, generalStats, totalTime, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), statFile);
         statFile.close();
     }
     return 0;
