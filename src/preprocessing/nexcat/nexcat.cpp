@@ -32,29 +32,36 @@ struct Statistics
 template <typename TStream>
 void printStatistics(TStream &stream, const Statistics &stats, const bool clusterFiltering, const bool tabbed=false)
 {
+    assert(stats.removedReads == stats.totalSamePositionReads);
     if (tabbed)
     {
-        stream << "Total reads" << "\t"<< stats.totalReads << std::endl;
-        stream << "Filtered reads (-fc Option)" << "\t" << stats.filteredReads << std::endl;
-        stream << "Mapped reads" << "\t" << stats.totalMappedReads << std::endl;
-        stream << "Non mappable reads" << "\t" << stats.couldNotMap << std::endl;
-        stream << "Non uniquely mappable reads" << "\t" << stats.couldNotMapUniquely << std::endl;
-        stream << "After barcode filtering" << "\t" << stats.totalMappedReads - stats.removedReads << "\t" << " (-" << stats.removedReads << ")" << std::endl;
-        stream << "PCR duplication rate" << "\t" << static_cast<float>(stats.removedReads) / static_cast<float>(stats.totalMappedReads) << std::endl;
-        stream << "Total duplet reads" << "\t" << stats.totalSamePositionReads << std::endl;
+        stream << "Total reads\t" << stats.totalReads << std::endl;
+        stream << "Filtered reads (-fc Option)\t" << stats.filteredReads << std::endl;
+        stream << "Non mappable reads\t" << stats.couldNotMap << std::endl;
+        stream << "Non uniquely mappable reads\t" << stats.couldNotMapUniquely << std::endl;
+        stream << std::endl;
+        stream << "Mapped reads\t" << stats.totalMappedReads << std::endl;
+        stream << "Total duplet reads\t" << stats.totalSamePositionReads << std::endl;
+        stream << std::endl;
+        stream << "After barcode filtering\t" << stats.totalMappedReads - stats.removedReads << std::endl;
+        stream << std::endl;
+        stream << "PCR duplication rate\t" << static_cast<float>(stats.removedReads) / static_cast<float>(stats.totalMappedReads) << std::endl;
         if (clusterFiltering)
-            stream << "After cluster filtering" << "\t" << stats.readsAfterFiltering << "\t" << " (-" << stats.totalMappedReads - stats.removedReads - stats.readsAfterFiltering << ")" << std::endl;
+            stream << "After cluster filtering\t" << stats.readsAfterFiltering << "\t(-" << stats.totalMappedReads - stats.removedReads - stats.readsAfterFiltering << ")" << std::endl;
     }
     else
     {
         stream << "Total reads                          : " << stats.totalReads << std::endl;
-        stream << "Filtered reads (-fc Option)          : " << stats.filteredReads << std::endl;
+        stream << "Filtered reads (-fc Option)          : -" << stats.filteredReads << std::endl;
+        stream << "Non mappable reads                   : -" << stats.couldNotMap << std::endl;
+        stream << "Non uniquely mappable reads          : -" << stats.couldNotMapUniquely << std::endl;
+        stream << "                                     : -----------------" << std::endl;
         stream << "Mapped reads                         : " << stats.totalMappedReads << std::endl;
-        stream << "Non mappable reads                   : " << stats.couldNotMap << std::endl;
-        stream << "Non uniquely mappable reads          : " << stats.couldNotMapUniquely << std::endl;
-        stream << "After barcode filtering              : " << stats.totalMappedReads - stats.removedReads << " (-" << stats.removedReads << ")" << std::endl;
+        stream << "Total duplet reads                   : -" << stats.totalSamePositionReads << std::endl;
+        stream << "                                     : -----------------" << std::endl;
+        stream << "After barcode filtering              : " << stats.totalMappedReads - stats.removedReads << std::endl;
+        stream << std::endl;
         stream << "PCR duplication rate                 : " << static_cast<float>(stats.removedReads) / static_cast<float>(stats.totalMappedReads) << std::endl;
-        stream << "Total duplet reads                   : " << stats.totalSamePositionReads << std::endl;
         if (clusterFiltering)
             stream << "After cluster filtering              : " << stats.readsAfterFiltering << " (-" << stats.totalMappedReads - stats.removedReads - stats.readsAfterFiltering << ")" << std::endl;
     }
@@ -64,8 +71,8 @@ seqan::ArgumentParser buildParser(void)
 {
     seqan::ArgumentParser parser;
 
-    setCategory(parser, "Chip Nexus Processing");
-    setShortDescription(parser, "Preprocessing Pipeline for Chip-Nexus data");
+    setCategory(parser, "Chip Nexus/Exo Data Processing");
+    setShortDescription(parser, "Preprocessing Pipeline for Chip-Nexus and Chip-Exo data");
     addUsageLine(parser, " \\fI<READ_FILE1>\\fP \\fI[OPTIONS]\\fP");
     addDescription(parser,
         "");
@@ -159,7 +166,17 @@ struct SaveBam
     seqan::BamFileOut bamFileOut;
 };
 
-typedef std::map<BamRecordKey<WithBarcode>, unsigned int> OccurenceMap;
+typedef std::map<BamRecordKey<NoBarcode>, std::pair<unsigned int, unsigned int>> OccurenceMap;
+
+BamRecordKey<NoBarcode> getKey(const OccurenceMap::value_type& val)
+{
+    return val.first;
+}
+
+unsigned getUniqueFrequency(const OccurenceMap::value_type& val)
+{
+    return val.second.second;
+}
 
 template <typename TOccurenceMap, typename TArtifactWriter, typename TChromosomeFilter, typename TBamWriter>
 void processBamFile(seqan::BamFileIn& bamFileIn, const TArtifactWriter& artifactWriter, const TBamWriter& bamWriter, 
@@ -172,6 +189,8 @@ void processBamFile(seqan::BamFileIn& bamFileIn, const TArtifactWriter& artifact
     while (!atEnd(bamFileIn))
     {
         readRecord(record, bamFileIn);
+        if (atEnd(bamFileIn))
+            break;
         ++stats.totalReads;
         if (chromosomeFilter.find(record.rID) != chromosomeFilter.end())
         {
@@ -193,18 +212,21 @@ void processBamFile(seqan::BamFileIn& bamFileIn, const TArtifactWriter& artifact
 
         ++stats.totalMappedReads;
         const BamRecordKey<WithBarcode> key(record);
-        const auto findResult = occurenceMap.find(key);
-        if (findResult != occurenceMap.end())  // element is filtered out
+        const BamRecordKey<NoBarcode> pos(record);
+        const auto insertResult = keySet.insert(key);
+        OccurenceMap::mapped_type &mapItem = occurenceMap[pos];
+        if (!insertResult.second)  // element was not inserted because it existed already
         {
-            findResult->second++;
             artifactWriter(std::move(record));
             ++stats.removedReads; // stats.removedReads = total non unique hits
         }
         else
         {
-            occurenceMap.insert(findResult, std::pair<BamRecordKey<WithBarcode>, unsigned int>(key,(unsigned int)1));
             bamWriter(std::move(record));
+            ++mapItem.second; // unique hits
         }
+        // total hits
+        ++mapItem.first;
     }
 }
 
@@ -320,8 +342,8 @@ int main(int argc, char const * argv[])
         while (!atEnd(bamFileIn2))
         {
             readRecord(record, bamFileIn2);
-            const auto occurenceMapIt =  occurenceMap.find(BamRecordKey<WithBarcode>(record));
-            if (occurenceMapIt->second >= clusterSize)
+            const auto occurenceMapIt =  occurenceMap.find(BamRecordKey<NoBarcode>(record));
+            if (occurenceMapIt->second.second >= clusterSize)
             {
                 saveBam2.write(record);
                 ++stats.readsAfterFiltering;
@@ -349,112 +371,66 @@ int main(int argc, char const * argv[])
     seqan::BedRecord<seqan::Bed4> bedRecord;
     std::vector<unsigned> duplicationRateUnique;
     std::vector<unsigned> duplicationRate;
-    std::vector<unsigned> duplicationRateNUWORB;
-    std::vector<unsigned> duplicationRateNUWRRB;
-    std::vector<unsigned> duplicationRateNUWRPOS;
-    BamRecordKey<NoBarcode> last_position;
-    unsigned int hits = 0;
-    unsigned int unique_hits = 0;
-    unsigned int NUWRPOS = 0;
-    BamRecordKey<NoBarcode> current_position;
-    auto genomePositionIterator = occurenceMap.begin();
-    for(;genomePositionIterator!=occurenceMap.end();++genomePositionIterator)
+    std::for_each(occurenceMap.begin(), occurenceMap.end(), [&](const OccurenceMap::value_type& val)
     {
-        current_position = genomePositionIterator->first;
-        const auto NUWRRB = genomePositionIterator->second;
-        if (NUWRRB > 0)
+        if (bedOutputEnabled)
         {
-            if (duplicationRateNUWRRB.size() < NUWRRB)
-                duplicationRateNUWRRB.resize(NUWRRB);
-            ++duplicationRateNUWRRB[NUWRRB - 1];
+            bedRecord.rID = getKey(val).getRID();
+            bedRecord.ref = contigNames(bamFileIn.context)[bedRecord.rID];
+            if (getKey(val).isReverseStrand())    // reverse strand
+            {
+                // I think this -1 is not neccessary, but its here to reproduce the data from the CHipNexus paper exactly
+                bedRecord.beginPos = getKey(val).get5EndPosition();
+                bedRecord.endPos = bedRecord.beginPos + 1;
+                bedRecord.name = std::to_string(-static_cast<int32_t>(val.second.second)); // abuse name as val parameter in BedGraph
+                saveBedReverseStrand.write(bedRecord);
+            }
+            else    // forward strand
+            {
+                bedRecord.beginPos = getKey(val).get5EndPosition();
+                bedRecord.endPos = bedRecord.beginPos + 1;
+                bedRecord.name = std::to_string(val.second.second); // abuse name as val parameter in BedGraph
+                saveBedForwardStrand.write(bedRecord);
+            }
         }
-        hits += genomePositionIterator->second;
-        if(genomePositionIterator->second > 1)
-            NUWRPOS += genomePositionIterator->second;
-        ++unique_hits;
-
-        if (current_position != std::next(genomePositionIterator)->first || std::next(genomePositionIterator) == occurenceMap.end())
+        const auto uniqueHits = val.second.second;
+        const auto totalHits = val.second.first;
+        if (duplicationRateUnique.size() < uniqueHits)
+            duplicationRateUnique.resize(uniqueHits);
+        ++duplicationRateUnique[uniqueHits - 1];
+        if (totalHits - uniqueHits > 0)
         {
-            last_position = current_position;
-            if (bedOutputEnabled)
-            {
-                bedRecord.rID = genomePositionIterator->first.getRID();
-                bedRecord.ref = contigNames(bamFileIn.context)[bedRecord.rID];
-                if (genomePositionIterator->first.isReverseStrand())    // reverse strand
-                {
-                    // I think this -1 is not neccessary, but its here to reproduce the data from the CHipNexus paper exactly
-                    bedRecord.beginPos = genomePositionIterator->first.get5EndPosition();
-                    bedRecord.endPos = bedRecord.beginPos + 1;
-                    bedRecord.name = std::to_string(-static_cast<int32_t>(hits)); // abuse name as val parameter in BedGraph
-                    saveBedReverseStrand.write(bedRecord);
-                }
-                else    // forward strand
-                {
-                    bedRecord.beginPos = genomePositionIterator->first.get5EndPosition();
-                    bedRecord.endPos = bedRecord.beginPos + 1;
-                    bedRecord.name = std::to_string(hits); // abuse name as val parameter in BedGraph
-                    saveBedForwardStrand.write(bedRecord);
-                }
-            }
-            //std::cout<<"hits:"<<hits<< " unique:"<<unique_hits<<std::endl;
-
-            if (unique_hits > 0)
-            {
-                if (duplicationRateUnique.size() < unique_hits)
-                    duplicationRateUnique.resize(unique_hits);
-                ++duplicationRateUnique[unique_hits - 1];
-            }   
-            if (hits > 0)
-            {                        
-                if (duplicationRateNUWORB.size() < hits)
-                    duplicationRateNUWORB.resize(hits);
-                ++duplicationRateNUWORB[hits - 1];
-            }
-            const auto nonUniqueHits = hits - unique_hits;            
-            if (nonUniqueHits > 0)
-            {
-                if (duplicationRate.size() < nonUniqueHits)
-                    duplicationRate.resize(nonUniqueHits);
-                ++duplicationRate[nonUniqueHits - 1];
-            }
-            if (NUWRPOS > 0)
-            {
-                if (duplicationRateNUWRPOS.size() < NUWRPOS)
-                    duplicationRateNUWRPOS.resize(NUWRPOS);
-                ++duplicationRateNUWRPOS[NUWRPOS - 1];
-            }
-
-            hits = 0;
-            unique_hits = 0;
-            NUWRPOS = 0;
+            const auto nonUniqueHits = totalHits - uniqueHits;
+            if (duplicationRate.size() < nonUniqueHits)
+                duplicationRate.resize(nonUniqueHits);
+            ++duplicationRate[nonUniqueHits - 1];
         }
-    };
-    std::cout<<"done"<<std::endl;
+    });
     saveBedForwardStrand.close();
     saveBedReverseStrand.close();
 
-    std::fstream fs2,fs3;
+    std::fstream fs,fs2,fs3;
 #ifdef _MSC_VER
+    fs.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_positions.txt", std::fstream::out, _SH_DENYNO);
     fs2.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_reads.txt", std::fstream::out, _SH_DENYNO);
 #else
+    fs.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_positions.txt", std::fstream::out);
     fs2.open(getFilePrefix(seqan::toCString(fileName1)) + "_duplication_rate_reads.txt", std::fstream::out);
 #endif
-    fs2 << "level" << "\t" << "unique" << "\t" << "non_unique" << "\t" << "SDL"
-        << "\t" << "IMIBDL" << "\t" << "NUWRPOS"<< std::endl;
-    unsigned maxLen = std::max(std::max(std::max(std::max(duplicationRateUnique.size(), duplicationRate.size()), duplicationRateNUWORB.size()),
-        duplicationRateNUWRRB.size()),duplicationRateNUWRPOS.size());
+    fs << "rate" << "\t" << "unique" << "\t" << "non_unique" << std::endl;
+    fs2 << "rate" << "\t" << "unique" << "\t" << "non_unique" << std::endl;
+    unsigned maxLen = duplicationRateUnique.size() > duplicationRate.size() ? duplicationRateUnique.size() : duplicationRate.size();
     duplicationRateUnique.resize(maxLen);
     duplicationRate.resize(maxLen);
-    duplicationRateNUWORB.resize(maxLen);
-    duplicationRateNUWRRB.resize(maxLen);
-    duplicationRateNUWRPOS.resize(maxLen);
+    std::vector<unsigned>::iterator it = duplicationRateUnique.begin();
     unsigned int sumUniqueReads = 0;
     unsigned int sumNonUniqueReads = 0;
     for (unsigned i = 0; i < maxLen;++i)
     {
-        fs2 << i + 1 << "\t" << duplicationRateUnique[i]*(i+1) << "\t" << (duplicationRate[i])*(i+1) << "\t" <<
-            (duplicationRateNUWORB[i])*(i+1) << "\t" <<(duplicationRateNUWRRB[i])*(i+1) << "\t" <<(duplicationRateNUWRPOS[i])*(i+1) << std::endl;
-		stats.totalSamePositionReads += (duplicationRate[i] * (i+1));
+        if (i > 0)
+            stats.totalSamePositionReads += (duplicationRate[i] * (i+1));
+        fs << i + 1 << "\t" << duplicationRateUnique[i] << "\t" << duplicationRate[i] << std::endl;
+        fs2 << i + 1 << "\t" << duplicationRateUnique[i]*(i+1) << "\t" << (duplicationRate[i])*(i+1) <<std::endl;
         sumUniqueReads += duplicationRateUnique[i] * (i + 1);
         sumNonUniqueReads += duplicationRate[i] * (i+1);
     }
