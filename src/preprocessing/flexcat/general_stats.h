@@ -51,6 +51,12 @@ struct AdapterTrimmingStats
         overlapSum = 0;
         minOverlap = std::numeric_limits<TLen>::max();
         maxOverlap = 0;
+        auto it = numRemoved.begin();
+        while (it != numRemoved.end())
+        {
+            *it = 0;
+            ++it;
+        }
     }
 };
 
@@ -70,6 +76,19 @@ struct GeneralStats
 
     using TAdapterTrimmingStats = AdapterTrimmingStats<TReadLen>;
     TAdapterTrimmingStats adapterTrimmingStats;
+
+    void clear()
+    {
+        removedN = removedDemultiplex = removedQuality = uncalledBases = removedShort = readCount = 0;
+        processTime = readTime = writeTime = 0;
+        auto it = matchedBarcodeReads.begin();
+        while (it != matchedBarcodeReads.end())
+        {
+            *it = 0;
+            ++it;
+        }
+        adapterTrimmingStats.clear();
+    };
 
     GeneralStats(): removedN(0), removedDemultiplex(0), removedQuality(0), uncalledBases(0), removedShort(0), readCount(0), processTime(0), readTime(0), writeTime(0) {};
     GeneralStats(unsigned int N, unsigned int numAdapters) : GeneralStats() 

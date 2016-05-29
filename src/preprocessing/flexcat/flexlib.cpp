@@ -375,7 +375,7 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
         const auto t1 = std::chrono::steady_clock::now();
         TStats stats = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
         auto item = std::make_unique<std::vector<TRead<TSeq>>>();
-        if (numReads > programParams.firstReads)    // maximum read number reached -> dont do further reads
+        if (numReads >= programParams.firstReads)    // maximum read number reached -> dont do further reads
         {
             // return empty unique_ptr to signal eof
             item.release();
@@ -403,11 +403,13 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
             std::get<0>(*item) = std::make_unique<std::vector<TRead<TSeq>>>();
             std::get<1>(*item) = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
         }
+        else
+            std::get<1>(*item).clear();
         //if(std::get<0>(*item) == nullptr) // this check is not necessary
         //    std::get<0>(*item) = std::make_unique<std::vector<TRead<TSeq>>>();
         TStats& stats = std::get<1>(*item);
         auto& reads = *std::get<0>(*item);
-        if (numReads > programParams.firstReads)    // maximum read number reached -> dont do further reads
+        if (numReads >= programParams.firstReads)    // maximum read number reached -> dont do further reads
         {
             // return empty unique_ptr to signal eof
             item.release();
