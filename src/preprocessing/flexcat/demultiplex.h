@@ -243,8 +243,8 @@ void demultiplex(std::vector<TRead<TSeq>>& reads, const TFinder& finder,
         MatchBarcodes(reads, finder, stats, ExactBarcodeMatching());
     if (exclude)
         reads.erase(std::remove_if(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult == 0;}), reads.end());
-    else
-        std::partition(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult != 0;});
+    //else  // this makes the data potentially more cache friendly by moving non-matched barcode reads to the end but destroys order
+    //    std::partition(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult != 0;});
 
     if (std::is_same<TRead<TSeq>, Read<TSeq>>::value || std::is_same<TRead<TSeq>, ReadPairedEnd<TSeq>>::value)   // clipping is not done for multiplex barcodes, only for inline barcodes
     {

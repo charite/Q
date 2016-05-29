@@ -687,7 +687,7 @@ unsigned stripPair(TSeq& seq1, TSeq& seq2) noexcept
 }
 
 //Version for automatic matching options
-inline bool isMatch(const unsigned int overlap, const int mismatches, const AdapterMatchSettings &adatperMatchSettings) noexcept
+inline bool isMatch(const unsigned int overlap, const unsigned int mismatches, const AdapterMatchSettings &adatperMatchSettings) noexcept
 {
     if (overlap == 0)
         return false;
