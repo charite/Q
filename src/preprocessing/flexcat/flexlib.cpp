@@ -123,16 +123,9 @@ int demultiplexingStage(const DemultiplexingParams& params, std::vector<TRead>& 
 {
     if (!params.run)
         return 0;
-    if (!params.approximate)
-    {
-        demultiplex(reads, esaFinder, params.hardClip, stats, ExactBarcodeMatching(), params.exclude);
-    }
-    else
-    {
-        if (!check(reads, params.barcodes, stats))            // On Errors with barcodes return 1;
-            return 1;
-        demultiplex(reads, esaFinder, params.hardClip, stats, ApproximateBarcodeMatching(), params.exclude);
-    }
+    if (!check(reads, params.barcodes, stats))
+        return -1;
+    demultiplex(reads, esaFinder, params.hardClip, stats, params.approximate, params.exclude);
     return 0;
 }
 
@@ -170,8 +163,8 @@ void qualityTrimmingStage(const QualityTrimmingParams& params, std::vector<TRead
             trimBatch(reads, params.cutoff, Tail(), params.tag);
         }
         }
+        stats.removedQuality += removeShortSeqs(reads, params.min_length);
     }
-    stats.removedQuality += removeShortSeqs(reads, params.min_length);
 }
 
 //Postprocessing
@@ -180,8 +173,8 @@ void postprocessingStage(const ProcessingParams& params, std::vector<TRead>& rea
 {
     if (params.runPost)
     {
-        if ((params.finalMinLength != 0) && (params.finalLength == 0))
-            stats.removedShort += removeShortSeqs(reads, params.finalMinLength);
+        if ((params.minLength != 0) && (params.finalLength == 0))
+            stats.removedShort += removeShortSeqs(reads, params.minLength);
         else if (params.finalLength != 0)
             trimTo(reads, params.finalLength, stats);
     }
@@ -194,7 +187,7 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
 {
     bool paired = programParams.fileCount == 2;
     bool adapter = adapterParams.run;
-    outStream << std::endl;
+    outStream << std::endl << std::endl;
     outStream << "Read statistics\n";
     outStream << "===============\n";
     outStream << "Reads processed:\t" << generalStats.readCount;
@@ -241,12 +234,11 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
             barcodesTotal = barcodesTotal/(length(demultiplexParams.barcodes[0])*5);
         }
 
-        outStream << "Reads per barcode:\n";
-        outStream << "Unidentified:\t" << generalStats.matchedBarcodeReads[0];
+        outStream << "Unidentified:\t\t" << generalStats.matchedBarcodeReads[0];
         if (generalStats.readCount != 0)
         {
             outStream  << "\t\t(" << std::setprecision(3) << (double)generalStats.matchedBarcodeReads[0] /
-                ((double)generalStats.readCount) * 100 << "%)";
+                ((double)generalStats.readCount) * 100 << "%) reads";
         }  
         outStream << "\n";
         for (unsigned i = 1; i <= barcodesTotal; ++i)
@@ -255,7 +247,7 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
             if (generalStats.readCount != 0)
             {
                 outStream  << "\t\t(" << std::setprecision(3) << (double)generalStats.matchedBarcodeReads[i] /
-                    ((double)generalStats.readCount) * 100 << "%)";
+                    ((double)generalStats.readCount) * 100 << "%) reads";
             }
             outStream << "\n";
         }
@@ -263,20 +255,28 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
     }
     outStream << "File statistics\n";
     outStream << "===============\n";
-    // How many reads are left.f
-    int survived = generalStats.readCount - generalStats.removedN
-        - generalStats.removedQuality - generalStats.removedShort
-        - demultiplexParams.exclude * generalStats.removedDemultiplex;
-    // In percentage points.
-    double surv_proc = (double)survived / (double)generalStats.readCount * 100;
-// TODO: add support for multiple output files
-    outStream << outputStreams.getFilename(0) + ":\n";
-    outStream << "-------\n";
-    outStream << "  Surviving Reads: " << survived << "/" << generalStats.readCount
-              << " (" << std::setprecision(3) << surv_proc << "%)\n";
-    outStream << std::endl;
+    // How many reads are left
+    //int survived = generalStats.readCount - generalStats.removedN
+    //    - generalStats.removedQuality - generalStats.removedShort
+    //    - demultiplexParams.exclude * generalStats.removedDemultiplex;
+    //// In percentage points.
+    //double surv_proc = (double)survived / (double)generalStats.readCount * 100;
+    for (unsigned int n = 0;n < outputStreams.getNumStreams();++n)
+    {
+        unsigned int survived = outputStreams.getNumReads(n);
+        double surv_proc = (double)survived / (double)generalStats.readCount * 100;
+        outStream << outputStreams.getFilename(n) << ":\t" << survived << "\t(" 
+            << std::setprecision(3) << surv_proc << "%) reads\n";
+
+        // outStream << outputStreams.getFilename(0) + ":\n";
+     //   outStream << "-------\n";
+       // outStream << "  Surviving Reads: " << survived << "/" << generalStats.readCount
+       //     << " (" << std::setprecision(3) << surv_proc << "%)\n";
+       // outStream << std::endl;
+    }
     if (adapter)
     {
+        outStream << std::endl;
         outStream << "ADAPTERS" << std::endl;
         outStream << "========" << std::endl;
         unsigned int i = 0;
@@ -575,13 +575,10 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         {
             getOptionValue(processingParams.finalLength , parser, "fl");
         }
-        if (seqan::isSet(parser, "fm"))
-        {
-            getOptionValue(processingParams.finalMinLength , parser, "fm");
-        }
+        getOptionValue(processingParams.minLength , parser, "ml");
         processingParams.runPre = ((processingParams.minLen + processingParams.trimLeft + processingParams.trimRight != 0)
             || isSet(parser, "u"));
-        processingParams.runPost = (processingParams.finalLength + processingParams.finalMinLength != 0);
+        processingParams.runPost = (processingParams.finalLength + processingParams.minLength != 0);
         if(flexiProgram == FlexiProgram::FILTERING)
         {
             processingParams.runPre = true;
@@ -764,61 +761,46 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
             std::cout << "Pre-, Postprocessing and Filtering:\n";
             std::cout << "\tPre-trim 5'-end length: " << processingParams.trimLeft << "\n";
 			std::cout << "\tPre-trim 3'-end length: " << processingParams.trimRight << "\n";
-            std::cout << "\tExclude reads shorter than: " << processingParams.minLen << "\n";
+
             if (isSet(parser, "u"))
-            {
                 std::cout << "\tAllowed uncalled bases per sequence: " << processingParams.uncalled << "\n";
-            }
+
             if (isSet(parser, "s"))
-            {
                 std::cout << "\tSubstitute for uncalled bases: " << processingParams.substitute << "\n";
-            }
-            if (isSet(parser, "fm") && (processingParams.finalLength == 0))
-            {
-                std::cout << "\tMinimum sequence length after COMPLETE workflow: " << processingParams.finalMinLength << "\n";
-            }
+
+            if (processingParams.minLen > 0 && (processingParams.finalLength == 0))
+                std::cout << "\tExclude reads shorter than: " << processingParams.minLen << "\n";
+
             else if (processingParams.finalLength != 0)
-            {
                     std::cout << "\tTrim sequences after COMPLETE workflow to length: " <<processingParams.finalLength<< "\n";
-            }
+
             std::cout << "\n";   
         }
         if (demultiplexingParams.run)
         {
             std::cout << "Barcode Demultiplexing:\n";
             std::cout << "\tBarcode file: " << demultiplexingParams.barcodeFile << "\n";
+            
             if (demultiplexingParams.runx)
-            {
                 std::cout << "\tMultiplex barcode file: " << demultiplexingParams.multiplexFile << "\n";
-            }
             else
-            {
                 std::cout << "\tMultiplex barcodes file:  NO" << demultiplexingParams.multiplexFile << "\n";
-            }
+
             if (demultiplexingParams.approximate)
-            {
                 std::cout << "\tApproximate matching: YES\n";
-            }
             else
-            {
                 std::cout << "\tApproximate matching: NO\n";
-            }
+
             if (demultiplexingParams.hardClip && !demultiplexingParams.runx)
-            {
                 std::cout << "\tHardClip mode: YES\n";
-            }
             else
-            {
                 std::cout << "\tHardClip mode: NO\n";
-            }
+
             if (demultiplexingParams.exclude)
-            {
                 std::cout << "\tExclude unidentified sequences: YES\n";
-            }
             else
-            {
                 std::cout << "\tExclude unidentified sequences: NO\n";
-            }
+
             std::cout << "\n";
         }
         if (adapterTrimmingParams.run)

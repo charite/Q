@@ -98,33 +98,10 @@ struct GeneralStats
     };
     GeneralStats(const GeneralStats& rhs) = default;
     GeneralStats(GeneralStats&& rhs) = default;
-    //{
-    //    removedN = rhs.removedN;
-    //    removedDemultiplex = rhs.removedDemultiplex;
-    //    removedQuality = rhs.removedQuality;
-    //    uncalledBases = rhs.uncalledBases;
-    //    removedShort = rhs.removedShort;
-    //    readCount = rhs.readCount;
-    //    processTime = rhs.processTime;
-    //    ioTime = rhs.ioTime;
-    //    matchedBarcodeReads = rhs.matchedBarcodeReads;
-    //    adapterTrimmingStats = rhs.adapterTrimmingStats;
-    //};
+
     GeneralStats& operator=(const GeneralStats& rhs) = default;
     GeneralStats& operator=(GeneralStats&& rhs) = default;
-    //{
-    //    removedN = rhs.removedN;
-    //    removedDemultiplex = rhs.removedDemultiplex;
-    //    removedQuality = rhs.removedQuality;
-    //    uncalledBases = rhs.uncalledBases;
-    //    removedShort = rhs.removedShort;
-    //    readCount = rhs.readCount;
-    //    processTime = rhs.processTime;
-    //    ioTime = rhs.ioTime;
-    //    matchedBarcodeReads = rhs.matchedBarcodeReads;
-    //    adapterTrimmingStats = rhs.adapterTrimmingStats;
-    //    return *this;
-    //}
+
 
     GeneralStats& operator+=(const GeneralStats& rhs)
     {

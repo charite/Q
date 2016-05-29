@@ -43,7 +43,7 @@ struct ProcessingParams
     unsigned trimLeft;
     unsigned trimRight;
     unsigned minLen;
-    unsigned finalMinLength;
+    unsigned minLength;
     unsigned finalLength;
     bool tagTrimming;
     bool runPre;
@@ -57,7 +57,7 @@ struct ProcessingParams
         trimLeft(0),
         trimRight(0),
         minLen(0),
-        finalMinLength(0),
+        minLength(0),
         finalLength(0),
         tagTrimming(false),
         runPre(false),

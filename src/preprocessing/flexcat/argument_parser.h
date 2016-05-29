@@ -250,13 +250,6 @@ void ArgumentParserBuilder::addGeneralOptions(seqan::ArgumentParser & parser, co
         "ni", "noInfo", "Don't print paramter overview to console.");
     addOption(parser, adInfoOpt);
 
-    seqan::ArgParseOption finMinLenOpt = seqan::ArgParseOption(
-        "fm", "finalMinLength", "Deletes read (and mate)"
-        " if on of them is shorter than the given value after the complete worflow.",
-        seqan::ArgParseArgument::INTEGER, "LENGTH");
-    setMinValue(finMinLenOpt, "1");
-    addOption(parser, finMinLenOpt);
-
     seqan::ArgParseOption finLenOpt = seqan::ArgParseOption(
         "fl", "finalLength", "Trims reads to desired length after the complete workflow.",
         seqan::ArgParseArgument::INTEGER, "LENGTH");
@@ -418,12 +411,12 @@ void ArgumentParserBuilder::addReadTrimmingOptions(seqan::ArgumentParser & parse
     addOption(parser, qualOpt);
 
     seqan::ArgParseOption lenOpt = seqan::ArgParseOption(
-        "l", "length",
+        "qml", "length",
         "Minimum read length after trimming. "
         "Shorter reads will be substituted by a single N or removed if the paired read is too short as well.",
         seqan::ArgParseArgument::INTEGER, "LENGTH");
-    setDefaultValue(lenOpt, 1);
-    setMinValue(lenOpt, "1");
+    setDefaultValue(lenOpt, 0);
+    setMinValue(lenOpt, "0");
     addOption(parser, lenOpt);
 
     seqan::ArgParseOption trimOpt = seqan::ArgParseOption(
@@ -748,7 +741,7 @@ int loadQualityTrimmingParams(seqan::ArgumentParser const & parser, QualityTrimm
         getOptionValue(params.cutoff, parser, "q");
     }
     // MINIMUM SEQUENCE LENGTH -------------------
-    getOptionValue(params.min_length, parser, "l");
+    getOptionValue(params.min_length, parser, "qml");
     // Set run flag, depending on essential parameters (which are in a valid state at this point).
     params.run = isSet(parser, "q");
     return 0;

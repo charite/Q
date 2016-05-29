@@ -11,10 +11,13 @@ class OutputStreams
     using TSeqStream = std::unique_ptr<seqan::SeqFileOut>;
     struct StreamPair
     {
+        StreamPair() : numReads(0) {};
+        StreamPair& operator=(const StreamPair &rhs) = default;
         TSeqStream first;
         TSeqStream second;
         std::string firstFilename;
         std::string secondFilename;
+        unsigned int numReads;
     };
     //using TStreamPair = std::pair<TSeqStream, TSeqStream>;
     using TStreamPair = StreamPair;
@@ -101,6 +104,19 @@ public:
         return std::string();
     }
 
+    inline unsigned int getNumReads(const int streamIndex) const
+    {
+        auto it = fileStreams.find(streamIndex);
+        if (it != fileStreams.end())
+            return it->second.numReads;
+        return 0;
+    }
+
+    inline unsigned int getNumStreams() const
+    {
+        return fileStreams.size();
+    }
+
     void addStream(const std::string fileName, const int streamIndex, const bool useDefault)
     {
         auto filename = createStream(fileStreams[streamIndex].first, fileName, useDefault);
@@ -167,8 +183,9 @@ public:
         updateStreams(names, std::is_same<TRead<TSeq>, ReadPairedEnd<TSeq>>::value || std::is_same<TRead<TSeq>, ReadMultiplexPairedEnd<TSeq>>::value);
         for(auto& read : reads)
         {
-            const unsigned streamIndex = read.demuxResult;
-            writeRecord(fileStreams[streamIndex], read);
+            auto& fileStream = fileStreams[read.demuxResult];
+            ++fileStream.numReads;
+            writeRecord(fileStream, read);
         }
     }
 
@@ -178,8 +195,9 @@ public:
         updateStreams(names, std::is_same<TRead<TSeq>, ReadPairedEnd<TSeq>>::value || std::is_same<TRead<TSeq>, ReadMultiplexPairedEnd<TSeq>>::value);
         for (auto& read : reads)
         {
-            const unsigned streamIndex = read.demuxResult;
-            writeRecord(fileStreams[streamIndex], std::move(read));
+            auto& fileStream = fileStreams[read.demuxResult];
+            ++fileStream.numReads;
+            writeRecord(fileStream, std::move(read));
         }
     }
 

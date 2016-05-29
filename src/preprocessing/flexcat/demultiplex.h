@@ -116,7 +116,7 @@ private:
 // Functions
 // ============================================================================
 
-
+// checks if all barcodes have the same length and removes reads that are shorter than the barcodes
 template <typename TReads, typename TBarcodes, typename TStats>
 bool check(TReads& reads, TBarcodes& barcodes, TStats& stats) noexcept
 {
@@ -233,11 +233,14 @@ void MatchBarcodes(std::vector<TRead>& reads, const TFinder& finder, TStats& sta
     }
 }
 
-template<template <typename> class TRead, typename TSeq, typename TFinder, typename TStats, typename TApprox>
+template<template <typename> class TRead, typename TSeq, typename TFinder, typename TStats>
 void demultiplex(std::vector<TRead<TSeq>>& reads, const TFinder& finder,
-    const bool hardClip, TStats& stats, const TApprox& approximate, const bool exclude)
+    const bool hardClip, TStats& stats, const bool approximate, const bool exclude)
 {
-    MatchBarcodes(reads, finder, stats, approximate);
+    if(approximate)
+        MatchBarcodes(reads, finder, stats, ApproximateBarcodeMatching());
+    else
+        MatchBarcodes(reads, finder, stats, ExactBarcodeMatching());
     if (exclude)
         reads.erase(std::remove_if(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult == 0;}), reads.end());
     else
