@@ -175,25 +175,6 @@ void MatchBarcodes(std::vector<TRead<TSeq>>& reads, const TBarcodeFinder& finder
         read.demuxResult = finder.getMatchIndex(read);});
 }
 
-struct ClipHard {};
-struct ClipSoft {};
-
-template <typename TRead>
-void clipBarcodes(std::vector<TRead>& reads, const unsigned len, const ClipHard&) noexcept
-{
-    for (auto& read : reads)
-        erase(read.seq, 0, len);
-}
-
-//Overload for deleting only matched barcodes 
-template<typename TRead>
-void clipBarcodes(std::vector<TRead>& reads, const int len, const ClipSoft&) noexcept
-{
-    // unmatched reads are partitioned to the end
-    std::for_each(reads.begin(), std::find_if(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult == 0;}), [len](auto& read) {
-        erase(read.seq, 0, len);
-    });
-}
 
 struct ApproximateBarcodeMatching {};
 struct ExactBarcodeMatching {};
@@ -233,6 +214,27 @@ void MatchBarcodes(std::vector<TRead>& reads, const TFinder& finder, TStats& sta
     }
 }
 
+struct ClipSoft {};
+struct ClipHard {};
+
+//Overload for deleting only matched barcodes 
+template<typename TRead, typename TClipMode>
+void clipBarcodes(std::vector<TRead>& reads, const int len, const TClipMode& hard) noexcept
+{
+    if (std::is_same<TClipMode,ClipSoft>::value) // static if
+    {
+        std::for_each(reads.begin(), reads.end(), [len](auto& read) {
+            if(read.demuxResult != 0)
+                erase(read.seq, 0, len);
+        });
+    }
+    else
+    {
+        for (auto& read : reads)
+            erase(read.seq, 0, len);
+    }
+}
+
 template<template <typename> class TRead, typename TSeq, typename TFinder, typename TStats>
 void demultiplex(std::vector<TRead<TSeq>>& reads, const TFinder& finder,
     const bool hardClip, TStats& stats, const bool approximate, const bool exclude)
@@ -243,12 +245,10 @@ void demultiplex(std::vector<TRead<TSeq>>& reads, const TFinder& finder,
         MatchBarcodes(reads, finder, stats, ExactBarcodeMatching());
     if (exclude)
         reads.erase(std::remove_if(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult == 0;}), reads.end());
-    //else  // this makes the data potentially more cache friendly by moving non-matched barcode reads to the end but destroys order
-    //    std::partition(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult != 0;});
 
     if (std::is_same<TRead<TSeq>, Read<TSeq>>::value || std::is_same<TRead<TSeq>, ReadPairedEnd<TSeq>>::value)   // clipping is not done for multiplex barcodes, only for inline barcodes
     {
-        if (hardClip)
+        if(hardClip)
             clipBarcodes(reads, finder.getBarcodeLength(), ClipHard());
         else
             clipBarcodes(reads, finder.getBarcodeLength(), ClipSoft());
