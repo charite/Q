@@ -41,7 +41,7 @@ void printStatistics(TStream &stream, const Statistics &stats, const bool cluste
         stream << "Non uniquely mappable reads\t" << stats.couldNotMapUniquely << std::endl;
         stream << std::endl;
         stream << "Mapped reads\t" << stats.totalMappedReads << std::endl;
-        stream << "Total duplet reads\t" << stats.totalSamePositionReads << std::endl;
+        stream << "Removed duplet reads\t" << stats.removedReads << std::endl;
         stream << std::endl;
         stream << "After barcode filtering\t" << stats.totalMappedReads - stats.removedReads << std::endl;
         stream << std::endl;
@@ -57,7 +57,7 @@ void printStatistics(TStream &stream, const Statistics &stats, const bool cluste
         stream << "Non uniquely mappable reads          : -" << stats.couldNotMapUniquely << std::endl;
         stream << "                                     : -----------------" << std::endl;
         stream << "Mapped reads                         : " << stats.totalMappedReads << std::endl;
-        stream << "Total duplet reads                   : -" << stats.totalSamePositionReads << std::endl;
+        stream << "Removed duplet reads                 : -" << stats.removedReads << std::endl;
         stream << "                                     : -----------------" << std::endl;
         stream << "After barcode filtering              : " << stats.totalMappedReads - stats.removedReads << std::endl;
         stream << std::endl;
