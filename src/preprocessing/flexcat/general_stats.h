@@ -60,7 +60,6 @@ struct AdapterTrimmingStats
     }
 };
 
-template <typename TReadLen>
 struct GeneralStats
 {
     unsigned removedN;       //Number of deleted sequences due to N's
@@ -74,7 +73,7 @@ struct GeneralStats
     float writeTime;
     std::vector<unsigned int> matchedBarcodeReads;
 
-    using TAdapterTrimmingStats = AdapterTrimmingStats<TReadLen>;
+    using TAdapterTrimmingStats = AdapterTrimmingStats<unsigned int>;
     TAdapterTrimmingStats adapterTrimmingStats;
 
     void clear()

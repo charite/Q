@@ -185,7 +185,7 @@ SEQAN_DEFINE_TEST(findN_test)
 
 SEQAN_DEFINE_TEST(processN_test)
 {
-    GeneralStats<unsigned char> stats;
+    GeneralStats stats;
     std::vector<Read<seqan::Dna5QString>> reads(6);
     reads[0].seq = "ATGACTGTACACGTGATCGTACGTAGCAGC";
     reads[1].seq = "ATGGNGGGTACACGTGATCGTACGTAGCAGC";
@@ -241,7 +241,7 @@ SEQAN_DEFINE_TEST(processN_test)
 
 SEQAN_DEFINE_TEST(processN_paired_test)
 {
-    GeneralStats<unsigned char> stats;
+    GeneralStats stats;
     
     std::vector<ReadPairedEnd<seqan::Dna5QString>> reads(6);
     reads[0].seq = "ATGACTGTACACGTGATCGTACGTAGCAGC";
@@ -304,7 +304,7 @@ SEQAN_DEFINE_TEST(processN_paired_test)
 
 SEQAN_DEFINE_TEST(processN_multiplex_test)
 {
-    GeneralStats<unsigned char> stats;
+    GeneralStats stats;
     std::vector<ReadMultiplex<seqan::Dna5QString>> reads(6);
     reads[0].seq = "ATGACTGTACACGTGATCGTACGTAGCAGC";
     reads[1].seq = "ATGGNGGGTACACGTGATCGTACGTAGCAGC";
@@ -364,7 +364,7 @@ SEQAN_DEFINE_TEST(processN_multiplex_test)
 
 SEQAN_DEFINE_TEST(processN_paired_multiplex_test)
 {
-    GeneralStats<unsigned char> stats;
+    GeneralStats stats;
     std::vector<ReadMultiplexPairedEnd<seqan::Dna5QString>> reads(6);
     reads[0].seq = "ATGACTGTACACGTGATCGTACGTAGCAGC";
     reads[1].seq = "ATGGNGGGTACACGTGATCGTACGTAGCAGC";
@@ -433,7 +433,7 @@ SEQAN_DEFINE_TEST(processN_paired_multiplex_test)
 
 SEQAN_DEFINE_TEST(preTrim_test)
 {
-    GeneralStats<unsigned char> stats;
+    GeneralStats stats;
     using TRead = Read<seqan::Dna5QString>;
     std::vector<TRead> reads(7);
 
@@ -493,7 +493,7 @@ SEQAN_DEFINE_TEST(preTrim_test)
 
 SEQAN_DEFINE_TEST(preTrim_paired_test)
 {
-    GeneralStats<unsigned char> stats;
+    GeneralStats stats;
     using TRead = ReadPairedEnd<seqan::Dna5QString>;
     std::vector<TRead> reads(7);
     std::vector<TRead> reads2(7);
@@ -553,7 +553,7 @@ SEQAN_DEFINE_TEST(preTrim_paired_test)
 
 SEQAN_DEFINE_TEST(trimTo_test)
 {
-    GeneralStats<unsigned char> stats;
+    GeneralStats stats;
     using TRead = Read<seqan::Dna5QString>;
     std::vector<TRead> reads(4);
     
@@ -578,7 +578,7 @@ SEQAN_DEFINE_TEST(trimTo_test)
 
 SEQAN_DEFINE_TEST(trimTo_paired_test)
 {
-    GeneralStats<unsigned char> stats;
+    GeneralStats stats;
     using TRead = ReadPairedEnd<seqan::Dna5QString>;
     std::vector<TRead> reads(4);
 

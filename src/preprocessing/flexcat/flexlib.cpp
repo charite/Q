@@ -447,7 +447,7 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
 
     TStats generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
 
-    bool reuse = true;
+    bool reuse = true; // this should be disabled only for debugging
     if (programParams.num_threads > 1)
     {
         if (reuse)
@@ -877,7 +877,7 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
     // Start processing. Different functions are needed for one or two input files.
     std::cout << "\nProcessing reads...\n" << std::endl;
 
-    GeneralStats<unsigned char> generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
+    GeneralStats generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
     if (fileCount == 1)
     {
         if (!demultiplexingParams.run)
