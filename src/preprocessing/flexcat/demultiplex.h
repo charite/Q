@@ -219,7 +219,7 @@ struct ClipHard {};
 
 //Overload for deleting only matched barcodes 
 template<typename TRead, typename TClipMode>
-void clipBarcodes(std::vector<TRead>& reads, const int len, const TClipMode& hard) noexcept
+void clipBarcodes(std::vector<TRead>& reads, const int len, const TClipMode&) noexcept
 {
     if (std::is_same<TClipMode,ClipSoft>::value) // static if
     {

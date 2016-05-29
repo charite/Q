@@ -148,7 +148,7 @@ struct AdapterMatchSettings
     AdapterMatchSettings() : min_length(0), errors(0), overhang(0), errorRate(0), times(1) {};
 
     unsigned char min_length; //The minimum length of the overlap.
-    int errors;     //The maximum number of errors we allow.
+    unsigned int errors;     //The maximum number of errors we allow.
     unsigned char overhang;
     double errorRate;  //The maximum number of errors allowed per overlap
     unsigned char times;
