@@ -162,7 +162,9 @@ struct AdapterTrimmingParams
     AdapterSet adapters;
     AdapterMatchSettings mode;
     bool tag;
-    AdapterTrimmingParams() : pairedNoAdapterFile(false), run(false), tag(false) {};
+    bool best;
+    bool nler;
+    AdapterTrimmingParams() : pairedNoAdapterFile(false), run(false), tag(false), best(false) {};
 };
 
 // ============================================================================
@@ -686,16 +688,49 @@ unsigned stripPair(TSeq& seq1, TSeq& seq2) noexcept
     return insert;
 }
 
-//Version for automatic matching options
-inline bool isMatch(const unsigned int overlap, const unsigned int mismatches, const AdapterMatchSettings &adatperMatchSettings) noexcept
+namespace ErrorRateMode
+{
+    struct linear {};
+    struct nonLinear {};
+}
+
+inline bool isMatch(const unsigned int overlap, const unsigned int mismatches, const AdapterMatchSettings &adatperMatchSettings,
+    const ErrorRateMode::linear&) noexcept
 {
     if (overlap == 0)
         return false;
-    if (adatperMatchSettings.errorRate > 0)
-        return overlap >= adatperMatchSettings.min_length && (static_cast<double>(mismatches) / static_cast<double>(overlap)) <= adatperMatchSettings.errorRate;
-    else
-        return overlap >= adatperMatchSettings.min_length && mismatches <= adatperMatchSettings.errors;
+    unsigned int allowedMismatches = static_cast<unsigned int>(adatperMatchSettings.errorRate * static_cast<float>(overlap));
+    if (adatperMatchSettings.errorRate == 0)
+        allowedMismatches = adatperMatchSettings.errors;
+
+    return overlap >= adatperMatchSettings.min_length && mismatches <= allowedMismatches;
 }
+
+inline bool isMatch(const unsigned int overlap, const unsigned int mismatches, const AdapterMatchSettings &adatperMatchSettings,
+    const ErrorRateMode::nonLinear&) noexcept
+{
+    if (overlap == 0)
+        return false;
+    unsigned int allowedMismatches = static_cast<unsigned int>(adatperMatchSettings.errorRate * static_cast<float>(overlap));
+    if (adatperMatchSettings.errorRate > 0)
+    {
+        if (overlap < 6)
+            allowedMismatches = 0;
+        else if (overlap < 10)
+            allowedMismatches = std::min<unsigned int>(allowedMismatches, 1);
+    }
+    else
+        allowedMismatches = adatperMatchSettings.errors;
+
+    return overlap >= adatperMatchSettings.min_length && mismatches <= allowedMismatches;
+}
+
+// convenience wrapper
+inline bool isMatch(const unsigned int overlap, const unsigned int mismatches, const AdapterMatchSettings &) noexcept
+{
+    return isMatch(overlap, mismatches, AdapterMatchSettings(), ErrorRateMode::linear());
+}
+
 
 enum adapterDirection : bool
 {
@@ -752,6 +787,12 @@ struct TlsBlockAdapterTrimming
     std::string tlsString;
 };
 
+namespace AdapterSelectionMethod
+{
+    struct TopDown {};
+    struct Best {};
+}
+
 // convenience wrapper
 template <typename TSeq, typename TAdapters, typename TReadLen, typename TStripAdapterDirection>
 unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats<TReadLen>& stats, TAdapters const& adapters, AdapterMatchSettings const& spec,
@@ -761,11 +802,113 @@ unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats<TReadLen>& stats, TAdapter
     params.adapters = adapters;
     params.mode = spec;
     TlsBlockAdapterTrimming<AdapterTrimmingStats<TReadLen>> tlsBlock(stats, params);
-    return stripAdapter(seq, tlsBlock, stripDirection);
+    return stripAdapter(seq, tlsBlock, stripDirection, AdapterSelectionMethod::Best(), ErrorRateMode::linear());
 }
 
-template <typename TSeq, typename TStripAdapterDirection, typename TlsBlock>
-unsigned stripAdapter(TSeq& seq, TlsBlock& tlsBlock, const TStripAdapterDirection&)
+template <typename TSeq, typename TStripAdapterDirection, typename TlsBlock, typename TErrorRateMode>
+unsigned stripAdapter(TSeq& seq, TlsBlock& tlsBlock, const TStripAdapterDirection&, const AdapterSelectionMethod::Best&, const TErrorRateMode&)
+{
+    AlignAlgorithm::Menkuec alignAlgorithm;
+
+    using TReadLen = decltype(tlsBlock.stats.overlapSum);
+    unsigned removedTotal{ 0 };
+    AlignResult<TReadLen> alignResult;  // small object, created on stack
+    AlignResult<TReadLen> bestAlignResult;  // small object, created on stack
+    typename decltype(tlsBlock.params.adapters)::value_type bestAdapter;
+    unsigned removedTotalOld = 0;
+    TReadLen lenSeq = length(seq);
+
+    Dna5ToStdString(tlsBlock.tlsString, seq);
+
+    for (unsigned int n = 0;n < tlsBlock.params.mode.times; ++n)
+    {
+        bestAlignResult.score = AlignResult<TReadLen>::noMatch;
+        for (auto const& adapterItem : tlsBlock.params.adapters)
+        {
+            //if (static_cast<unsigned>(length(adapterItem.seq)) < spec.min_length)
+            //  continue;
+            if ((TStripAdapterDirection::value == adapterDirection::reverse && adapterItem.reverse == false) ||
+                (TStripAdapterDirection::value == adapterDirection::forward && adapterItem.reverse == true))
+                continue;
+
+            const auto& adapterSequence = adapterItem.getSeq();
+            const auto lenAdapter = adapterItem.getLen();
+
+            const int oppositeEndOverhang = adapterItem.anchored == true ? lenAdapter - lenSeq : adapterItem.overhang;
+            const int sameEndOverhang = adapterItem.anchored == true ? 0 : lenAdapter - tlsBlock.params.mode.min_length;
+            if (adapterItem.adapterEnd == AdapterItem::end3)
+                alignPair(alignResult, tlsBlock.tlsString, adapterSequence, oppositeEndOverhang, sameEndOverhang, alignAlgorithm);
+            else
+                alignPair(alignResult, tlsBlock.tlsString, adapterSequence, sameEndOverhang, oppositeEndOverhang, alignAlgorithm);
+
+            if (isMatch(alignResult.overlap, alignResult.mismatches, tlsBlock.params.mode, TErrorRateMode()))
+            {
+                if (alignResult.score > bestAlignResult.score)
+                {
+                    bestAlignResult = alignResult;
+                    bestAdapter = adapterItem;
+                }
+            }
+        }
+        if (bestAlignResult.score != AlignResult<TReadLen>::noMatch)
+        {
+            const auto& alignResult = bestAlignResult;
+            const auto& adapterItem = bestAdapter;
+            const auto lenAdapter = adapterItem.getLen();
+
+            TReadLen eraseStart = 0;
+            TReadLen eraseEnd = 0;
+            if (adapterItem.adapterEnd == AdapterItem::end3)
+            {
+                eraseStart = alignResult.shiftPos;
+                eraseEnd = lenSeq;
+            }
+            else
+            {
+                eraseStart = 0;
+                eraseEnd = std::min<TReadLen>(lenSeq, alignResult.shiftPos + lenAdapter);
+            }
+
+            seqan::erase(seq, eraseStart, eraseEnd);
+            tlsBlock.tlsString.erase(eraseStart, eraseEnd);
+            TReadLen removed = eraseEnd - eraseStart;
+            removedTotal += removed;
+            lenSeq -= removed;
+
+            // update statistics        
+            const auto statisticLen = removed;
+            if (tlsBlock.stats.removedLength.size() < statisticLen)
+                tlsBlock.stats.removedLength.resize(statisticLen);
+            if (tlsBlock.stats.removedLength[statisticLen - 1].size() < static_cast<size_t>(alignResult.mismatches + 1))
+                tlsBlock.stats.removedLength[statisticLen - 1].resize(alignResult.mismatches + 1);
+            ++tlsBlock.stats.removedLength[statisticLen - 1][alignResult.mismatches];
+
+            if (tlsBlock.stats.numRemoved.size() < static_cast<size_t>(adapterItem.id + 1))
+            {
+                std::cout << "error: numRemoved too small!" << std::endl;
+                throw(std::runtime_error("error: numRemoved too small!"));
+            }
+            ++tlsBlock.stats.numRemoved[adapterItem.id];
+
+            tlsBlock.stats.overlapSum += alignResult.overlap;
+            tlsBlock.stats.maxOverlap = std::max(tlsBlock.stats.maxOverlap, alignResult.overlap);
+            tlsBlock.stats.minOverlap = std::min(tlsBlock.stats.minOverlap, alignResult.overlap);
+        }
+
+        if (removedTotal == removedTotalOld)
+            return removedTotal;
+        removedTotalOld = removedTotal;
+
+        // dont try more adapter trimming if the read is too short already
+        if (static_cast<TReadLen>(lenSeq) < tlsBlock.params.mode.min_length)
+            return removedTotal;
+    }
+    return removedTotal;
+}
+
+
+template <typename TSeq, typename TStripAdapterDirection, typename TlsBlock, typename TErrorRateMode>
+unsigned stripAdapter(TSeq& seq, TlsBlock& tlsBlock, const TStripAdapterDirection&, const AdapterSelectionMethod::TopDown&, const TErrorRateMode&)
 {
     AlignAlgorithm::Menkuec alignAlgorithm;
 
@@ -798,7 +941,7 @@ unsigned stripAdapter(TSeq& seq, TlsBlock& tlsBlock, const TStripAdapterDirectio
             else
                 alignPair(alignResult, tlsBlock.tlsString, adapterSequence, sameEndOverhang, oppositeEndOverhang, alignAlgorithm);
 
-            if (isMatch(alignResult.overlap, alignResult.mismatches, tlsBlock.params.mode))
+            if (isMatch(alignResult.overlap, alignResult.mismatches, tlsBlock.params.mode, TErrorRateMode()))
             {
                 TReadLen eraseStart = 0;
                 TReadLen eraseEnd = 0;
@@ -850,15 +993,16 @@ unsigned stripAdapter(TSeq& seq, TlsBlock& tlsBlock, const TStripAdapterDirectio
     return removedTotal;
 }
 
-template < template <typename> class TRead, typename TSeq, typename TlsBlock, typename TTagAdapter,
+template < template <typename> class TRead, typename TSeq, typename TlsBlock, typename TTagAdapter, 
+    typename TAdapterSelectionMethod, typename TErrorRateMode,
     typename = std::enable_if_t<std::is_same<TRead<TSeq>, Read<TSeq>>::value || std::is_same<TRead<TSeq>, ReadMultiplex<TSeq>>::value> >
-    void stripAdapterBatch(std::vector<TRead<TSeq>>& reads, TlsBlock& tlsBlock, TTagAdapter, bool = false) noexcept(!TTagAdapter::value)
+    void stripAdapterBatch(std::vector<TRead<TSeq>>& reads, TlsBlock& tlsBlock, TTagAdapter, TAdapterSelectionMethod, TErrorRateMode, bool = false) noexcept(!TTagAdapter::value)
 {
     for (auto& read : reads)
     {
         if (seqan::empty(read.seq))
             continue;
-        const unsigned over = stripAdapter(read.seq, tlsBlock, StripAdapterDirection<adapterDirection::forward>());
+        const unsigned over = stripAdapter(read.seq, tlsBlock, StripAdapterDirection<adapterDirection::forward>(), TAdapterSelectionMethod(), TErrorRateMode());
         if (TTagAdapter::value && over != 0)
             insertAfterFirstToken(read.id, ":AdapterRemoved");
     }
@@ -866,9 +1010,10 @@ template < template <typename> class TRead, typename TSeq, typename TlsBlock, ty
 }
 
 // pairedEnd adapters will be trimmed in single mode, each seperately
-template < template <typename> class TRead, typename TSeq, typename TlsBlock, typename TTagAdapter,
+template < template <typename> class TRead, typename TSeq, typename TlsBlock, typename TTagAdapter, 
+    typename TAdapterSelectionMethod, typename TErrorRateMode,
     typename = std::enable_if_t<std::is_same<TRead<TSeq>, ReadPairedEnd<TSeq>>::value || std::is_same<TRead<TSeq>, ReadMultiplexPairedEnd<TSeq>>::value> >
-    void stripAdapterBatch(std::vector<TRead<TSeq>>& reads, TlsBlock& tlsBlock, TTagAdapter) noexcept(!TTagAdapter::value)
+    void stripAdapterBatch(std::vector<TRead<TSeq>>& reads, TlsBlock& tlsBlock, TTagAdapter, TAdapterSelectionMethod, TErrorRateMode) noexcept(!TTagAdapter::value)
 {
     for (auto& read : reads)
     {
@@ -881,9 +1026,9 @@ template < template <typename> class TRead, typename TSeq, typename TlsBlock, ty
         }
         else
         {
-            over = stripAdapter(read.seq, tlsBlock, StripAdapterDirection<adapterDirection::forward>());
+            over = stripAdapter(read.seq, tlsBlock, StripAdapterDirection<adapterDirection::forward>(), TAdapterSelectionMethod(), TErrorRateMode());
             if (!seqan::empty(read.seqRev))
-                over += stripAdapter(read.seqRev, tlsBlock, StripAdapterDirection<adapterDirection::reverse>());
+                over += stripAdapter(read.seqRev, tlsBlock, StripAdapterDirection<adapterDirection::reverse>(), TAdapterSelectionMethod(), TErrorRateMode());
         }
         if (TTagAdapter::value && over != 0)
             insertAfterFirstToken(read.id, ":AdapterRemoved");

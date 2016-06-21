@@ -367,11 +367,16 @@ void ArgumentParserBuilder::addAdapterTrimmingOptions(seqan::ArgumentParser & pa
     setDefaultValue(rateOpt, 0.2);
     addOption(parser, rateOpt);
 
-    seqan::ArgParseOption overlapOpt = seqan::ArgParseOption(
+    seqan::ArgParseOption nlerOpt = seqan::ArgParseOption(
+        "nler", "non-linear error rate", "Limit the number of allowed mismatches for overlaps <6 to 0 and "
+            "for overlaps <10 to 1");
+    addOption(parser, nlerOpt);
+
+    seqan::ArgParseOption olOpt = seqan::ArgParseOption(
         "ol", "overlap", "Minimum length of overlap for a significant adapter match.",
         seqan::ArgParseOption::INTEGER, "VALUE");
-    setDefaultValue(overlapOpt, 4);
-    addOption(parser, overlapOpt);
+    setDefaultValue(olOpt, 4);
+    addOption(parser, olOpt);
 
     seqan::ArgParseOption overhangOpt = seqan::ArgParseOption(
         "oh", "overhang", "Number of bases that the adapter can stick over at the opposite end",
@@ -384,6 +389,15 @@ void ArgumentParserBuilder::addAdapterTrimmingOptions(seqan::ArgumentParser & pa
         seqan::ArgParseOption::INTEGER, "VALUE");
     setDefaultValue(timesOpt, 1);
     addOption(parser, timesOpt);
+
+    seqan::ArgParseOption bestOpt = seqan::ArgParseOption(
+        "best", "best", "Trim best matching adapters, if multiple adapters are specified.");
+    addOption(parser, bestOpt);
+
+    seqan::ArgParseOption topdownOpt = seqan::ArgParseOption(
+        "topdown", "topdown", "Trim adapters in the order they are specified, first match will be taken.");
+    addOption(parser, topdownOpt);
+
 
     if (flexiProgram != FlexiProgram::ALL_STEPS)
     {
@@ -422,7 +436,7 @@ void ArgumentParserBuilder::addReadTrimmingOptions(seqan::ArgumentParser & parse
     seqan::ArgParseOption trimOpt = seqan::ArgParseOption(
         "m", "method", "Method for trimming reads.",
         seqan::ArgParseArgument::STRING, "METHOD");
-    setDefaultValue(trimOpt, "WIN");
+    setDefaultValue(trimOpt, "TAIL");
     setValidValues(trimOpt, "WIN BWA TAIL");
     addOption(parser, trimOpt);
 
@@ -664,6 +678,9 @@ int loadAdapterTrimmingParams(seqan::ArgumentParser const& parser, AdapterTrimmi
     getOptionValue(er, parser, "er");
     getOptionValue(oh, parser, "oh");
     getOptionValue(times, parser, "times");
+    getOptionValue(params.nler, parser, "nler");
+    if (!isSet(parser, "topdown"))
+        params.best = true;
     params.mode = AdapterMatchSettings(o, e, er, oh, times);
 
     // ADAPTER SEQUENCES ----------------------------
