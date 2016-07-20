@@ -43,9 +43,10 @@ struct ReadBase
 
     TSeq seq;
     std::string id;
-    int demuxResult;
+    char demuxResult;
+    unsigned char qTrimmed;
 
-    ReadBase() 
+    ReadBase() : demuxResult(0), qTrimmed(0)
     {
     }
     ReadBase(const ReadBase& rhs) = default;
@@ -54,6 +55,7 @@ struct ReadBase
         seq = std::move(rhs.seq);
         id = std::move(rhs.id);
         demuxResult = rhs.demuxResult;
+        qTrimmed = rhs.qTrimmed;
     }
 
     bool operator==(const ReadBase& rhs) const
@@ -66,6 +68,7 @@ struct ReadBase
         seq = std::move(rhs.seq);
         id = std::move(rhs.id);
         demuxResult = rhs.demuxResult;
+        qTrimmed = rhs.qTrimmed;
         return *this;
     }
     inline unsigned int minSeqLen() const noexcept

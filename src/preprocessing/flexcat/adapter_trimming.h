@@ -87,6 +87,19 @@ namespace seqan {
 
 using TAdapterSequence = std::string;
 
+
+auto initQualityErrorProbabilities()
+{
+    std::array<float, 41> qualityErrorProbabilies;
+    for (unsigned int i = 0; i < qualityErrorProbabilies.size(); ++i)
+    {
+        qualityErrorProbabilies[i] = pow(10,-static_cast<float>(i)/10);
+    }
+    return qualityErrorProbabilies;
+}
+
+static const std::array<float,41> qualityErrorProbabilies = initQualityErrorProbabilities();
+
 struct AdapterItem;
 typedef std::vector< AdapterItem > AdapterSet;
 
@@ -560,6 +573,7 @@ void alignPair(TAlignResult& ret, const TSeq& read, const TAdapter& adapter,
     const std::string::const_iterator adapterBeginIterator = adapter.begin();
     std::string::const_iterator readIterator = readBeginIterator;
     std::string::const_iterator adapterIterator = adapterBeginIterator;
+
     while (shiftPos <= shiftEndPos)
     {
         const unsigned int overlapNegativeShift = std::min<unsigned int>(shiftPos + lenAdapter, lenRead);
@@ -631,6 +645,75 @@ void alignPair(TAlignResult& ret, const TSeq& read, const TAdapter& adapter,
     }
 }
 
+/*
+- shifts adapterTemplate against sequence
+- calculate score for each shift position
+- +1 for same base, -1 for mismatch, +0 for N
+- return score of the shift position, where the errorRate was minimal
+*/
+template <typename TSeq, typename TQual, typename TAdapter, typename TAlignResult>
+void alignPair(TAlignResult& ret, const TSeq& read, const TQual& qual, const TAdapter& adapter,
+    const int leftOverhang, const int rightOverhang, const AlignAlgorithm::Menkuec&) noexcept
+{
+    const auto lenRead = length(read);
+    const auto lenAdapter = length(adapter);
+    const int shiftStartPos = -leftOverhang;
+    const int shiftEndPos = lenRead - lenAdapter + rightOverhang;
+    int shiftPos = shiftStartPos;
+
+    ret = TAlignResult();
+    const std::string::const_iterator readBeginIterator = read.begin();
+    const std::string::const_iterator adapterBeginIterator = adapter.begin();
+    const std::string::const_iterator qualityBeginIterator = qual.begin();
+    std::string::const_iterator readIterator = readBeginIterator;
+    std::string::const_iterator adapterIterator = adapterBeginIterator;
+    std::string::const_iterator qualityIterator = qualityBeginIterator;
+
+    while (shiftPos <= shiftEndPos)
+    {
+        const unsigned int overlapNegativeShift = std::min<unsigned int>(shiftPos + lenAdapter, lenRead);
+        const unsigned int overlapPositiveShift = std::min<unsigned int>(lenRead - shiftPos, lenAdapter);
+        const unsigned int overlap = std::min<unsigned int>(overlapNegativeShift, overlapPositiveShift);
+        const unsigned int overlapStart = std::max<int>(shiftPos, 0);
+        unsigned int matches = 0;
+        unsigned int ambiguous = 0;
+        unsigned int remaining = overlap;
+        float qExtra = 0;
+        readIterator = readBeginIterator + overlapStart;
+        qualityIterator = qualityBeginIterator + overlapStart;
+        adapterIterator = adapterBeginIterator + std::min(0, shiftPos)*(-1);
+
+        while (remaining > 0)
+        {
+            if (*readIterator == 'N' || *adapterIterator == 'N')
+                ++ambiguous;
+            else if (*readIterator == *adapterIterator)
+                ++matches;
+            else
+                qExtra += qualityErrorProbabilies[*qualityIterator];
+            ++readIterator;
+            ++qualityIterator;
+            ++adapterIterator;
+            --remaining;
+        }
+        ambiguous += (unsigned char)qExtra;
+        const float errorRate = static_cast<float>(overlap - matches - ambiguous) / static_cast<float>(overlap);
+        if (errorRate < ret.errorRate || (errorRate == ret.errorRate && overlap > ret.overlap))
+        {
+            ret.matches = matches;
+            ret.ambiguous = ambiguous;
+            ret.errorRate = errorRate;
+            ret.shiftPos = shiftPos;
+            ret.overlap = overlap;
+        }
+        ++shiftPos;
+    }
+    if (ret.matches != 0)
+    {
+        ret.mismatches = ret.overlap - ret.matches - ret.ambiguous;
+        ret.score = 2 * ret.matches - ret.overlap + ret.ambiguous;
+    }
+}
 
 
 template <typename TSeq, typename TAdapter, typename TAlignResult>
@@ -777,6 +860,35 @@ void Dna5ToStdString(std::string& dest, const seqan::Dna5QString &source) noexce
     }
 }
 
+void Dna5QToStdString(std::string& dest, std::string& destQ, const seqan::Dna5QString &source) noexcept
+{
+    auto len = length(source);
+    dest.resize(len);
+    destQ.resize(len);
+    for (size_t n = 0; n < len; n++)
+    {
+        destQ[n] = seqan::getQualityValue(source[n]);
+        switch (((unsigned char)source[n]) & 0x07)
+        {
+        case 0:
+            dest[n] = 'A';
+            break;
+        case 1:
+            dest[n] = 'C';
+            break;
+        case 2:
+            dest[n] = 'G';
+            break;
+        case 3:
+            dest[n] = 'T';
+            break;
+        case 4:
+            dest[n] = 'N';
+            break;
+        }
+    }
+}
+
 template <typename TStats>
 struct TlsBlockAdapterTrimming
 {
@@ -785,12 +897,14 @@ struct TlsBlockAdapterTrimming
     TStats& stats;
     const AdapterTrimmingParams& params; // can use ref here, bcs read only does not cause false sharing
     std::string tlsString;
+    std::string tlsString2;
 };
 
 namespace AdapterSelectionMethod
 {
     struct TopDown {};
     struct Best {};
+    struct BestQ {};
 }
 
 // convenience wrapper
@@ -803,6 +917,107 @@ unsigned stripAdapter(TSeq& seq, AdapterTrimmingStats<TReadLen>& stats, TAdapter
     params.mode = spec;
     TlsBlockAdapterTrimming<AdapterTrimmingStats<TReadLen>> tlsBlock(stats, params);
     return stripAdapter(seq, tlsBlock, stripDirection, AdapterSelectionMethod::Best(), ErrorRateMode::linear());
+}
+
+template <typename TSeq, typename TStripAdapterDirection, typename TlsBlock, typename TErrorRateMode>
+unsigned stripAdapter(TSeq& seq, TlsBlock& tlsBlock, const TStripAdapterDirection&, const AdapterSelectionMethod::BestQ&, const TErrorRateMode&)
+{
+    AlignAlgorithm::Menkuec alignAlgorithm;
+
+    using TReadLen = decltype(tlsBlock.stats.overlapSum);
+    unsigned removedTotal{ 0 };
+    AlignResult<TReadLen> alignResult;  // small object, created on stack
+    AlignResult<TReadLen> bestAlignResult;  // small object, created on stack
+    typename decltype(tlsBlock.params.adapters)::value_type bestAdapter;
+    unsigned removedTotalOld = 0;
+    TReadLen lenSeq = length(seq);
+
+    Dna5QToStdString(tlsBlock.tlsString, tlsBlock.tlsString2, seq);
+
+    for (unsigned int n = 0;n < tlsBlock.params.mode.times; ++n)
+    {
+        bestAlignResult.score = AlignResult<TReadLen>::noMatch;
+        for (auto const& adapterItem : tlsBlock.params.adapters)
+        {
+            //if (static_cast<unsigned>(length(adapterItem.seq)) < spec.min_length)
+            //  continue;
+            if ((TStripAdapterDirection::value == adapterDirection::reverse && adapterItem.reverse == false) ||
+                (TStripAdapterDirection::value == adapterDirection::forward && adapterItem.reverse == true))
+                continue;
+
+            const auto& adapterSequence = adapterItem.getSeq();
+            const auto lenAdapter = adapterItem.getLen();
+
+            const int oppositeEndOverhang = adapterItem.anchored == true ? lenAdapter - lenSeq : adapterItem.overhang;
+            const int sameEndOverhang = adapterItem.anchored == true ? 0 : lenAdapter - tlsBlock.params.mode.min_length;
+            if (adapterItem.adapterEnd == AdapterItem::end3)
+                alignPair(alignResult, tlsBlock.tlsString, tlsBlock.tlsString2, adapterSequence, oppositeEndOverhang, sameEndOverhang, alignAlgorithm);
+            else
+                alignPair(alignResult, tlsBlock.tlsString, tlsBlock.tlsString2, adapterSequence, sameEndOverhang, oppositeEndOverhang, alignAlgorithm);
+
+            if (isMatch(alignResult.overlap, alignResult.mismatches, tlsBlock.params.mode, TErrorRateMode()))
+            {
+                if (alignResult.score > bestAlignResult.score)
+                {
+                    bestAlignResult = alignResult;
+                    bestAdapter = adapterItem;
+                }
+            }
+        }
+        if (bestAlignResult.score != AlignResult<TReadLen>::noMatch)
+        {
+            const auto& alignResult = bestAlignResult;
+            const auto& adapterItem = bestAdapter;
+            const auto lenAdapter = adapterItem.getLen();
+
+            TReadLen eraseStart = 0;
+            TReadLen eraseEnd = 0;
+            if (adapterItem.adapterEnd == AdapterItem::end3)
+            {
+                eraseStart = alignResult.shiftPos;
+                eraseEnd = lenSeq;
+            }
+            else
+            {
+                eraseStart = 0;
+                eraseEnd = std::min<TReadLen>(lenSeq, alignResult.shiftPos + lenAdapter);
+            }
+
+            seqan::erase(seq, eraseStart, eraseEnd);
+            tlsBlock.tlsString.erase(eraseStart, eraseEnd);
+            TReadLen removed = eraseEnd - eraseStart;
+            removedTotal += removed;
+            lenSeq -= removed;
+
+            // update statistics        
+            const auto statisticLen = removed;
+            if (tlsBlock.stats.removedLength.size() < statisticLen)
+                tlsBlock.stats.removedLength.resize(statisticLen);
+            if (tlsBlock.stats.removedLength[statisticLen - 1].size() < static_cast<size_t>(alignResult.mismatches + 1))
+                tlsBlock.stats.removedLength[statisticLen - 1].resize(alignResult.mismatches + 1);
+            ++tlsBlock.stats.removedLength[statisticLen - 1][alignResult.mismatches];
+
+            if (tlsBlock.stats.numRemoved.size() < static_cast<size_t>(adapterItem.id + 1))
+            {
+                std::cout << "error: numRemoved too small!" << std::endl;
+                throw(std::runtime_error("error: numRemoved too small!"));
+            }
+            ++tlsBlock.stats.numRemoved[adapterItem.id];
+
+            tlsBlock.stats.overlapSum += alignResult.overlap;
+            tlsBlock.stats.maxOverlap = std::max(tlsBlock.stats.maxOverlap, alignResult.overlap);
+            tlsBlock.stats.minOverlap = std::min(tlsBlock.stats.minOverlap, alignResult.overlap);
+        }
+
+        if (removedTotal == removedTotalOld)
+            return removedTotal;
+        removedTotalOld = removedTotal;
+
+        // dont try more adapter trimming if the read is too short already
+        if (static_cast<TReadLen>(lenSeq) < tlsBlock.params.mode.min_length)
+            return removedTotal;
+    }
+    return removedTotal;
 }
 
 template <typename TSeq, typename TStripAdapterDirection, typename TlsBlock, typename TErrorRateMode>

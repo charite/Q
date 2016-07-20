@@ -164,8 +164,8 @@ template <typename TDest, typename TSource>
 void insertAfterFirstToken(TDest& dest, TSource&& source)
 {
     unsigned const len = length(dest);
-    for (unsigned k = 0;k < len;++k)
-        if (dest[k] == ' ' || k == (len - 1))
+    for (unsigned k = 0;k <= len;++k)
+        if (dest[k] == ' ' || k == len)
         {
             insert(dest, k, std::forward<TSource>(source));
             break;

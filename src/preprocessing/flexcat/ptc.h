@@ -584,8 +584,8 @@ namespace ptc
         std::atomic_bool _run;
     // function declarations and definitions
     public:
-        Consume(TSink&& sink, const unsigned int numSlots)
-            : OrderManager<TOrderPolicy>(numSlots), SinkReuseInterface<TSink, TCoreItemType, reuseItems>(sink), _slots(numSlots), _numSlots(numSlots), _run(false)
+        Consume(TSink sink, const unsigned int numSlots)
+            : OrderManager<TOrderPolicy>(numSlots), SinkReuseInterface<TSink, TCoreItemType, reuseItems>(std::forward<TSink>(sink)), _slots(numSlots), _numSlots(numSlots), _run(false)
         {}
         ~Consume()
         {
@@ -735,7 +735,7 @@ namespace ptc
     template <typename TSource, typename TTransformer, typename TSink>
     auto ordered_ptc(TSource&& source, const TTransformer& transformer, TSink&& sink, const unsigned int numThreads)
     {
-        return std::make_unique<PTC_unit<TSource, TTransformer, TSink, OrderPolicy::Ordered, WaitPolicy::Semaphore>>
+        return std::make_unique<PTC_unit<TSource, TTransformer, TSink&&, OrderPolicy::Ordered, WaitPolicy::Semaphore>>
             (std::forward<TSource>(source), transformer, std::forward<TSink>(sink), numThreads);
     }
 

@@ -456,8 +456,8 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
         preprocessingStage(processingParams, *reads, stats);
         if (demultiplexingStage(demultiplexingParams, *reads, esaFinder, stats) != 0)
             std::cerr << "DemultiplexingStage error" << std::endl;
-        adapterTrimmingStage(*reads, tlsBlock);
         qualityTrimmingStage(qualityTrimmingParams, *reads, stats);
+        adapterTrimmingStage(*reads, tlsBlock);
         postprocessingStage(processingParams, *reads, stats);
         stats.processTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
         return std::make_unique<std::tuple<decltype(reads), decltype(demultiplexingParams.barcodeIds), TStats>>(std::make_tuple(std::move(reads), demultiplexingParams.barcodeIds, stats));
@@ -540,8 +540,11 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
 // ----------------------------------------------------------------------------
 // Program entry point.
 
+
 int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
 {
+    initQualityErrorProbabilities();
+
     auto t1 = std::chrono::steady_clock::now();
     seqan::ArgumentParser parser = initParser(flexiProgram);
 

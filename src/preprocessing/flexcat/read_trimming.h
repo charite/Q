@@ -151,8 +151,10 @@ unsigned _trimReads(std::vector<TRead>& reads, unsigned const cutoff, const TSpe
     int trimmedReads = 0;
     std::transform(reads.begin(),reads.end(),reads.begin(),[&trimmedReads, cutoff, &spec](auto& read)->auto
     {
-        if (trimRead(read.seq, cutoff, spec))
+        auto nTrimmed = trimRead(read.seq, cutoff, spec);
+        if (nTrimmed)
         {
+            read.qTrimmed = (unsigned char)nTrimmed;
             ++trimmedReads;
             if (TTagTrimming::value)
                 append(read.id, ":QT");
