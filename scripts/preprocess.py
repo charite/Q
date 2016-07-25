@@ -198,7 +198,7 @@ if (results.exo == False and
 		(os.path.isfile(nexusOutputFilenameSplit1) == False or 
 			os.path.isfile(nexusOutputFilenameSplit2) == False)) or
 		results.overwrite == True)):
-    args = (nexcat_path, bowtieOutputFilename,  "-b -fc", results.filter_chromosomes)
+    args = (nexcat_path, bowtieOutputFilename, "-b", "-fc", results.filter_chromosomes)
     if results.random_split == True:
 		args += ("-rs",)
     print "Filtering post-mapping barcodes..."
