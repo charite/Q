@@ -34,7 +34,6 @@ parser.add_argument('--adapters', type=str, default = "/../data/adapters.fa")
 parser.add_argument('--barcodes', type=str, default = "/../data/barcodes.fa")
 parser.add_argument('--flexcat_er', type=str, default = "0.2")
 parser.add_argument('--flexcat_ol', type=str, default = "4")
-parser.add_argument('--flexcat_fm', type=str, default = "19")
 parser.add_argument('--flexcat_ml', type=str, default = "19")
 parser.add_argument('--flexcat_oh', type=str, default = "0")
 parser.add_argument('--flexcat_times', type=str, default = "1")
@@ -113,13 +112,13 @@ if results.exo:
  args = (flexcat_path, results.input_file, "-tt", "-t", "-ss", "-st", "-app", 
 	"-tnum", results.num_threads, "-times", results.flexcat_times, "-er", 
 	results.flexcat_er, "-ol", results.flexcat_ol, "-oh", results.flexcat_oh, 
-	"-fm", results.flexcat_fm, "-ml", results.flexcat_ml, "-a", 
+	"-ml", results.flexcat_ml, "-a", 
 	flexcatAdapterFilename,"-o", flexcatOutputFilename)
 else:
  args = (flexcat_path, results.input_file, "-tl", "5", "-tt", "-t", "-ss", "-st", 
 	"-app", "-tnum", results.num_threads, "-times", results.flexcat_times, "-er", 
 	results.flexcat_er, "-ol", results.flexcat_ol, "-oh", results.flexcat_oh, 
-	"-fm", results.flexcat_fm, "-ml", results.flexcat_ml, "-b", 
+	"-ml", results.flexcat_ml, "-b", 
 	flexcatBarcodeFilename, "-a", flexcatAdapterFilename,"-o", flexcatOutputFilename)
 if not os.path.exists(outputDir):
  os.makedirs(outputDir)
