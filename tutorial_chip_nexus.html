@@ -176,7 +176,7 @@ the short reads characcteristic of ChIP-nexus data. Note that bowtie requires an
   to be removed (which is recommended in general for ChIP-nexus analysis, because such chromosomes tend to be highly enriched for mapping artefacts).
 </p>
 run
-<pre><code>nexcat -fc '(.*)[H|U|M]+(.*)' SRR1175698.sam</pre></code>
+<pre><code>nexcat -fc '(.*)[H|U|M]+(.*)' -b SRR1175698.sam</pre></code>
 
 <p>The Drosophila genome build 3 (dm3) contains two "chromosomes" that are used to place sequences that could not be localised to
 one of the six canonical chromosomes. ChrU (U="unknown"), chrUextra. There are also "Het" versions of the
@@ -227,8 +227,8 @@ samtools index SRR1175698_filtered_sorted.bam</pre></code>
 			<p>
 			If you have the UCSC tools installed, you can also generate bigWig files out of the bedGraph files that nexcat generates.
 	   <pre><code>fetchChromSizes dm3 > dm3.sizes
-bedGraphToBigWig SRR1175698_filtered_forward.bedGraph dm3.sizes SRR1175698_filtered_forward.bw
-bedGraphToBigWig SRR1175698_filtered_reverse.bedGraph dm3.sizes SRR1175698_filtered_reverse.bw</pre></code>			
+bedGraphToBigWig SRR1175698_filtered_forward.bed dm3.sizes SRR1175698_filtered_forward.bw
+bedGraphToBigWig SRR1175698_filtered_reverse.bed dm3.sizes SRR1175698_filtered_reverse.bw</pre></code>			
 			These files can then be loaded into a viewer like IGV.
 			</p>
 
@@ -246,7 +246,7 @@ Non uniquely mappable reads	5321656
 After barcode filtering	6286485	 (-2506930)
 PCR duplication rate	0.285092
 Total duplet reads	1166805
-Command line	nexcat	-fc	(.*)[H|U|M]+(.*)	SRR1175698.sam</pre></code>
+Command line	nexcat	-fc	(.*)[H|U|M]+(.*)	-b	SRR1175698.sam</pre></code>
 			</p>
 	
  		   <br>
