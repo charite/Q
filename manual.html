@@ -61,8 +61,8 @@
 			</ul>
 			 <li><a href="#peak_calling" >Running Q in nexus-mode</a></li>
 			<ul>
-				 <li><a href="#binding_characteristics" >Binding characteristics</a></li>
-				 <li><a href="#peak_calling" >Peak calling</a></li>
+				 <li><a href="#binding_characteristics_peak_calling" >Binding characteristics and peak calling</a></li>
+				 <li><a href="#q_frags_track" >q-frags coverage track for IGV</a></li>				 
 			</ul>
 			</ul>
 			</p>
@@ -101,7 +101,7 @@
             <th>-t</th><th>Tag sequences with removed adapters</th>
           </tr>
               <tr>
-            <th>-fm 0</th><th>Set the final minimum length of reads that will be accepted, default is 0</th>
+            <th>-ml 0</th><th>Set the final minimum length of reads that will be accepted, default is 0</th>
           </tr>
               <tr>
             <th>-er 0.2</th><th>Error rate for adapter matching, default is 0.2</th>
@@ -308,11 +308,40 @@ Estimated fragment Length	18</pre></code>
  		   <br>		   			 
 			 
 		   <h2 id="peak_calling">Running Q in nexus-mode</h2>
-			
-		   <h3 id="binding_characteristics">Binding characteristics</h3>
-		   <h3 id="peak_calling">Peak calling</h3>
-
-			 
+			<p>
+			Using the switch --nexus-mode will cause Q to use parameter settings optimized for ChIP-nexus data.
+			The usage is described in the <a href="http://charite.github.io/Q/tutorial_chip_nexus.html">Q-nexus tutorial</a>.
+			For a comprehensive list of all parameters type:
+			</p>			
+				<pre><code>Q --help </pre></code>
+		   <h3 id="binding_characteristics_peak_calling">Binding characteristics and peak calling</h3>
+			<p>
+			In --nexus-mode Q will automatically derive the width of the protected region using the distribution
+			of qfrag lengths with pseudo-control. Then peak calling will be performed using the estimated width.
+			</p>
+			<pre><code>Q -nexus-mode -t IN.bam -o OUT_PREFIX </pre></code>
+			<p>
+			Peak calling can be skipped using the --binding-characteristics-only option.
+			</p>									
+			<pre><code>Q --nexus-mode --binding-characteristics-only -t IN.bam -o OUT_PREFIX </pre></code>
+			<p>
+			The estimation of the protected region width can be skipped by specifying the width
+			using the -l option.
+			</p>									
+			<pre><code>Q --nexus-mode -l 12 -t IN.bam -o OUT_PREFIX </pre></code>
+			<h3 id="q_frags_track">q-frags coverage track for IGV</h3>
+			<p>
+				The “-w” option causes Q to output all qfrags for a given chromosome in BED format.
+			</p>
+	         <pre><code>Q --nexus-mode -w chr2L -t IN.bam -o chr2L </pre></code>
+			<p>	         
+	         In order to view the qfrags coverage profile in IGV the BED file has to be sorted and converted
+	         into tdf format using igvtools, as follows:
+			</p>
+	      <pre><code>igvtools sort chr2L-qfrags.bed chr2L-qfrags-sorted.bed</pre></code>
+	      <pre><code> igvtools count -z 1 -w 1 --includeDuplicates chr2L-qfrags-sorted.bed chr2L-qfrags-sorted.tdf dm3.chrom.sizes</pre></code>
+  		   <br>
+ 		   <br>		 	      
     </div>
     <script src="javascripts/scale.fix.js"></script>
   </body>
