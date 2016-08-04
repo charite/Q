@@ -20,11 +20,13 @@
 	 <img src="img/Q_main_header.png" align="top" width='100%'/>
 	 <br><br>
 	 <p class="header">
-    Q is a fast saturation-based ChIP-seq peak caller.
+    Q is a fast saturation-based ChIP-seq and
+    <a href="http://www.ncbi.nlm.nih.gov/pubmed/25751057" target="_idr">ChIP-nexus</a>    
+    peak caller.
     Q works well in conjunction with the irreproducible discovery rate
     (<a href="http://statistics.berkeley.edu/sites/default/files/tech-reports/790.pdf" target="_idr">IDR</a>)
     procedure.
-    Q was extensively tested on publicly available datasets from 
+    Q was extensively tested on publicly available ChIP-seq datasets from 
     <a href="http://genome.ucsc.edu/ENCODE/" target="_encode">ENCODE</a> and shown to perform well with respect to reproducibility of the called peak set, consistency of the peak sets with respect to 
     predicted transcription factor binding motifs contained in them, as well as overall run time. Q is implemented in C++ making use of the 
     <a href="http://www.seqan.de" target="_seqan">SeqAn</a> library.
@@ -49,6 +51,20 @@
     <a href="http://genome.ucsc.edu/">UCSC's genome browser</a>,
     where they can be displayed in the context of other related data such as 
     for example ChIP-seq data for histone modifications and cofactors or expression data.
+    <br> <br>
+    ChIP-nexus, an extension of the ChIP-exo protocol, requires less input DNA and
+enables selective PCR duplicate removal using random barcodes. We developed 
+a comprehensive software package for ChIP-nexus data that exploits the
+random barcodes used in the ChIP-nexus protocol. Furthermore, we developed
+bespoke methods to estimate the length of the protected region resulting from
+protein-DNA binding as well as for peak calling.
+    <br> <br>
+    If you use Q for ChIP-seq, please cite:
+	<ul>
+	  Hansen et al. (2015) Saturation analysis of ChIP-seq data for reproducible identification of binding peaks.
+ Genome Research, 25:1391-400.
+	  [PMID: <a href="http://www.ncbi.nlm.nih.gov/pubmed/26163319">26163319</a>]
+	</ul>
     </p>
     <hr/>
     <div class="wrapper">
@@ -60,12 +76,18 @@
         </ul>
       <p class="view"><a href="http://github.com/charite/Q">View the Project on GitHub</a></p>
       <p class="view"><a href="installation_nexus.html">Installation</a></p>
-      <p class="view"><a href="manual.html">Manual for Q-nexus</a></p>
       <p class="view"><a href="tutorial.html">Tutorial for ChIP-seq</a></p>      
       <p class="view"><a href="tutorial_chip_nexus.html">Tutorial for ChIP-nexus</a></p>      
       </header>
       <section>
         <h1>NEWS</h1>
+        <dl>
+          <dt>02/08/2016: New release v1.2.0 is available</dt>
+          <dd>Additional software is provided for the preprocessing of ChIP-nexus data.
+	  When Q is executed in a newly added nexus-mode the width of the protected region will be estimated
+	  and used for peak calling with parameters optimized for ChIP-nexus data.
+	  </dd>
+        </dl>     
         <dl>
           <dt>13/11/2015: Bug fix for issue 6 in Q v1.1.1</dt>
           <dd>The function writeBedGraph caused a corrupt memory error. This bug is fixed in Q version 1.1.1.</dd>
@@ -83,7 +105,7 @@
         <br>                
       </section>
       <footer>
-        <p>This project is maintained by <a href="http://compbio.charite.de/contao/index.php/phansen.html">Peter Hansen</a></p>
+        <p>This project is maintained by <a href="https://charite.github.io/team_hansen.html">Peter Hansen</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
