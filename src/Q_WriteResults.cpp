@@ -808,8 +808,6 @@ int writeBedGraph(std::vector<Chromosome> &chromosome, seqan::CharString out_pre
 	// If you want the bedGraph for fragment coverage use the average fragment length.
 	// fiddle seqan::CharString to std::string
 	
-	std::cout << "Here we go!" << "\n";
-
 	// create file names and out stream
 	char* foo = toCString(out_prefix);
 	std::string op = foo;	
