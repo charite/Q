@@ -278,13 +278,16 @@ const __m128i ONE_40 = _mm_set1_epi64x(0x0101010101);
 const __m128i ONE_48 = _mm_set1_epi64x(0x010101010101);
 const __m128i ONE_56 = _mm_set1_epi64x(0x01010101010101);
 const __m128i ONE_128 = _mm_set1_epi8(1);
-const __m256i ONE_256 = _mm256_set1_epi8(1);
 
 const __m128i ZERO_128 = _mm_set1_epi8(0);
-const __m256i ZERO_256 = _mm256_set1_epi8(0);
 //const __m128i N_128 = _mm_set1_epi8(0x04);
 const __m128i N_128 = _mm_set1_epi8('N');
+
+#ifdef __AVX2__
+const __m256i ONE_256 = _mm256_set1_epi8(1);
 const __m256i N_256 = _mm256_set1_epi8('N');
+const __m256i ZERO_256 = _mm256_set1_epi8(0);
+#endif
 
 // vector access to SSE registers is a microsoft specialty
 #ifdef _MSC_VER
@@ -533,6 +536,7 @@ struct compareAdapter<16>
     }
 };
 
+#ifdef __AVX2__
 template <>
 struct compareAdapter<32>
 {
@@ -551,6 +555,7 @@ struct compareAdapter<32>
         adapterIterator += 32;
     }
 };
+#endif
 
 /*
 - shifts adapterTemplate against sequence

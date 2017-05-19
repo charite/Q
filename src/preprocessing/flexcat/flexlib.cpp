@@ -66,6 +66,28 @@
 #include "read_writer.h"
 #include "ptc.h"
 
+
+#ifdef _MSC_VER
+bool is_avx2_supported(void)
+{
+    int cpuInfo[4];
+    __cpuid(cpuInfo, 7);
+    const int ebx = cpuInfo[1];
+    const int bit_AVX2 = 0x10;
+    return ebx & bit_AVX2 ? true : false;
+}
+#else
+#include <cpuid.h>
+
+bool is_avx2_supported(void)
+{
+    unsigned int eax = 0, ebx = 0, ecx = 0, edx = 0;
+    __get_cpuid(7, &eax, &ebx, &ecx, &edx);
+    return ebx & bit_AVX2 ? true : false;
+}
+#endif
+
+
 using namespace seqan;
 
 
@@ -543,6 +565,15 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
 
 int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
 {
+#ifdef __AVX2__
+    if(!is_avx2_supported())
+    {
+        std::cout << "\nYour CPU does not support AVX2. Please recompile on your machine or use a binary"
+            << " that has been compiled without AVX2 support.\n";
+        return 1;
+    }
+#endif
+
     initQualityErrorProbabilities();
 
     auto t1 = std::chrono::steady_clock::now();
@@ -729,6 +760,11 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         std::cout << "Overview:\n";
         std::cout << "=========\n";
         std::cout << "Application Type: " << sizeof(void*) * 8 << " bit" << std::endl;
+#ifdef __AVX2__        
+        std::cout << "AVX2: enabled" << std::endl;
+#else
+        std::cout << "AVX2: disabled" << std::endl;
+#endif
         getArgumentValue(filename1, parser, 0, 0);
         std::cout << "Forward-read file: " << filename1 << "\n";
         if (programParams.fileCount == 2)
