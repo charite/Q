@@ -808,7 +808,6 @@ int writeBedGraph(std::vector<Chromosome> &chromosome, seqan::CharString out_pre
 	// If you want the bedGraph for fragment coverage use the average fragment length.
 	// fiddle seqan::CharString to std::string
 	
-
 	// create file names and out stream
 	char* foo = toCString(out_prefix);
 	std::string op = foo;	
@@ -838,7 +837,7 @@ int writeBedGraph(std::vector<Chromosome> &chromosome, seqan::CharString out_pre
 		}
 		
 		// init coverage vector
-		std::vector<int> COV(chromosome[i].len,0);
+		std::vector<int> COV(chromosome[i].len+1,0);
 
 		for(unsigned j=0;j<HITS.size();j++)
 		{
@@ -859,13 +858,13 @@ int writeBedGraph(std::vector<Chromosome> &chromosome, seqan::CharString out_pre
 				}				
 			}
 		}		
-		
 		int c_pos=0;
-		int c_cov=COV[0];		
+		int c_cov=COV[0];
 		for(unsigned j=1;j<COV.size();j++)
 		{
-			if(COV[j]!=COV[j-1])
+			if(COV[j]!=COV[j-1]||j==(unsigned)chromosome[i].len-1)
 			{
+				//std::cout << chromosome[i].name << "\t" << c_pos << "\t" << j << "\t" << c_cov << "\t" << HITS.size() << "\n";
 				OUT << chromosome[i].name << "\t" << c_pos << "\t" << j << "\t" << c_cov << "\n";
 				c_pos=j;
 				c_cov=COV[j];
