@@ -66,6 +66,28 @@
 #include "read_writer.h"
 #include "ptc.h"
 
+
+#ifdef _MSC_VER
+bool is_avx2_supported(void)
+{
+    int cpuInfo[4];
+    __cpuid(cpuInfo, 7);
+    const int ebx = cpuInfo[1];
+    const int bit_AVX2 = 0x10;
+    return ebx & bit_AVX2 ? true : false;
+}
+#else
+#include <cpuid.h>
+
+bool is_avx2_supported(void)
+{
+    unsigned int eax = 0, ebx = 0, ecx = 0, edx = 0;
+    __get_cpuid(7, &eax, &ebx, &ecx, &edx);
+    return ebx & bit_AVX2 ? true : false;
+}
+#endif
+
+
 using namespace seqan;
 
 
@@ -97,21 +119,21 @@ inline void loadMultiplex(std::vector<TRead<TSeq>>& reads, unsigned records, seq
 // PROGRAM STAGES ---------------------
 //Preprocessing Stage
 template<typename TReadSet, typename TStats>
-void preprocessingStage(const ProcessingParams& processingParams, TReadSet& readSet, TStats& generalStats)
+void preprocessingStage(const ProcessingParams& processingParams, TReadSet& readSet, TStats& stats)
 {
     if (processingParams.runPre)
     {
         //Trimming and filtering
         if (processingParams.trimLeft + processingParams.trimRight + processingParams.minLen != 0)
             preTrim(readSet, processingParams.trimLeft, processingParams.trimRight,
-                processingParams.minLen, processingParams.tagTrimming, generalStats);
+                processingParams.minLen, processingParams.tagTrimming, stats);
        // Detecting uncalled Bases
         if (processingParams.runCheckUncalled)
         {
             if (processingParams.runSubstitute)
-                processN(readSet, processingParams.uncalled, processingParams.substitute, generalStats);
+                processN(readSet, processingParams.uncalled, processingParams.substitute, stats);
             else
-                processN(readSet, processingParams.uncalled, NoSubstitute(), generalStats);
+                processN(readSet, processingParams.uncalled, NoSubstitute(), stats);
         }
     }
 }
@@ -119,33 +141,44 @@ void preprocessingStage(const ProcessingParams& processingParams, TReadSet& read
 // DEMULTIPLEXING
 template <typename TRead, typename TFinder, typename TStats>
 int demultiplexingStage(const DemultiplexingParams& params, std::vector<TRead>& reads, TFinder& esaFinder,
-    TStats& generalStats)
+    TStats& stats)
 {
     if (!params.run)
         return 0;
-    if (!params.approximate)
-    {
-        demultiplex(reads, esaFinder, params.hardClip, generalStats, ExactBarcodeMatching(), params.exclude);
-    }
-    else
-    {
-        if (!check(reads, params.barcodes, generalStats))            // On Errors with barcodes return 1;
-            return 1;
-        demultiplex(reads, esaFinder, params.hardClip, generalStats, ApproximateBarcodeMatching(), params.exclude);
-    }
+    if (!check(reads, params.barcodes, stats))
+        return -1;
+    demultiplex(reads, esaFinder, params.hardClip, stats, params.approximate, params.exclude);
     return 0;
 }
 
 // ADAPTER TRIMMING
-template <typename TRead, typename TStats>
-void adapterTrimmingStage(const AdapterTrimmingParams& params, std::vector<TRead>& reads, TStats& stats)
+template <typename TRead, typename TlsBlock>
+void adapterTrimmingStage(std::vector<TRead>& reads, TlsBlock& tlsBlock)
 {
-    if (!params.run)
+    if (!tlsBlock.params.run)
         return;
-    if(params.tag)
-        stripAdapterBatch(reads, params.adapters, params.mode, params.pairedNoAdapterFile, stats.adapterTrimmingStats, TagAdapter<true>());
+    if(tlsBlock.params.tag)
+        if(tlsBlock.params.best)
+            if(tlsBlock.params.nler)
+                stripAdapterBatch(reads, tlsBlock, TagAdapter<true>(), AdapterSelectionMethod::Best(), ErrorRateMode::nonLinear());
+            else
+                stripAdapterBatch(reads, tlsBlock, TagAdapter<true>(), AdapterSelectionMethod::Best(), ErrorRateMode::linear());
+        else
+            if (tlsBlock.params.nler)
+                stripAdapterBatch(reads, tlsBlock, TagAdapter<true>(), AdapterSelectionMethod::TopDown(), ErrorRateMode::nonLinear());
+            else
+                stripAdapterBatch(reads, tlsBlock, TagAdapter<true>(), AdapterSelectionMethod::TopDown(), ErrorRateMode::linear());
     else
-        stripAdapterBatch(reads, params.adapters, params.mode, params.pairedNoAdapterFile, stats.adapterTrimmingStats, TagAdapter<false>());
+        if (tlsBlock.params.best)
+            if (tlsBlock.params.nler)
+                stripAdapterBatch(reads, tlsBlock, TagAdapter<false>(), AdapterSelectionMethod::Best(), ErrorRateMode::nonLinear());
+            else
+                stripAdapterBatch(reads, tlsBlock, TagAdapter<false>(), AdapterSelectionMethod::Best(), ErrorRateMode::linear());
+        else
+            if (tlsBlock.params.nler)
+                stripAdapterBatch(reads, tlsBlock, TagAdapter<false>(), AdapterSelectionMethod::TopDown(), ErrorRateMode::nonLinear());
+            else
+                stripAdapterBatch(reads, tlsBlock, TagAdapter<false>(), AdapterSelectionMethod::TopDown(), ErrorRateMode::linear());
 }
 
 // QUALITY TRIMMING
@@ -170,8 +203,8 @@ void qualityTrimmingStage(const QualityTrimmingParams& params, std::vector<TRead
             trimBatch(reads, params.cutoff, Tail(), params.tag);
         }
         }
+        stats.removedQuality += removeShortSeqs(reads, params.min_length);
     }
-    stats.removedQuality += removeShortSeqs(reads, params.min_length);
 }
 
 //Postprocessing
@@ -180,8 +213,8 @@ void postprocessingStage(const ProcessingParams& params, std::vector<TRead>& rea
 {
     if (params.runPost)
     {
-        if ((params.finalMinLength != 0) && (params.finalLength == 0))
-            stats.removedShort += removeShortSeqs(reads, params.finalMinLength);
+        if ((params.minLength != 0) && (params.finalLength == 0))
+            stats.removedShort += removeShortSeqs(reads, params.minLength);
         else if (params.finalLength != 0)
             trimTo(reads, params.finalLength, stats);
     }
@@ -189,12 +222,12 @@ void postprocessingStage(const ProcessingParams& params, std::vector<TRead>& rea
 
 // END PROGRAM STAGES ---------------------
 template <typename TOutStream, typename TStats>
-void printStatistics(const ProgramParams& programParams, const TStats& generalStats, DemultiplexingParams& demultiplexParams,
+void printStatistics(const ProgramParams& programParams, const TStats& generalStats, const float totalTime, DemultiplexingParams& demultiplexParams,
                 const AdapterTrimmingParams& adapterParams, const OutputStreams& outputStreams, const bool timing, TOutStream &outStream)
 {
     bool paired = programParams.fileCount == 2;
     bool adapter = adapterParams.run;
-    outStream << std::endl;
+    outStream << std::endl << std::endl;
     outStream << "Read statistics\n";
     outStream << "===============\n";
     outStream << "Reads processed:\t" << generalStats.readCount;
@@ -241,12 +274,11 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
             barcodesTotal = barcodesTotal/(length(demultiplexParams.barcodes[0])*5);
         }
 
-        outStream << "Reads per barcode:\n";
-        outStream << "Unidentified:\t" << generalStats.matchedBarcodeReads[0];
+        outStream << "Unidentified:\t\t" << generalStats.matchedBarcodeReads[0];
         if (generalStats.readCount != 0)
         {
             outStream  << "\t\t(" << std::setprecision(3) << (double)generalStats.matchedBarcodeReads[0] /
-                ((double)generalStats.readCount) * 100 << "%)";
+                ((double)generalStats.readCount) * 100 << "%) reads";
         }  
         outStream << "\n";
         for (unsigned i = 1; i <= barcodesTotal; ++i)
@@ -255,7 +287,7 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
             if (generalStats.readCount != 0)
             {
                 outStream  << "\t\t(" << std::setprecision(3) << (double)generalStats.matchedBarcodeReads[i] /
-                    ((double)generalStats.readCount) * 100 << "%)";
+                    ((double)generalStats.readCount) * 100 << "%) reads";
             }
             outStream << "\n";
         }
@@ -263,20 +295,28 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
     }
     outStream << "File statistics\n";
     outStream << "===============\n";
-    // How many reads are left.f
-    int survived = generalStats.readCount - generalStats.removedN
-        - generalStats.removedQuality - generalStats.removedShort
-        - demultiplexParams.exclude * generalStats.removedDemultiplex;
-    // In percentage points.
-    double surv_proc = (double)survived / (double)generalStats.readCount * 100;
-// TODO: add support for multiple output files
-    outStream << outputStreams.getFilename(0) + ":\n";
-    outStream << "-------\n";
-    outStream << "  Surviving Reads: " << survived << "/" << generalStats.readCount
-              << " (" << std::setprecision(3) << surv_proc << "%)\n";
-    outStream << std::endl;
+    // How many reads are left
+    //int survived = generalStats.readCount - generalStats.removedN
+    //    - generalStats.removedQuality - generalStats.removedShort
+    //    - demultiplexParams.exclude * generalStats.removedDemultiplex;
+    //// In percentage points.
+    //double surv_proc = (double)survived / (double)generalStats.readCount * 100;
+    for (unsigned int n = 0;n < outputStreams.getNumStreams();++n)
+    {
+        unsigned int survived = outputStreams.getNumReads(n);
+        double surv_proc = (double)survived / (double)generalStats.readCount * 100;
+        outStream << outputStreams.getFilename(n) << ":\t" << survived << "\t(" 
+            << std::setprecision(3) << surv_proc << "%) reads\n";
+
+        // outStream << outputStreams.getFilename(0) + ":\n";
+     //   outStream << "-------\n";
+       // outStream << "  Surviving Reads: " << survived << "/" << generalStats.readCount
+       //     << " (" << std::setprecision(3) << surv_proc << "%)\n";
+       // outStream << std::endl;
+    }
     if (adapter)
     {
+        outStream << std::endl;
         outStream << "ADAPTERS" << std::endl;
         outStream << "========" << std::endl;
         unsigned int i = 0;
@@ -287,7 +327,7 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
             else
                 outStream << " 5'";
             outStream << "-adapter, ";
-            outStream << generalStats.adapterTrimmingStats.numRemoved[adapterItem.id] << "x, " << adapterItem.seq << std::endl;
+            outStream << (unsigned int)generalStats.adapterTrimmingStats.numRemoved[adapterItem.id] << "x, " << adapterItem.getSeq() << std::endl;
             ++i;
         }
         outStream << std::endl;
@@ -296,18 +336,18 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
         outStream << std::endl;
         if (totalRemoved != 0)
         {
-            int mean = generalStats.adapterTrimmingStats.overlapSum / totalRemoved;
+            unsigned int mean = generalStats.adapterTrimmingStats.overlapSum / totalRemoved;
             outStream << "Adapter sizes:\n";
-            outStream << "Min: " << generalStats.adapterTrimmingStats.minOverlap << ", Mean: " << mean
-                << ", Max: " << generalStats.adapterTrimmingStats.maxOverlap << "\n\n";
+            outStream << "Min: " << (unsigned int)generalStats.adapterTrimmingStats.minOverlap << ", Mean: " << mean
+                << ", Max: " << (unsigned int)generalStats.adapterTrimmingStats.maxOverlap << "\n\n";
         }
         outStream << "Number of removed adapters\nmismatches\t0\t1\t2\t3\t4\t5\t6\t7\t8\nlength" << std::endl;
         i = 0;
         for (const auto adaptersSizeX : generalStats.adapterTrimmingStats.removedLength)
         {
-            outStream << ++i<<"\t";
+            outStream << (unsigned int)++i<<"\t";
             for (const auto adaptersSizeXMismatchesN : adaptersSizeX)
-                outStream << "\t" << adaptersSizeXMismatchesN;
+                outStream << "\t" << (unsigned int)adaptersSizeXMismatchesN;
             outStream << std::endl;
         }
     }
@@ -318,8 +358,11 @@ void printStatistics(const ProgramParams& programParams, const TStats& generalSt
         outStream << std::endl;
         outStream << "Time statistics:\n";
         outStream << "==================\n";
-        outStream << "Processing time: " << std::setw(5) << generalStats.processTime << " seconds.\n";
-        outStream << "       I/O time: " << std::setw(5) << generalStats.ioTime << " seconds.\n";
+        outStream << "read time        : " << std::setw(5) << generalStats.readTime << " seconds  " << generalStats.readTime/totalTime*100<< "%.\n";
+        outStream << "Processing time* : " << std::setw(5) << generalStats.processTime << " seconds  " << generalStats.processTime / totalTime * 100 << "%.\n";
+        outStream << "write time       : " << std::setw(5) << generalStats.writeTime << " seconds  " << generalStats.writeTime / totalTime * 100 << "%.\n";
+        outStream << "------------------\n";
+        outStream << "total time       : " << std::setw(5) << totalTime << " seconds.\n";
         outStream << std::endl;
     }
 }
@@ -330,9 +373,11 @@ unsigned int readReads(std::vector<TRead<TSeq>>& reads, const unsigned int recor
     reads.resize(records);
     unsigned int i = 0;
     TSeq seq;
+    std::string id;
     while (i < records && !atEnd(inputFileStreams.fileStream1))
     {
-        readRecord(reads[i].id, seq, inputFileStreams.fileStream1);
+        readRecord(id, seq, inputFileStreams.fileStream1);
+        reads[i].id = id;
         reads[i].seq = seq;
         ++i;
     }
@@ -356,89 +401,158 @@ unsigned int readReads(std::vector<TRead<TSeq>>& reads, const unsigned int recor
 }
 
 // END FUNCTION DEFINITIONS ---------------------------------------------
-template<template <typename> class TRead, typename TSeq, typename TEsaFinder, typename TStats>
-int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& inputFileStreams, const DemultiplexingParams& demultiplexingParams, const ProcessingParams& processingParams, const AdapterTrimmingParams& adapterTrimmingParams,
+template<template <typename> class TRead, typename TSeq, typename TAdapterTrimmingParams, typename TEsaFinder, typename TStats>
+int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& inputFileStreams, const DemultiplexingParams& demultiplexingParams, 
+    const ProcessingParams& processingParams, const TAdapterTrimmingParams& adapterTrimmingParams,
     const QualityTrimmingParams& qualityTrimmingParams, TEsaFinder& esaFinder,
     OutputStreams& outputStreams, TStats& stats)
 {
-    using TReadWriter = ReadWriter<OutputStreams, ProgramParams>;
+    using TReadWriter = ReadWriter<OutputStreams, ProgramParams, TStats>;
     TReadWriter readWriter(outputStreams, programParams);
 
     unsigned int numReads = 0;
-    auto readReader = [&numReads, &programParams, &inputFileStreams]() {
+    auto readReader = [&numReads, &programParams, &inputFileStreams, &demultiplexingParams, &adapterTrimmingParams]() {
+        const auto t1 = std::chrono::steady_clock::now();
+        TStats stats = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
         auto item = std::make_unique<std::vector<TRead<TSeq>>>();
-        if (numReads > programParams.firstReads)    // maximum read number reached -> dont do further reads
+        if (numReads >= programParams.firstReads)    // maximum read number reached -> dont do further reads
         {
-            item.release();   // return empty unique_ptr to signal end
-            return std::move(item);
+            // return empty unique_ptr to signal eof
+            item.release();
+            return std::unique_ptr<std::tuple<decltype(item), TStats>>();
         }
         readReads(*item, programParams.records, inputFileStreams);
         loadMultiplex(*item, programParams.records, inputFileStreams.fileStreamMultiplex);
         numReads += item->size();
         if (item->empty())    // no more reads available
-            item.release();   // return empty unique_ptr to signal eof
-        return std::move(item);
+        {
+            // return empty unique_ptr to signal eof
+            item.release();
+            return std::unique_ptr<std::tuple<decltype(item), TStats>>();
+        }
+        stats.readTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+        return std::make_unique<std::tuple<decltype(item), TStats>>(std::make_tuple(std::move(item), stats));
+    };
+    auto readReaderReuse = [&numReads, &programParams, &inputFileStreams, &demultiplexingParams, &adapterTrimmingParams](std::unique_ptr<std::tuple<std::unique_ptr<std::vector<TRead<TSeq>>>,TStats>>&& usedItem) {
+        const auto t1 = std::chrono::steady_clock::now();
+
+        auto item = std::move(usedItem);
+        if (item == nullptr)
+        {
+            item = std::make_unique<std::tuple<std::unique_ptr<std::vector<TRead<TSeq>>>, TStats>>();
+            std::get<0>(*item) = std::make_unique<std::vector<TRead<TSeq>>>();
+            std::get<1>(*item) = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
+        }
+        else
+            std::get<1>(*item).clear();
+        //if(std::get<0>(*item) == nullptr) // this check is not necessary
+        //    std::get<0>(*item) = std::make_unique<std::vector<TRead<TSeq>>>();
+        TStats& stats = std::get<1>(*item);
+        auto& reads = *std::get<0>(*item);
+        if (numReads >= programParams.firstReads)    // maximum read number reached -> dont do further reads
+        {
+            // return empty unique_ptr to signal eof
+            item.release();
+            return std::unique_ptr<std::tuple<std::unique_ptr<std::vector<TRead<TSeq>>>, TStats>>();
+        }
+        readReads(reads, programParams.records, inputFileStreams);
+        loadMultiplex(reads, programParams.records, inputFileStreams.fileStreamMultiplex);
+        numReads += reads.size();
+        if (reads.empty())    // no more reads available
+        {
+            // return empty unique_ptr to signal eof
+            return std::unique_ptr<std::tuple<std::unique_ptr<std::vector<TRead<TSeq>>>, TStats>>();
+        }
+        stats.readTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+        return item;
     };
 
-    auto transformer = [&](auto reads){
-        GeneralStats generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
-        generalStats.readCount = reads->size();
-        preprocessingStage(processingParams, *reads, generalStats);
-        if (demultiplexingStage(demultiplexingParams, *reads, esaFinder, generalStats) != 0)
+
+
+    auto transformer = [&](auto t){
+        const auto t1 = std::chrono::steady_clock::now();
+        auto reads = std::move(std::get<0>(*t));
+        TStats& stats = std::get<1>(*t);
+        TlsBlockAdapterTrimming<typename TStats::TAdapterTrimmingStats> tlsBlock(stats.adapterTrimmingStats, adapterTrimmingParams);
+        stats.readCount = reads->size();
+        preprocessingStage(processingParams, *reads, stats);
+        if (demultiplexingStage(demultiplexingParams, *reads, esaFinder, stats) != 0)
             std::cerr << "DemultiplexingStage error" << std::endl;
-        adapterTrimmingStage(adapterTrimmingParams, *reads, generalStats);
-        qualityTrimmingStage(qualityTrimmingParams, *reads, generalStats);
-        postprocessingStage(processingParams, *reads, generalStats);
-        return std::make_unique<std::tuple<decltype(reads), decltype(demultiplexingParams.barcodeIds), decltype(generalStats) >>(std::make_tuple(std::move(reads), demultiplexingParams.barcodeIds, generalStats));
+        qualityTrimmingStage(qualityTrimmingParams, *reads, stats);
+        adapterTrimmingStage(*reads, tlsBlock);
+        postprocessingStage(processingParams, *reads, stats);
+        stats.processTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+        return std::make_unique<std::tuple<decltype(reads), decltype(demultiplexingParams.barcodeIds), TStats>>(std::make_tuple(std::move(reads), demultiplexingParams.barcodeIds, stats));
     };
 
     TStats generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
 
+    bool reuse = true; // this should be disabled only for debugging
     if (programParams.num_threads > 1)
     {
-        if (programParams.ordered)
+        if (reuse)
         {
-            auto ptc_unit = ptc::ordered_ptc(readReader, transformer, readWriter, programParams.num_threads);
-            ptc_unit->start();
-            auto f = ptc_unit->get_future();
-            stats = f.get();
+            if (programParams.ordered)
+            {
+                auto ptc_unit = ptc::ordered_ptc(readReaderReuse, transformer, readWriter, programParams.num_threads);
+                ptc_unit->start();
+                auto f = ptc_unit->get_future();
+                stats = f.get();
+            }
+            else
+            {
+                auto ptc_unit = ptc::unordered_ptc(readReaderReuse, transformer, readWriter, programParams.num_threads);
+                ptc_unit->start();
+                auto f = ptc_unit->get_future();
+                stats = f.get();
+            }
         }
         else
         {
-            auto ptc_unit = ptc::unordered_ptc(readReader, transformer, readWriter, programParams.num_threads);
-            ptc_unit->start();
-            auto f = ptc_unit->get_future();
-            stats = f.get();
+            if (programParams.ordered)
+            {
+                auto ptc_unit = ptc::ordered_ptc(readReader, transformer, readWriter, programParams.num_threads);
+                ptc_unit->start();
+                auto f = ptc_unit->get_future();
+                stats = f.get();
+            }
+            else
+            {
+                auto ptc_unit = ptc::unordered_ptc(readReader, transformer, readWriter, programParams.num_threads);
+                ptc_unit->start();
+                auto f = ptc_unit->get_future();
+                stats = f.get();
+            }
         }
     }
     else
     {
         std::unique_ptr<std::vector<TRead<TSeq>>> readSet;
         const auto tMain = std::chrono::steady_clock::now();
-        while (generalStats.readCount < programParams.firstReads)
+        while (stats.readCount < programParams.firstReads)
         {
-            readSet.reset(new std::vector<TRead<TSeq>>(programParams.records));
+            generalStats = TStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
             auto t1 = std::chrono::steady_clock::now();
+            readSet.reset(new std::vector<TRead<TSeq>>(programParams.records));
             const auto numReadsRead = readReads(*readSet, programParams.records, inputFileStreams);
-            generalStats.ioTime += std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
             if (numReadsRead == 0)
                 break;
-
-            auto res = transformer(std::move(readSet));
-            generalStats += std::get<2>(*res);
+            generalStats.readTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+            auto res = transformer(std::make_unique<std::tuple<decltype(readSet),decltype(generalStats)>>(std::make_tuple(std::move(readSet), generalStats)));
+            generalStats = std::get<2>(*res);
 
             t1 = std::chrono::steady_clock::now();
-            outputStreams.writeSeqs(std::move(*(std::get<0>(*res))), demultiplexingParams.barcodeIds);
-            generalStats.ioTime += std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
+            outputStreams.writeSeqs(*(std::get<0>(*res)), demultiplexingParams.barcodeIds);
+            generalStats.writeTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();
 
             // Print information
             const auto deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - tMain).count();
             if (programParams.showSpeed)
-                std::cout << "\rreads processed: " << generalStats.readCount << "   (" << static_cast<int>(generalStats.readCount / deltaTime) << " Reads/s)";
+                std::cout << "\rreads processed: " << stats.readCount << "   (" << static_cast<int>(stats.readCount / deltaTime) << " Reads/s)";
             else
-                std::cout << "\rreads processed: " << generalStats.readCount;
+                std::cout << "\rreads processed: " << stats.readCount;
+            stats += generalStats;
         }
-        stats = generalStats;
     }
     return 0;
 }
@@ -448,9 +562,21 @@ int mainLoop(TRead<TSeq>, const ProgramParams& programParams, InputFileStreams& 
 // ----------------------------------------------------------------------------
 // Program entry point.
 
+
 int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
 {
-    SEQAN_PROTIMESTART(loopTime);
+#ifdef __AVX2__
+    if(!is_avx2_supported())
+    {
+        std::cout << "\nYour CPU does not support AVX2. Please recompile on your machine or use a binary"
+            << " that has been compiled without AVX2 support.\n";
+        return 1;
+    }
+#endif
+
+    initQualityErrorProbabilities();
+
+    auto t1 = std::chrono::steady_clock::now();
     seqan::ArgumentParser parser = initParser(flexiProgram);
 
     // Additional checks
@@ -501,13 +627,10 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         {
             getOptionValue(processingParams.finalLength , parser, "fl");
         }
-        if (seqan::isSet(parser, "fm"))
-        {
-            getOptionValue(processingParams.finalMinLength , parser, "fm");
-        }
+        getOptionValue(processingParams.minLength , parser, "ml");
         processingParams.runPre = ((processingParams.minLen + processingParams.trimLeft + processingParams.trimRight != 0)
             || isSet(parser, "u"));
-        processingParams.runPost = (processingParams.finalLength + processingParams.finalMinLength != 0);
+        processingParams.runPost = (processingParams.finalLength + processingParams.minLength != 0);
         if(flexiProgram == FlexiProgram::FILTERING)
         {
             processingParams.runPre = true;
@@ -637,6 +760,11 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         std::cout << "Overview:\n";
         std::cout << "=========\n";
         std::cout << "Application Type: " << sizeof(void*) * 8 << " bit" << std::endl;
+#ifdef __AVX2__        
+        std::cout << "AVX2: enabled" << std::endl;
+#else
+        std::cout << "AVX2: disabled" << std::endl;
+#endif
         getArgumentValue(filename1, parser, 0, 0);
         std::cout << "Forward-read file: " << filename1 << "\n";
         if (programParams.fileCount == 2)
@@ -657,33 +785,21 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
             std::cout << "Output-path: Working Directory\n";
         }
         std:: cout << "\n"; 
+
         std::cout << "General Options:\n";
         std::cout << "\tReads per block: " << programParams.records * ((programParams.fileCount == 2) + 1)<< "\n";
-        /*
-        if (isSet(parser, "c"))
-        {
-            std::cout << "\tCompress output: YES" << "\n";
-        }tag
-        else
-        {
-            std::cout << "\tCompress output: NO" << "\n";
-        }
-        */
-		if (isSet(parser, "fr") && (value(format(inputFileStreams.fileStream1)) !=
-			Find<FileFormat<seqan::SeqFileIn>::Type, Fasta>::VALUE))
-		{
-			std::cout << "\tForce no-quality output: YES\n";
-		}
-		if (isSet(parser, "nq") && (value(format(inputFileStreams.fileStream1)) !=
+       
+        if (isSet(parser, "nq") && (value(format(inputFileStreams.fileStream1)) !=
                                     Find<FileFormat<seqan::SeqFileIn>::Type, Fasta>::VALUE))
-        {
             std::cout << "\tProcess only first n reads: " << programParams.firstReads << "\n";
-        }
-        else if (value(format(inputFileStreams.fileStream1)) != Find<FileFormat<seqan::SeqFileIn>::Type, Fasta>::VALUE)
-        {
+
+        if (value(format(inputFileStreams.fileStream1)) != Find<FileFormat<seqan::SeqFileIn>::Type, Fasta>::VALUE)
             std::cout << "\tForce no-quality output: NO\n";
-        }
+        else
+            std::cout << "\tForce no-quality output: YES\n";
+
         std::cout << "\tNumber of threads: " << programParams.num_threads << "\n";
+
         if (programParams.ordered)
             std::cout << "\tOrder policy: ordered" << std::endl;
         else
@@ -691,13 +807,9 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         if(flexiProgram == FlexiProgram::ADAPTER_REMOVAL || flexiProgram == FlexiProgram::QUALITY_CONTROL|| flexiProgram == FlexiProgram::ALL_STEPS)
         {
             if (isSet(parser, "t"))
-            {
                 std::cout << "\tTag quality-trimmed or adapter-removed reads: YES\n";
-            }
             else if (adapterTrimmingParams.run||qualityTrimmingParams.run)
-            {
                 std::cout << "\tTag quality-trimmed or adapter-removed reads: NO\n";
-            }
             std::cout << "\n";
         }
     
@@ -706,61 +818,46 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
             std::cout << "Pre-, Postprocessing and Filtering:\n";
             std::cout << "\tPre-trim 5'-end length: " << processingParams.trimLeft << "\n";
 			std::cout << "\tPre-trim 3'-end length: " << processingParams.trimRight << "\n";
-            std::cout << "\tExclude reads shorter than: " << processingParams.minLen << "\n";
+
             if (isSet(parser, "u"))
-            {
                 std::cout << "\tAllowed uncalled bases per sequence: " << processingParams.uncalled << "\n";
-            }
+
             if (isSet(parser, "s"))
-            {
                 std::cout << "\tSubstitute for uncalled bases: " << processingParams.substitute << "\n";
-            }
-            if (isSet(parser, "fm") && (processingParams.finalLength == 0))
-            {
-                std::cout << "\tMinimum sequence length after COMPLETE workflow: " << processingParams.finalMinLength << "\n";
-            }
+
+            if (processingParams.minLen > 0 && (processingParams.finalLength == 0))
+                std::cout << "\tExclude reads shorter than: " << processingParams.minLen << "\n";
+
             else if (processingParams.finalLength != 0)
-            {
                     std::cout << "\tTrim sequences after COMPLETE workflow to length: " <<processingParams.finalLength<< "\n";
-            }
+
             std::cout << "\n";   
         }
         if (demultiplexingParams.run)
         {
             std::cout << "Barcode Demultiplexing:\n";
             std::cout << "\tBarcode file: " << demultiplexingParams.barcodeFile << "\n";
+            
             if (demultiplexingParams.runx)
-            {
                 std::cout << "\tMultiplex barcode file: " << demultiplexingParams.multiplexFile << "\n";
-            }
             else
-            {
                 std::cout << "\tMultiplex barcodes file:  NO" << demultiplexingParams.multiplexFile << "\n";
-            }
+
             if (demultiplexingParams.approximate)
-            {
                 std::cout << "\tApproximate matching: YES\n";
-            }
             else
-            {
                 std::cout << "\tApproximate matching: NO\n";
-            }
+
             if (demultiplexingParams.hardClip && !demultiplexingParams.runx)
-            {
                 std::cout << "\tHardClip mode: YES\n";
-            }
             else
-            {
                 std::cout << "\tHardClip mode: NO\n";
-            }
+
             if (demultiplexingParams.exclude)
-            {
                 std::cout << "\tExclude unidentified sequences: YES\n";
-            }
             else
-            {
                 std::cout << "\tExclude unidentified sequences: NO\n";
-            }
+
             std::cout << "\n";
         }
         if (adapterTrimmingParams.run)
@@ -787,28 +884,35 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
                     std::cout << "\tPaired end Mode: with adapter file\n";
                 }
             }
+            unsigned o = 0;
+            getOptionValue(o, parser, "overlap");
+            std::cout << "\tMinimum overlap " << o << "\n";
             if (isSet(parser, "e") && !isSet(parser, "er"))
             {
-                unsigned e, o;
+                unsigned e;
                 getOptionValue(e, parser, "e");
-                getOptionValue(o, parser, "overlap");
-				std::cout << "\tAllowed mismatches: " << e << "\n";
-                std::cout << "\tMinimum overlap " << o << "\n";
+                std::cout << "\tAllowed mismatches: " << e << "\n";
             }
 			else if (!isSet(parser, "e") && isSet(parser, "er"))
 			{
-				unsigned o;
 				double er;
 				getOptionValue(er, parser, "er");
-				getOptionValue(o, parser, "overlap");
 				std::cout << "\tAllowed error rate: " << er << "\n";
-				std::cout << "\tMinimum overlap " << o << "\n";
 			}
-			else
+            else if ((!isSet(parser, "e") && !isSet(parser, "er")))
+            {
+                std::cout << "\nWarning: either errors or error rate need to be specified.\n";
+                return 1;
+            }
+            else
 			{
 				std::cout << "\nWarning: errors and error rate can not be specified both at the same time.\n";
 				return 1;
 			}
+            if (isSet(parser, "nler"))
+                std::cout << "\tError-rate mode: non-linear\n";
+            else
+                std::cout << "\tError-rate mode: linear\n";
             if (isSet(parser, "oh"))
             {
                 unsigned overhang;
@@ -818,7 +922,16 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
             unsigned times;
             getOptionValue(times, parser, "times");
             std::cout << "\tMax adapter trimming iterations " << times << "\n";
-			std::cout << "\n";
+            if (isSet(parser, "best") && isSet(parser, "topdown"))
+            {
+                std::cout << "\nError: --best and --topdown can not be specified at the same time.\n";
+                return -1;
+            }
+            if (!isSet(parser, "topdown"))
+                std::cout << "\tAdapter selection method: best\n";
+            else
+                std::cout << "\tAdapter selection method: top-down\n";
+            std::cout << "\n";
         }
         if (qualityTrimmingParams.run)
         {
@@ -827,7 +940,7 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
             std::string method;
             getOptionValue(method, parser, "m");
             std::cout << "\tMethod: " << method << "\n";
-            if (isSet(parser, "l"))
+            if (isSet(parser, "qml"))
             {
                 std::cout << "\tMinimum length after trimming: " << qualityTrimmingParams.min_length << "\n";
             }
@@ -836,8 +949,8 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
     }
     // Start processing. Different functions are needed for one or two input files.
     std::cout << "\nProcessing reads...\n" << std::endl;
-    GeneralStats generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
 
+    GeneralStats generalStats(length(demultiplexingParams.barcodeIds) + 1, adapterTrimmingParams.adapters.size());
     if (fileCount == 1)
     {
         if (!demultiplexingParams.run)
@@ -847,19 +960,19 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         else
             mainLoop(Read<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
     }
-     else
-     {
-         if (!demultiplexingParams.run)
-             outputStreams.addStreams("", "", 0, useDefault);
-         if (demultiplexingParams.runx)
-             mainLoop(ReadMultiplexPairedEnd<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
-         else
-             mainLoop(ReadPairedEnd<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
+    else
+    {
+        if (!demultiplexingParams.run)
+            outputStreams.addStreams("", "", 0, useDefault);
+        if (demultiplexingParams.runx)
+            mainLoop(ReadMultiplexPairedEnd<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
+        else
+            mainLoop(ReadPairedEnd<seqan::Dna5QString>(), programParams, inputFileStreams, demultiplexingParams, processingParams, adapterTrimmingParams, qualityTrimmingParams, esaFinder, outputStreams, generalStats);
     }
-    double loop = SEQAN_PROTIMEDIFF(loopTime);
-    generalStats.processTime = loop - generalStats.ioTime;
+    generalStats.processTime /= programParams.num_threads;
 
-    printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
+    const float totalTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - t1).count();;
+    printStatistics(programParams, generalStats, totalTime, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), std::cout);
     if (isSet(parser, "st"))
     {
         std::fstream statFile;
@@ -872,7 +985,7 @@ int flexcatMain(const FlexiProgram flexiProgram, int argc, char const ** argv)
         for (int i = 0;i < argc;++i)
             statFile << argv[i] << " ";
         statFile << std::endl;
-        printStatistics(programParams, generalStats, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), statFile);
+        printStatistics(programParams, generalStats, totalTime, demultiplexingParams, adapterTrimmingParams, outputStreams, !isSet(parser, "ni"), statFile);
         statFile.close();
     }
     return 0;

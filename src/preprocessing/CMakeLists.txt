@@ -9,6 +9,12 @@
 project (NexusTools)
 set(seqan_dir ${CMAKE_CURRENT_SOURCE_DIR}/../seqan2)
 
+if(AVX2)
+    message("AVX2 enabled")
+else()
+    message("AVX2 disabled")
+endif(AVX2)
+
 if(LINUX_STATIC)
     cmake_minimum_required (VERSION 3.1)
     message("building with linux static libs")

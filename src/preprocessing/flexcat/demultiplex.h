@@ -116,7 +116,7 @@ private:
 // Functions
 // ============================================================================
 
-
+// checks if all barcodes have the same length and removes reads that are shorter than the barcodes
 template <typename TReads, typename TBarcodes, typename TStats>
 bool check(TReads& reads, TBarcodes& barcodes, TStats& stats) noexcept
 {
@@ -175,25 +175,6 @@ void MatchBarcodes(std::vector<TRead<TSeq>>& reads, const TBarcodeFinder& finder
         read.demuxResult = finder.getMatchIndex(read);});
 }
 
-struct ClipHard {};
-struct ClipSoft {};
-
-template <typename TRead>
-void clipBarcodes(std::vector<TRead>& reads, const unsigned len, const ClipHard&) noexcept
-{
-    for (auto& read : reads)
-        erase(read.seq, 0, len);
-}
-
-//Overload for deleting only matched barcodes 
-template<typename TRead>
-void clipBarcodes(std::vector<TRead>& reads, const int len, const ClipSoft&) noexcept
-{
-    // unmatched reads are partitioned to the end
-    std::for_each(reads.begin(), std::find_if(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult == 0;}), [len](auto& read) {
-        erase(read.seq, 0, len);
-    });
-}
 
 struct ApproximateBarcodeMatching {};
 struct ExactBarcodeMatching {};
@@ -233,19 +214,41 @@ void MatchBarcodes(std::vector<TRead>& reads, const TFinder& finder, TStats& sta
     }
 }
 
-template<template <typename> class TRead, typename TSeq, typename TFinder, typename TStats, typename TApprox>
-void demultiplex(std::vector<TRead<TSeq>>& reads, const TFinder& finder,
-    const bool hardClip, TStats& stats, const TApprox& approximate, const bool exclude)
+struct ClipSoft {};
+struct ClipHard {};
+
+//Overload for deleting only matched barcodes 
+template<typename TRead, typename TClipMode>
+void clipBarcodes(std::vector<TRead>& reads, const int len, const TClipMode&) noexcept
 {
-    MatchBarcodes(reads, finder, stats, approximate);
+    if (std::is_same<TClipMode,ClipSoft>::value) // static if
+    {
+        std::for_each(reads.begin(), reads.end(), [len](auto& read) {
+            if(read.demuxResult != 0)
+                erase(read.seq, 0, len);
+        });
+    }
+    else
+    {
+        for (auto& read : reads)
+            erase(read.seq, 0, len);
+    }
+}
+
+template<template <typename> class TRead, typename TSeq, typename TFinder, typename TStats>
+void demultiplex(std::vector<TRead<TSeq>>& reads, const TFinder& finder,
+    const bool hardClip, TStats& stats, const bool approximate, const bool exclude)
+{
+    if(approximate)
+        MatchBarcodes(reads, finder, stats, ApproximateBarcodeMatching());
+    else
+        MatchBarcodes(reads, finder, stats, ExactBarcodeMatching());
     if (exclude)
         reads.erase(std::remove_if(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult == 0;}), reads.end());
-    else
-        std::partition(reads.begin(), reads.end(), [](const auto& read)->auto {return read.demuxResult != 0;});
 
     if (std::is_same<TRead<TSeq>, Read<TSeq>>::value || std::is_same<TRead<TSeq>, ReadPairedEnd<TSeq>>::value)   // clipping is not done for multiplex barcodes, only for inline barcodes
     {
-        if (hardClip)
+        if(hardClip)
             clipBarcodes(reads, finder.getBarcodeLength(), ClipHard());
         else
             clipBarcodes(reads, finder.getBarcodeLength(), ClipSoft());

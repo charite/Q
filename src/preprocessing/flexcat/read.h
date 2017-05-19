@@ -43,15 +43,19 @@ struct ReadBase
 
     TSeq seq;
     std::string id;
-    int demuxResult;
+    char demuxResult;
+    unsigned char qTrimmed;
 
-    ReadBase() = default;
+    ReadBase() : demuxResult(0), qTrimmed(0)
+    {
+    }
     ReadBase(const ReadBase& rhs) = default;
     ReadBase(ReadBase&& rhs) noexcept(std::is_nothrow_move_constructible<TSeq>::value)
     {
         seq = std::move(rhs.seq);
         id = std::move(rhs.id);
         demuxResult = rhs.demuxResult;
+        qTrimmed = rhs.qTrimmed;
     }
 
     bool operator==(const ReadBase& rhs) const
@@ -64,6 +68,7 @@ struct ReadBase
         seq = std::move(rhs.seq);
         id = std::move(rhs.id);
         demuxResult = rhs.demuxResult;
+        qTrimmed = rhs.qTrimmed;
         return *this;
     }
     inline unsigned int minSeqLen() const noexcept
@@ -75,22 +80,6 @@ struct ReadBase
 template<typename TSeq>
 struct Read : ReadBase<TSeq>
 {
-    //Read() = default;
-    //Read(const Read& rhs) = default;
-    //Read(Read&& rhs) noexcept
-    //{
-    //    ReadBase<TSeq>::ReadBase(std::move(rhs));
-    //}
-    //bool operator==(const Read& rhs) const
-    //{
-    //    return ReadBase<TSeq>::operator==(rhs);
-    //}
-    //Read& operator=(const Read& rhs) = default;
-    //Read& operator=(const Read&& rhs) noexcept
-    //{
-    //    ReadBase<TSeq>::operator=(std::move(rhs));
-    //    return *this;
-    //}
 };
 
 template<typename TSeq>

@@ -66,7 +66,7 @@ struct Mean {
 // Functions
 // ============================================================================
 
-inline unsigned getQuality(const seqan::String<seqan::Dna5Q>& seq, unsigned i)
+inline unsigned getQuality(const seqan::String<seqan::Dna5Q>& seq, unsigned i) noexcept
 {
 	return seqan::getQualityValue(seq[i]);
 }
@@ -151,11 +151,13 @@ unsigned _trimReads(std::vector<TRead>& reads, unsigned const cutoff, const TSpe
     int trimmedReads = 0;
     std::transform(reads.begin(),reads.end(),reads.begin(),[&trimmedReads, cutoff, &spec](auto& read)->auto
     {
-        if (trimRead(read.seq, cutoff, spec))
+        auto nTrimmed = trimRead(read.seq, cutoff, spec);
+        if (nTrimmed)
         {
+            read.qTrimmed = (unsigned char)nTrimmed;
             ++trimmedReads;
             if (TTagTrimming::value)
-                append(read.id, "[Trimmed]");
+                append(read.id, ":QT");
         }
         return read;
     });

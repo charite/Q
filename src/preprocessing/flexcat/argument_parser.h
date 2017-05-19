@@ -250,13 +250,6 @@ void ArgumentParserBuilder::addGeneralOptions(seqan::ArgumentParser & parser, co
         "ni", "noInfo", "Don't print paramter overview to console.");
     addOption(parser, adInfoOpt);
 
-    seqan::ArgParseOption finMinLenOpt = seqan::ArgParseOption(
-        "fm", "finalMinLength", "Deletes read (and mate)"
-        " if on of them is shorter than the given value after the complete worflow.",
-        seqan::ArgParseArgument::INTEGER, "LENGTH");
-    setMinValue(finMinLenOpt, "1");
-    addOption(parser, finMinLenOpt);
-
     seqan::ArgParseOption finLenOpt = seqan::ArgParseOption(
         "fl", "finalLength", "Trims reads to desired length after the complete workflow.",
         seqan::ArgParseArgument::INTEGER, "LENGTH");
@@ -374,11 +367,16 @@ void ArgumentParserBuilder::addAdapterTrimmingOptions(seqan::ArgumentParser & pa
     setDefaultValue(rateOpt, 0.2);
     addOption(parser, rateOpt);
 
-    seqan::ArgParseOption overlapOpt = seqan::ArgParseOption(
+    seqan::ArgParseOption nlerOpt = seqan::ArgParseOption(
+        "nler", "non-linear error rate", "Limit the number of allowed mismatches for overlaps <6 to 0 and "
+            "for overlaps <10 to 1");
+    addOption(parser, nlerOpt);
+
+    seqan::ArgParseOption olOpt = seqan::ArgParseOption(
         "ol", "overlap", "Minimum length of overlap for a significant adapter match.",
         seqan::ArgParseOption::INTEGER, "VALUE");
-    setDefaultValue(overlapOpt, 4);
-    addOption(parser, overlapOpt);
+    setDefaultValue(olOpt, 4);
+    addOption(parser, olOpt);
 
     seqan::ArgParseOption overhangOpt = seqan::ArgParseOption(
         "oh", "overhang", "Number of bases that the adapter can stick over at the opposite end",
@@ -391,6 +389,15 @@ void ArgumentParserBuilder::addAdapterTrimmingOptions(seqan::ArgumentParser & pa
         seqan::ArgParseOption::INTEGER, "VALUE");
     setDefaultValue(timesOpt, 1);
     addOption(parser, timesOpt);
+
+    seqan::ArgParseOption bestOpt = seqan::ArgParseOption(
+        "best", "best", "Trim best matching adapters, if multiple adapters are specified.");
+    addOption(parser, bestOpt);
+
+    seqan::ArgParseOption topdownOpt = seqan::ArgParseOption(
+        "topdown", "topdown", "Trim adapters in the order they are specified, first match will be taken.");
+    addOption(parser, topdownOpt);
+
 
     if (flexiProgram != FlexiProgram::ALL_STEPS)
     {
@@ -418,18 +425,18 @@ void ArgumentParserBuilder::addReadTrimmingOptions(seqan::ArgumentParser & parse
     addOption(parser, qualOpt);
 
     seqan::ArgParseOption lenOpt = seqan::ArgParseOption(
-        "l", "length",
+        "qml", "length",
         "Minimum read length after trimming. "
         "Shorter reads will be substituted by a single N or removed if the paired read is too short as well.",
         seqan::ArgParseArgument::INTEGER, "LENGTH");
-    setDefaultValue(lenOpt, 1);
-    setMinValue(lenOpt, "1");
+    setDefaultValue(lenOpt, 0);
+    setMinValue(lenOpt, "0");
     addOption(parser, lenOpt);
 
     seqan::ArgParseOption trimOpt = seqan::ArgParseOption(
         "m", "method", "Method for trimming reads.",
         seqan::ArgParseArgument::STRING, "METHOD");
-    setDefaultValue(trimOpt, "WIN");
+    setDefaultValue(trimOpt, "TAIL");
     setValidValues(trimOpt, "WIN BWA TAIL");
     addOption(parser, trimOpt);
 
@@ -671,6 +678,9 @@ int loadAdapterTrimmingParams(seqan::ArgumentParser const& parser, AdapterTrimmi
     getOptionValue(er, parser, "er");
     getOptionValue(oh, parser, "oh");
     getOptionValue(times, parser, "times");
+    getOptionValue(params.nler, parser, "nler");
+    if (!isSet(parser, "topdown"))
+        params.best = true;
     params.mode = AdapterMatchSettings(o, e, er, oh, times);
 
     // ADAPTER SEQUENCES ----------------------------
@@ -690,7 +700,8 @@ int loadAdapterTrimmingParams(seqan::ArgumentParser const& parser, AdapterTrimmi
         unsigned int adapterId = 0;
         while (!atEnd(adapterInFile))
         {
-            readRecord(id, adapterItem.seq, adapterInFile);
+            auto tempSeq = adapterItem.getSeq();
+            readRecord(id, tempSeq, adapterInFile);
             if (id.find("3'") != std::string::npos)
                 adapterItem.adapterEnd = AdapterItem::end3;
             else if (id.find("5'") != std::string::npos)
@@ -705,6 +716,7 @@ int loadAdapterTrimmingParams(seqan::ArgumentParser const& parser, AdapterTrimmi
 
             adapterItem.overhang = oh;
             adapterItem.id = adapterId++;
+            adapterItem.setSeq(tempSeq);
             seqan::appendValue(params.adapters, adapterItem);
         }
     }
@@ -746,7 +758,7 @@ int loadQualityTrimmingParams(seqan::ArgumentParser const & parser, QualityTrimm
         getOptionValue(params.cutoff, parser, "q");
     }
     // MINIMUM SEQUENCE LENGTH -------------------
-    getOptionValue(params.min_length, parser, "l");
+    getOptionValue(params.min_length, parser, "qml");
     // Set run flag, depending on essential parameters (which are in a valid state at this point).
     params.run = isSet(parser, "q");
     return 0;
